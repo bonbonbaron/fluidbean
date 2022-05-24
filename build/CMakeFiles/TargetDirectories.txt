@@ -1,0 +1,8 @@
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/install/strip.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/install.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/install/local.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/rebuild_cache.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/edit_cache.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/fluidlite.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/list_install_components.dir
+/home/bonbonbaron/hack/FluidLite/build/CMakeFiles/fluidlite-static.dir

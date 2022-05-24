@@ -1,0 +1,10 @@
+[mp3 @ 0x1e5c530] Skipping 359 bytes of junk at 0.
+Input #0, mp3, from 'http://icecast3.play.cz/hey-radio128.mp3':
+  Metadata:
+    icy-br          : 128
+    icy-genre       : Various
+    icy-name        : Radio HEY 128
+    icy-pub         : 0
+    StreamTitle     : 
+  Duration: N/A, start: 0.000000, bitrate: 128 kb/s
+    Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 128 kb/s
