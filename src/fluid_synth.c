@@ -2124,10 +2124,9 @@ fluid_synth_write_s16 (fluid_synth_t * synth, int len,
  * unmodified to additional calls which are part of the same synthesis output.
  * Only used internally currently.
  */
-void
-fluid_synth_dither_s16 (int *dither_index, int len, float *lin, float *rin,
-												void *lout, int loff, int lincr,
-												void *rout, int roff, int rincr) {
+void fluid_synth_dither_s16 (int *dither_index, int len, float *lin, float *rin,
+                             void *lout, int loff, int lincr,
+                             void *rout, int roff, int rincr) {
 	int i, j, k;
 	signed short *left_out = (signed short *) lout;
 	signed short *right_out = (signed short *) rout;
