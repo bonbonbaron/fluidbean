@@ -20,12 +20,18 @@
 
 #include <math.h>
 
-#include "fluid_synth.h"
-#include "fluid_sys.h"
-#include "fluid_chan.h"
-#include "fluid_tuning.h"
-#include "fluid_settings.h"
-#include "fluid_sfont.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_tuning.h"
+#include "include/fluid_tuning.h"
+#include "include/fluid_settings.h"
+#include "include/fluid_settings.h"
+#include "include/fluid_sfont.h"
+#include "include/fluid_sfont.h"
 
 fluid_sfloader_t *new_fluid_defsfloader (void);
 
@@ -389,44 +395,26 @@ fluid_synth_t *new_fluid_synth (fluid_settings_t * settings) {
 															 fluid_synth_update_polyphony, synth);
 
 	/* do some basic sanity checking on the settings */
-
 	if (synth->midi_channels % 16 != 0) {
 		int n = synth->midi_channels / 16;
 		synth->midi_channels = (n + 1) * 16;
 		fluid_settings_setint (settings, "synth.midi-channels",
 													 synth->midi_channels);
-		FLUID_LOG (FLUID_WARN,
-							 "Requested number of MIDI channels is not a multiple of 16. "
-							 "I'll increase the number of channels to the next multiple.");
 	}
 
 	if (synth->audio_channels < 1) {
-		FLUID_LOG (FLUID_WARN,
-							 "Requested number of audio channels is smaller than 1. "
-							 "Changing this setting to 1.");
 		synth->audio_channels = 1;
 	} else if (synth->audio_channels > 128) {
-		FLUID_LOG (FLUID_WARN,
-							 "Requested number of audio channels is too big (%d). "
-							 "Limiting this setting to 128.", synth->audio_channels);
 		synth->audio_channels = 128;
 	}
 
 	if (synth->audio_groups < 1) {
-		FLUID_LOG (FLUID_WARN,
-							 "Requested number of audio groups is smaller than 1. "
-							 "Changing this setting to 1.");
 		synth->audio_groups = 1;
 	} else if (synth->audio_groups > 128) {
-		FLUID_LOG (FLUID_WARN,
-							 "Requested number of audio groups is too big (%d). "
-							 "Limiting this setting to 128.", synth->audio_groups);
 		synth->audio_groups = 128;
 	}
 
 	if (synth->effects_channels != 2) {
-		FLUID_LOG (FLUID_WARN, "Invalid number of effects channels (%d)."
-							 "Setting effects channels to 2.", synth->effects_channels);
 		synth->effects_channels = 2;
 	}
 
@@ -451,13 +439,14 @@ fluid_synth_t *new_fluid_synth (fluid_settings_t * settings) {
 	synth->tuning = NULL;
 
 	/* allocate and add the default sfont loader */
-	loader = new_fluid_defsfloader ();
+  // MB TODO: loader needs to be removed.
+	//loader = new_fluid_defsfloader ();
 
-	if (loader == NULL) {
-		FLUID_LOG (FLUID_WARN, "Failed to create the default SoundFont loader");
-	} else {
-		fluid_synth_add_sfloader (synth, loader);
-	}
+	//if (loader == NULL) {
+	//	FLUID_LOG (FLUID_WARN, "Failed to create the default SoundFont loader");
+	//} else {
+	//	fluid_synth_add_sfloader (synth, loader);
+	//}
 
 	/* allocate all channel objects */
 	synth->channel = FLUID_ARRAY (fluid_channel_t *, synth->midi_channels);
@@ -2542,6 +2531,8 @@ fluid_synth_sfload (fluid_synth_t * synth, const char *filename,
 		return FLUID_FAILED;
 	}
 
+  // MB TODO replace sfloader_load with defsfloader_load. 
+  //         Then get this function to consume the inflatable len & pointer.
 	for (list = synth->loaders; list; list = fluid_list_next (list)) {
 		loader = (fluid_sfloader_t *) fluid_list_get (list);
 
@@ -2661,6 +2652,8 @@ int fluid_synth_sfreload (fluid_synth_t * synth, unsigned int id) {
 	for (list = synth->loaders; list; list = fluid_list_next (list)) {
 		loader = (fluid_sfloader_t *) fluid_list_get (list);
 
+    // MB TODO replace sfloader_load with defsfloader_load. 
+    //         Then get this function to consume the inflatable len & pointer.
 		sfont = fluid_sfloader_load (loader, filename);
 
 		if (sfont != NULL) {

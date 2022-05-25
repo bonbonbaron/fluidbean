@@ -28,8 +28,10 @@
  * MT safe
  */
 
-#include "fluidsynth_priv.h"
-#include "fluid_hash.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluid_hash.h"
+#include "include/fluid_hash.h"
 
 
 #define HASH_TABLE_MIN_SIZE 7

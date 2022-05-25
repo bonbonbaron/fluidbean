@@ -18,10 +18,14 @@
  * 02111-1307, USA
  */
 
-#include "fluid_chan.h"
-#include "fluid_mod.h"
-#include "fluid_synth.h"
-#include "fluid_sfont.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_mod.h"
+#include "include/fluid_mod.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_sfont.h"
+#include "include/fluid_sfont.h"
 
 #define SETCC(_c,_n,_v)  _c->cc[_n] = _v
 

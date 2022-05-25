@@ -18,9 +18,12 @@
  * 02111-1307, USA
  */
 
-#include "fluid_mod.h"
-#include "fluid_chan.h"
-#include "fluid_voice.h"
+#include "include/fluid_mod.h"
+#include "include/fluid_mod.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_voice.h"
+#include "include/fluid_voice.h"
 
 /*
  * fluid_mod_clone

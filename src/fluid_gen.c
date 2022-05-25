@@ -19,8 +19,10 @@
  */
 
 
-#include "fluid_gen.h"
-#include "fluid_chan.h"
+#include "include/fluid_gen.h"
+#include "include/fluid_gen.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_chan.h"
 
 
 /* See SFSpec21 $8.1.3 */

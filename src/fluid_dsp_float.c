@@ -18,8 +18,10 @@
  * 02111-1307, USA
  */
 
-#include "fluidsynth_priv.h"
-#include "fluid_phase.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluid_phase.h"
+#include "include/fluid_phase.h"
 
 /* Purpose:
  *
@@ -43,9 +45,12 @@
  * - dsp_buf: Output buffer of floating point values (FLUID_BUFSIZE in length)
  */
 
-#include "fluidsynth_priv.h"
-#include "fluid_synth.h"
-#include "fluid_voice.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_voice.h"
+#include "include/fluid_voice.h"
 
 
 /* Interpolation (find a value between two samples of the original waveform) */

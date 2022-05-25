@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "fluidlite.h"
+#include "fluidbean.h"
 
 #define SAMPLE_RATE 44100
 #define SAMPLE_SIZE sizeof(float)

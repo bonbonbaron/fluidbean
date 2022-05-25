@@ -19,8 +19,10 @@
  */
 
 
-#include "fluid_tuning.h"
-#include "fluidsynth_priv.h"
+#include "include/fluid_tuning.h"
+#include "include/fluid_tuning.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluidsynth_priv.h"
 
 
 fluid_tuning_t *new_fluid_tuning (const char *name, int bank, int prog) {

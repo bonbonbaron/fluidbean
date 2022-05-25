@@ -18,14 +18,22 @@
  * 02111-1307, USA
  */
 
-#include "fluidsynth_priv.h"
-#include "fluid_voice.h"
-#include "fluid_mod.h"
-#include "fluid_chan.h"
-#include "fluid_conv.h"
-#include "fluid_synth.h"
-#include "fluid_sys.h"
-#include "fluid_sfont.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluid_voice.h"
+#include "include/fluid_voice.h"
+#include "include/fluid_mod.h"
+#include "include/fluid_mod.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_conv.h"
+#include "include/fluid_conv.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_sfont.h"
+#include "include/fluid_sfont.h"
 
 /* used for filter turn off optimization - if filter cutoff is above the
    specified value and filter q is below the other value, turn filter off */

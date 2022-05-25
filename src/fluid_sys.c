@@ -19,7 +19,8 @@
  */
 
 
-#include "fluid_sys.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_sys.h"
 
 static char fluid_errbuf[512];	/* buffer for error message */
 

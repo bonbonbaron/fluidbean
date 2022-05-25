@@ -11,7 +11,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.18.4/CMakeCCompiler.cmake"
   "CMakeFiles/3.18.4/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.18.4/CMakeSystem.cmake"
-  "../fluidlite.pc.in"
+  "../fluidbean.pc.in"
   "/usr/share/cmake-3.18/Modules/CMakeCCompiler.cmake.in"
   "/usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c"
   "/usr/share/cmake-3.18/Modules/CMakeCInformation.cmake"
@@ -113,12 +113,12 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/3.18.4/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.18.4/CMakeCCompiler.cmake"
   "CMakeFiles/3.18.4/CMakeCXXCompiler.cmake"
-  "fluidlite.pc"
+  "fluidbean.pc"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/fluidlite.dir/DependInfo.cmake"
-  "CMakeFiles/fluidlite-static.dir/DependInfo.cmake"
+  "CMakeFiles/fluidbean.dir/DependInfo.cmake"
+  "CMakeFiles/fluidbean-static.dir/DependInfo.cmake"
   )

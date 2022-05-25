@@ -18,11 +18,16 @@
  * 02111-1307, USA
  */
 
-#include "fluidsynth_priv.h"
-#include "fluid_sys.h"
-#include "fluid_hash.h"
-#include "fluid_synth.h"
-#include "fluid_settings.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluidsynth_priv.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_sys.h"
+#include "include/fluid_hash.h"
+#include "include/fluid_hash.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_settings.h"
+#include "include/fluid_settings.h"
 
 /* maximum allowed components of a settings variable (separated by '.') */
 #define MAX_SETTINGS_TOKENS	8		/* currently only a max of 3 are used */
