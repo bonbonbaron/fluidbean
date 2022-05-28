@@ -19,14 +19,9 @@
  */
 
 #include "include/fluidsynth_priv.h"
-#include "include/fluidsynth_priv.h"
-#include "include/fluid_sys.h"
 #include "include/fluid_sys.h"
 #include "include/fluid_hash.h"
-#include "include/fluid_hash.h"
 #include "include/fluid_synth.h"
-#include "include/fluid_synth.h"
-#include "include/fluid_settings.h"
 #include "include/fluid_settings.h"
 
 /* maximum allowed components of a settings variable (separated by '.') */

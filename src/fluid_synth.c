@@ -21,6 +21,7 @@
 #include <math.h>
 
 #include "include/fluid_synth.h"
+#include "include/fluid_defsfont.h"
 #include "include/fluid_synth.h"
 #include "include/fluid_sys.h"
 #include "include/fluid_sys.h"
@@ -46,11 +47,9 @@ fluid_sfloader_t *new_fluid_defsfloader (void);
 int fluid_synth_program_select2 (fluid_synth_t * synth,
 																 int chan,
 																 char *sfont_name,
-																 unsigned int bank_num,
-																 unsigned int preset_num);
+																 U32 bank_num,
+																 U32 preset_num);
 
-fluid_sfont_t *fluid_synth_get_sfont_by_name (fluid_synth_t * synth,
-																							char *name);
 
 int fluid_synth_set_gen2 (fluid_synth_t * synth, int chan,
 													int param, float value,
@@ -382,7 +381,7 @@ fluid_synth_t *new_fluid_synth (fluid_settings_t * settings) {
 	fluid_settings_getnum (settings, "synth.gain", &synth->gain);
 	fluid_settings_getint (settings, "synth.min-note-length", &i);
 	synth->min_note_length_ticks =
-		(unsigned int) (i * synth->sample_rate / 1000.0f);
+		(U32) (i * synth->sample_rate / 1000.0f);
 
 
 	/* register the callbacks */
@@ -1425,9 +1424,9 @@ fluid_synth_get_pitch_wheel_sens (fluid_synth_t * synth, int chan,
  * fluid_synth_get_preset
  */
 fluid_preset_t *fluid_synth_get_preset (fluid_synth_t * synth,
-																				unsigned int sfontnum,
-																				unsigned int banknum,
-																				unsigned int prognum) {
+																				U32 sfontnum,
+																				U32 banknum,
+																				U32 prognum) {
 	fluid_preset_t *preset = NULL;
 	fluid_sfont_t *sfont = NULL;
 	int offset;
@@ -1445,31 +1444,11 @@ fluid_preset_t *fluid_synth_get_preset (fluid_synth_t * synth,
 }
 
 /*
- * fluid_synth_get_preset2
+ * fluid_synth_get_preset
  */
-fluid_preset_t *fluid_synth_get_preset2 (fluid_synth_t * synth,
-																				 char *sfont_name,
-																				 unsigned int banknum,
-																				 unsigned int prognum) {
-	fluid_preset_t *preset = NULL;
-	fluid_sfont_t *sfont = NULL;
-	int offset;
-
-	sfont = fluid_synth_get_sfont_by_name (synth, sfont_name);
-
-	if (sfont != NULL) {
-		offset = fluid_synth_get_bank_offset (synth, fluid_sfont_get_id (sfont));
-		preset = fluid_sfont_get_preset (sfont, banknum - offset, prognum);
-		if (preset != NULL) {
-			return preset;
-		}
-	}
-	return NULL;
-}
-
 fluid_preset_t *fluid_synth_find_preset (fluid_synth_t * synth,
-																				 unsigned int banknum,
-																				 unsigned int prognum) {
+																				 U32 banknum,
+																				 U32 prognum) {
 	fluid_preset_t *preset = NULL;
 	fluid_sfont_t *sfont = NULL;
 	fluid_list_t *list = synth->sfont;
@@ -1499,8 +1478,8 @@ fluid_preset_t *fluid_synth_find_preset (fluid_synth_t * synth,
 int fluid_synth_program_change (fluid_synth_t * synth, int chan, int prognum) {
 	fluid_preset_t *preset = NULL;
 	fluid_channel_t *channel;
-	unsigned int banknum;
-	unsigned int sfont_id;
+	U32 banknum;
+	U32 sfont_id;
 	int subst_bank, subst_prog;
 
 	if ((prognum < 0) || (prognum >= FLUID_NUM_PROGRAMS) ||
@@ -1566,7 +1545,7 @@ int fluid_synth_program_change (fluid_synth_t * synth, int chan, int prognum) {
  * fluid_synth_bank_select
  */
 int
-fluid_synth_bank_select (fluid_synth_t * synth, int chan, unsigned int bank) {
+fluid_synth_bank_select (fluid_synth_t * synth, int chan, U32 bank) {
 	if ((chan >= 0) && (chan < synth->midi_channels)) {
 		fluid_channel_set_banknum (synth->channel[chan], bank);
 		return FLUID_OK;
@@ -1580,7 +1559,7 @@ fluid_synth_bank_select (fluid_synth_t * synth, int chan, unsigned int bank) {
  */
 int
 fluid_synth_sfont_select (fluid_synth_t * synth, int chan,
-													unsigned int sfont_id) {
+													U32 sfont_id) {
 	if ((chan >= 0) && (chan < synth->midi_channels)) {
 		fluid_channel_set_sfontnum (synth->channel[chan], sfont_id);
 		return FLUID_OK;
@@ -1593,8 +1572,8 @@ fluid_synth_sfont_select (fluid_synth_t * synth, int chan,
  */
 int
 fluid_synth_get_program (fluid_synth_t * synth, int chan,
-												 unsigned int *sfont_id, unsigned int *bank_num,
-												 unsigned int *preset_num) {
+												 U32 *sfont_id, U32 *bank_num,
+												 U32 *preset_num) {
 	fluid_channel_t *channel;
 	if ((chan >= 0) && (chan < synth->midi_channels)) {
 		channel = synth->channel[chan];
@@ -1612,8 +1591,8 @@ fluid_synth_get_program (fluid_synth_t * synth, int chan,
 int
 fluid_synth_program_select (fluid_synth_t * synth,
 														int chan,
-														unsigned int sfont_id,
-														unsigned int bank_num, unsigned int preset_num) {
+														U32 sfont_id,
+														U32 bank_num, U32 preset_num) {
 	fluid_preset_t *preset = NULL;
 	fluid_channel_t *channel;
 
@@ -1633,50 +1612,6 @@ fluid_synth_program_select (fluid_synth_t * synth,
 
 	/* inform the channel of the new bank and program number */
 	fluid_channel_set_sfontnum (channel, sfont_id);
-	fluid_channel_set_banknum (channel, bank_num);
-	fluid_channel_set_prognum (channel, preset_num);
-
-	fluid_channel_set_preset (channel, preset);
-
-	return FLUID_OK;
-}
-
-/*
- * fluid_synth_program_select2
- */
-int
-fluid_synth_program_select2 (fluid_synth_t * synth,
-														 int chan,
-														 char *sfont_name,
-														 unsigned int bank_num, unsigned int preset_num) {
-	fluid_preset_t *preset = NULL;
-	fluid_channel_t *channel;
-	fluid_sfont_t *sfont = NULL;
-	int offset;
-
-	if ((chan < 0) || (chan >= synth->midi_channels)) {
-		FLUID_LOG (FLUID_ERR, "Channel number out of range (chan=%d)", chan);
-		return FLUID_FAILED;
-	}
-	channel = synth->channel[chan];
-
-	sfont = fluid_synth_get_sfont_by_name (synth, sfont_name);
-	if (sfont == NULL) {
-		FLUID_LOG (FLUID_ERR, "Could not find SoundFont %s", sfont_name);
-		return FLUID_FAILED;
-	}
-
-	offset = fluid_synth_get_bank_offset (synth, fluid_sfont_get_id (sfont));
-	preset = fluid_sfont_get_preset (sfont, bank_num - offset, preset_num);
-	if (preset == NULL) {
-		FLUID_LOG (FLUID_ERR,
-							 "There is no preset with bank number %d and preset number %d in SoundFont %s",
-							 bank_num, preset_num, sfont_name);
-		return FLUID_FAILED;
-	}
-
-	/* inform the channel of the new bank and program number */
-	fluid_channel_set_sfontnum (channel, fluid_sfont_get_id (sfont));
 	fluid_channel_set_banknum (channel, bank_num);
 	fluid_channel_set_prognum (channel, preset_num);
 
@@ -2515,9 +2450,7 @@ fluid_synth_add_sfloader (fluid_synth_t * synth, fluid_sfloader_t * loader) {
 /*
  * fluid_synth_sfload
  */
-int
-fluid_synth_sfload (fluid_synth_t * synth, const char *filename,
-										int reset_presets) {
+int fluid_synth_sfload (fluid_synth_t * synth, void *sfDataP, U32 sfDataLen, int reset_presets) {
 	fluid_sfont_t *sfont;
 	fluid_list_t *list;
 	fluid_sfloader_t *loader;
@@ -2525,18 +2458,11 @@ fluid_synth_sfload (fluid_synth_t * synth, const char *filename,
 #if defined(MACOS9)
 	fluid_synth_sfunload_macos9 (synth);
 #endif
+	//for (list = synth->loaders; list; list = fluid_list_next (list)) {
+		//loader = (fluid_sfloader_t *) fluid_list_get (list);
 
-	if (filename == NULL) {
-		FLUID_LOG (FLUID_ERR, "Invalid filename");
-		return FLUID_FAILED;
-	}
-
-  // MB TODO replace sfloader_load with defsfloader_load. 
-  //         Then get this function to consume the inflatable len & pointer.
-	for (list = synth->loaders; list; list = fluid_list_next (list)) {
-		loader = (fluid_sfloader_t *) fluid_list_get (list);
-
-		sfont = fluid_sfloader_load (loader, filename);
+		//sfont = fluid_sfloader_load (loader, filename);
+    sfont = fluid_defsfloader_load(NULL, sfDataP, sfDataLen);
 		if (sfont == NULL)
 			return -1;
 
@@ -2547,16 +2473,13 @@ fluid_synth_sfload (fluid_synth_t * synth, const char *filename,
 			fluid_synth_program_reset (synth);
 		}
 		return (int) sfont->id;
-	}
+	//}
 
-	FLUID_LOG (FLUID_ERR, "Failed to load SoundFont \"%s\"", filename);
-	return -1;
+	//return -1;
 }
 
 
-/*
- * fluid_synth_sfunload_macos9
- */
+/* fluid_synth_sfunload_macos9 */
 void fluid_synth_sfunload_macos9 (fluid_synth_t * synth) {
 #if defined(MACOS9)
 	fluid_list_t *list, *next;
@@ -2574,11 +2497,9 @@ void fluid_synth_sfunload_macos9 (fluid_synth_t * synth) {
 #endif
 }
 
-/*
- * fluid_synth_sfunload
- */
+/* fluid_synth_sfunload */
 int
-fluid_synth_sfunload (fluid_synth_t * synth, unsigned int id,
+fluid_synth_sfunload (fluid_synth_t * synth, U32 id,
 											int reset_presets) {
 	fluid_sfont_t *sfont = fluid_synth_get_sfont_by_id (synth, id);
 
@@ -2615,11 +2536,8 @@ fluid_synth_sfunload (fluid_synth_t * synth, unsigned int id,
 	return FLUID_OK;
 }
 
-/* fluid_synth_sfreload
- *
- */
-int fluid_synth_sfreload (fluid_synth_t * synth, unsigned int id) {
-	char filename[1024];
+/* fluid_synth_sfreload */
+int fluid_synth_sfreload (fluid_synth_t * synth, void *sfDataP, U32 sfDataLen, U32 id) {
 	fluid_sfont_t *sfont;
 	int index = 0;
 	fluid_list_t *list;
@@ -2642,9 +2560,6 @@ int fluid_synth_sfreload (fluid_synth_t * synth, unsigned int id) {
 		index++;
 	}
 
-	/* keep a copy of the SoundFont's filename */
-	FLUID_STRCPY (filename, fluid_sfont_get_name (sfont));
-
 	if (fluid_synth_sfunload (synth, id, 0) != FLUID_OK) {
 		return FLUID_FAILED;
 	}
@@ -2654,7 +2569,8 @@ int fluid_synth_sfreload (fluid_synth_t * synth, unsigned int id) {
 
     // MB TODO replace sfloader_load with defsfloader_load. 
     //         Then get this function to consume the inflatable len & pointer.
-		sfont = fluid_sfloader_load (loader, filename);
+		//sfont = fluid_sfloader_load (loader, filename);
+    sfont = fluid_defsfloader_load(NULL, sfDataP, sfDataLen);
 
 		if (sfont != NULL) {
 
@@ -2670,7 +2586,6 @@ int fluid_synth_sfreload (fluid_synth_t * synth, unsigned int id) {
 		}
 	}
 
-	FLUID_LOG (FLUID_ERR, "Failed to load SoundFont \"%s\"", filename);
 	return -1;
 }
 
@@ -2719,7 +2634,7 @@ int fluid_synth_sfcount (fluid_synth_t * synth) {
  *
  * Returns SoundFont num
  */
-fluid_sfont_t *fluid_synth_get_sfont (fluid_synth_t * synth, unsigned int num) {
+fluid_sfont_t *fluid_synth_get_sfont (fluid_synth_t * synth, U32 num) {
 	return (fluid_sfont_t *)
 		fluid_list_get (fluid_list_nth (synth->sfont, num));
 }
@@ -2728,31 +2643,13 @@ fluid_sfont_t *fluid_synth_get_sfont (fluid_synth_t * synth, unsigned int num) {
  *
  */
 fluid_sfont_t *fluid_synth_get_sfont_by_id (fluid_synth_t * synth,
-																						unsigned int id) {
+																						U32 id) {
 	fluid_list_t *list = synth->sfont;
 	fluid_sfont_t *sfont;
 
 	while (list) {
 		sfont = (fluid_sfont_t *) fluid_list_get (list);
 		if (fluid_sfont_get_id (sfont) == id) {
-			return sfont;
-		}
-		list = fluid_list_next (list);
-	}
-	return NULL;
-}
-
-/* fluid_synth_get_sfont_by_name
- *
- */
-fluid_sfont_t *fluid_synth_get_sfont_by_name (fluid_synth_t * synth,
-																							char *name) {
-	fluid_list_t *list = synth->sfont;
-	fluid_sfont_t *sfont;
-
-	while (list) {
-		sfont = (fluid_sfont_t *) fluid_list_get (list);
-		if (FLUID_STRCMP (fluid_sfont_get_name (sfont), name) == 0) {
 			return sfont;
 		}
 		list = fluid_list_next (list);
@@ -3377,7 +3274,7 @@ float fluid_synth_get_gen (fluid_synth_t * synth, int chan, int param) {
 //fluid_synth_handle_midi_event disabled
 
 int
-fluid_synth_start (fluid_synth_t * synth, unsigned int id,
+fluid_synth_start (fluid_synth_t * synth, U32 id,
 									 fluid_preset_t * preset, int audio_chan, int midi_chan,
 									 int key, int vel) {
 	int r;
@@ -3409,7 +3306,7 @@ fluid_synth_start (fluid_synth_t * synth, unsigned int id,
 	return r;
 }
 
-int fluid_synth_stop (fluid_synth_t * synth, unsigned int id) {
+int fluid_synth_stop (fluid_synth_t * synth, U32 id) {
 	int i;
 	fluid_voice_t *voice;
 	int status = FLUID_FAILED;

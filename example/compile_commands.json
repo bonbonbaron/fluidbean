@@ -1,0 +1,399 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-c",
+      "-g",
+      "-o",
+      "out/example",
+      "src/main.c",
+      "-I../include"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example",
+    "file": "/home/bonbonbaron/hack/fluidbean/example/src/main.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/src/main.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-c",
+      "-g",
+      "-o",
+      "out/example",
+      "-I../include",
+      "src/sf3Inf.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example",
+    "file": "/home/bonbonbaron/hack/fluidbean/example/src/sf3Inf.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/src/sf3Inf.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-c",
+      "CMakeCCompilerId.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/3.18.4/CompilerIdC",
+    "file": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/3.18.4/CompilerIdC/CMakeCCompilerId.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/3.18.4/CompilerIdC/CMakeCCompilerId.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-g++-10",
+      "-c",
+      "CMakeCXXCompilerId.cpp"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/3.18.4/CompilerIdCXX",
+    "file": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/3.18.4/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/3.18.4/CompilerIdCXX/CMakeCXXCompilerId.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-v",
+      "-o",
+      "CMakeFiles/cmTC_99fea.dir/CMakeCCompilerABI.c.o",
+      "-c",
+      "/usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp",
+    "file": "/usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_99fea.dir/CMakeCCompilerABI.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-g++-10",
+      "-v",
+      "-o",
+      "CMakeFiles/cmTC_20951.dir/CMakeCXXCompilerABI.cpp.o",
+      "-c",
+      "/usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp",
+    "file": "/usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_20951.dir/CMakeCXXCompilerABI.cpp.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-I/home/bonbonbaron/hack/fluidbean/libbotox/src/include",
+      "-O3",
+      "-DNDEBUG",
+      "-o",
+      "CMakeFiles/botox.dir/libbotox/src/bt.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/libbotox/src/bt.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/libbotox/src/bt.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/botox.dir/libbotox/src/bt.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-I/home/bonbonbaron/hack/fluidbean/libbotox/src/include",
+      "-O3",
+      "-DNDEBUG",
+      "-o",
+      "CMakeFiles/botox.dir/libbotox/src/data.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/libbotox/src/data.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/libbotox/src/data.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/botox.dir/libbotox/src/data.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-I/home/bonbonbaron/hack/fluidbean/libbotox/src/include",
+      "-O3",
+      "-DNDEBUG",
+      "-o",
+      "CMakeFiles/botox.dir/libbotox/src/x.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/libbotox/src/x.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/libbotox/src/x.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/botox.dir/libbotox/src/x.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_init.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_init.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_init.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_init.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_chan.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_chan.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_chan.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_chan.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_chorus.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_chorus.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_chorus.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_chorus.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_conv.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_conv.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_conv.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_conv.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_defsfont.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_defsfont.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_dsp_float.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_dsp_float.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_dsp_float.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_dsp_float.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_gen.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_gen.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_gen.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_gen.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_hash.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_hash.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_hash.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_hash.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_list.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_list.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_list.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_list.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_mod.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_mod.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_mod.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_mod.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_rev.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_rev.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_rev.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_rev.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_settings.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_settings.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_settings.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_settings.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_synth.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_synth.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_synth.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_synth.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_sys.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_sys.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_sys.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_sys.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_tuning.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_tuning.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_tuning.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_tuning.c.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-I/home/bonbonbaron/hack/fluidbean/src",
+      "-I/home/bonbonbaron/hack/fluidbean/include",
+      "-O3",
+      "-DNDEBUG",
+      "-std=gnu99",
+      "-o",
+      "CMakeFiles/fluidbean.dir/src/fluid_voice.c.o",
+      "-c",
+      "/home/bonbonbaron/hack/fluidbean/src/fluid_voice.c"
+    ],
+    "directory": "/home/bonbonbaron/hack/fluidbean/example/out",
+    "file": "/home/bonbonbaron/hack/fluidbean/src/fluid_voice.c",
+    "output": "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_voice.c.o"
+  }
+]

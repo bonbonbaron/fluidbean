@@ -19,12 +19,8 @@
  */
 
 #include "include/fluid_chan.h"
-#include "include/fluid_chan.h"
-#include "include/fluid_mod.h"
 #include "include/fluid_mod.h"
 #include "include/fluid_synth.h"
-#include "include/fluid_synth.h"
-#include "include/fluid_sfont.h"
 #include "include/fluid_sfont.h"
 
 #define SETCC(_c,_n,_v)  _c->cc[_n] = _v
@@ -183,7 +179,7 @@ fluid_preset_t *fluid_channel_get_preset (fluid_channel_t * chan) {
 /*
  * fluid_channel_get_banknum
  */
-unsigned int fluid_channel_get_banknum (fluid_channel_t * chan) {
+U32 fluid_channel_get_banknum (fluid_channel_t * chan) {
 	return chan->banknum;
 }
 
@@ -205,7 +201,7 @@ int fluid_channel_get_prognum (fluid_channel_t * chan) {
 /*
  * fluid_channel_set_banknum
  */
-int fluid_channel_set_banknum (fluid_channel_t * chan, unsigned int banknum) {
+int fluid_channel_set_banknum (fluid_channel_t * chan, U32 banknum) {
 	chan->banknum = banknum;
 	return FLUID_OK;
 }
@@ -248,7 +244,7 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 			   spec). [KLE]
 
 			   FIXME: is this correct? [PH] */
-			fluid_channel_set_banknum (chan, (unsigned int) (value & 0x7f));	/* KLE */
+			fluid_channel_set_banknum (chan, (U32) (value & 0x7f));	/* KLE */
 		}
 		break;
 
@@ -262,9 +258,9 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 			/* FIXME: according to the Downloadable Sounds II specification,
 			   bit 31 should be set when we receive the message on channel
 			   10 (drum channel) */
-			fluid_channel_set_banknum (chan, (((unsigned int) value & 0x7f)
+			fluid_channel_set_banknum (chan, (((U32) value & 0x7f)
 																				+
-																				((unsigned int) chan->bank_msb <<
+																				((U32) chan->bank_msb <<
 																				 7)));
 		}
 		break;
@@ -418,11 +414,11 @@ int fluid_channel_get_interp_method (fluid_channel_t * chan) {
 	return chan->interp_method;
 }
 
-unsigned int fluid_channel_get_sfontnum (fluid_channel_t * chan) {
+U32 fluid_channel_get_sfontnum (fluid_channel_t * chan) {
 	return chan->sfontnum;
 }
 
-int fluid_channel_set_sfontnum (fluid_channel_t * chan, unsigned int sfontnum) {
+int fluid_channel_set_sfontnum (fluid_channel_t * chan, U32 sfontnum) {
 	chan->sfontnum = sfontnum;
 	return FLUID_OK;
 }

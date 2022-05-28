@@ -46,7 +46,7 @@ void fluid_log_config (void);
 /*
  * Utility functions
  */
-char *fluid_strtok (char **str, char *delim);
+S8 *fluid_strtok (S8 **str, S8 *delim);
 
 
 /**
@@ -56,7 +56,7 @@ char *fluid_strtok (char **str, char *delim);
 
  */
 
-extern unsigned int fluid_debug_flags;
+extern U32 fluid_debug_flags;
 
 #if DEBUG
 
@@ -64,7 +64,7 @@ enum fluid_debug_level {
 	FLUID_DBG_DRIVER = 1
 };
 
-int fluid_debug (int level, char *fmt, ...);
+S32 fluid_debug (S32 level, S8 *fmt, ...);
 
 #else
 #define fluid_debug

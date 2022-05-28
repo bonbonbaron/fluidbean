@@ -72,8 +72,8 @@ CMAKE_BINARY_DIR = /home/bonbonbaron/hack/fluidbean/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
+all: CMakeFiles/botox.dir/all
 all: CMakeFiles/fluidbean.dir/all
-all: CMakeFiles/fluidbean-static.dir/all
 
 .PHONY : all
 
@@ -83,24 +83,51 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
+clean: CMakeFiles/botox.dir/clean
 clean: CMakeFiles/fluidbean.dir/clean
-clean: CMakeFiles/fluidbean-static.dir/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/botox.dir
+
+# All Build rule for target.
+CMakeFiles/botox.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/bonbonbaron/hack/fluidbean/build/CMakeFiles --progress-num=1,2,3,4 "Built target botox"
+.PHONY : CMakeFiles/botox.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/botox.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/botox.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 0
+.PHONY : CMakeFiles/botox.dir/rule
+
+# Convenience name for target.
+botox: CMakeFiles/botox.dir/rule
+
+.PHONY : botox
+
+# clean rule for target.
+CMakeFiles/botox.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/clean
+.PHONY : CMakeFiles/botox.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/fluidbean.dir
 
 # All Build rule for target.
-CMakeFiles/fluidbean.dir/all:
+CMakeFiles/fluidbean.dir/all: CMakeFiles/botox.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/bonbonbaron/hack/fluidbean/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 "Built target fluidbean"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/bonbonbaron/hack/fluidbean/build/CMakeFiles --progress-num=5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 "Built target fluidbean"
 .PHONY : CMakeFiles/fluidbean.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/fluidbean.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 17
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 21
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fluidbean.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 0
 .PHONY : CMakeFiles/fluidbean.dir/rule
@@ -114,33 +141,6 @@ fluidbean: CMakeFiles/fluidbean.dir/rule
 CMakeFiles/fluidbean.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/clean
 .PHONY : CMakeFiles/fluidbean.dir/clean
-
-#=============================================================================
-# Target rules for target CMakeFiles/fluidbean-static.dir
-
-# All Build rule for target.
-CMakeFiles/fluidbean-static.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/bonbonbaron/hack/fluidbean/build/CMakeFiles --progress-num=18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34 "Built target fluidbean-static"
-.PHONY : CMakeFiles/fluidbean-static.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/fluidbean-static.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 17
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/fluidbean-static.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/bonbonbaron/hack/fluidbean/build/CMakeFiles 0
-.PHONY : CMakeFiles/fluidbean-static.dir/rule
-
-# Convenience name for target.
-fluidbean-static: CMakeFiles/fluidbean-static.dir/rule
-
-.PHONY : fluidbean-static
-
-# clean rule for target.
-CMakeFiles/fluidbean-static.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/clean
-.PHONY : CMakeFiles/fluidbean-static.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

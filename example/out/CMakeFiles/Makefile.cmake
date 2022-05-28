@@ -48,6 +48,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
+  "CMakeFiles/botox.dir/DependInfo.cmake"
   "CMakeFiles/fluidbean.dir/DependInfo.cmake"
-  "CMakeFiles/fluidbean-static.dir/DependInfo.cmake"
   )

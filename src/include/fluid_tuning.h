@@ -35,23 +35,23 @@
 #include "fluidsynth_priv.h"
 
 struct _fluid_tuning_t {
-	char *name;
-	int bank;
-	int prog;
+	S8 *name;
+	S32 bank;
+	S32 prog;
 	double pitch[128];						/* the pitch of every key, in cents */
 };
 
-fluid_tuning_t *new_fluid_tuning (const char *name, int bank, int prog);
+fluid_tuning_t *new_fluid_tuning (const S8 *name, S32 bank, S32 prog);
 fluid_tuning_t *fluid_tuning_duplicate (fluid_tuning_t * tuning);
 void delete_fluid_tuning (fluid_tuning_t * tuning);
 
-void fluid_tuning_set_name (fluid_tuning_t * tuning, const char *name);
-char *fluid_tuning_get_name (fluid_tuning_t * tuning);
+void fluid_tuning_set_name (fluid_tuning_t * tuning, const S8 *name);
+S8 *fluid_tuning_get_name (fluid_tuning_t * tuning);
 
 #define fluid_tuning_get_bank(_t) ((_t)->bank)
 #define fluid_tuning_get_prog(_t) ((_t)->prog)
 
-void fluid_tuning_set_pitch (fluid_tuning_t * tuning, int key, double pitch);
+void fluid_tuning_set_pitch (fluid_tuning_t * tuning, S32 key, double pitch);
 #define fluid_tuning_get_pitch(_t, _key) ((_t)->pitch[_key])
 
 void fluid_tuning_set_octave (fluid_tuning_t * tuning,

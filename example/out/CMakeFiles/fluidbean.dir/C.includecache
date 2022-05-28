@@ -56,9 +56,21 @@ fluidsynth/version.h
 
 ../../include/fluidsynth/voice.h
 
+../../libbotox/src/include/data.h
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+assert.h
+-
+
 /home/bonbonbaron/hack/fluidbean/src/fluid_defsfont.c
 include/fluid_defsfont.h
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_defsfont.h
+data.h
+/home/bonbonbaron/hack/fluidbean/src/data.h
 include/fluid_sfont.h
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_sfont.h
 include/fluid_sys.h
@@ -66,7 +78,15 @@ include/fluid_sys.h
 stb_vorbis.c
 /home/bonbonbaron/hack/fluidbean/src/stb_vorbis.c
 
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_chorus.h
+fluidsynth_priv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
+
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_config.h
+
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_conv.h
+fluidsynth_priv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
 
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_defsfont.h
 fluidbean.h
@@ -76,19 +96,65 @@ fluidsynth_priv.h
 fluid_list.h
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_list.h
 
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_gen.h
+fluidsynth_priv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
+
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_list.h
 fluidsynth_priv.h
 /home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
 
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_mod.h
+fluidsynth_priv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
+fluid_conv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_conv.h
+
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_phase.h
+fluid_config.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_config.h
+
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_rev.h
+fluidsynth_priv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
+
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_sfont.h
+fluid_synth.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_synth.h
+
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_synth.h
+fluid_config.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_config.h
+fluidsynth_priv.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
+fluid_list.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_list.h
+fluid_rev.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_rev.h
+fluid_voice.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_voice.h
+fluid_chorus.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_chorus.h
+fluid_sys.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_sys.h
 
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_sys.h
 fluidsynth_priv.h
 /home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
 
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_voice.h
+fluid_phase.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_phase.h
+fluid_gen.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_gen.h
+fluid_mod.h
+/home/bonbonbaron/hack/fluidbean/src/include/fluid_mod.h
+
 /home/bonbonbaron/hack/fluidbean/src/include/fluidsynth_priv.h
 fluid_config.h
 /home/bonbonbaron/hack/fluidbean/src/include/fluid_config.h
+botox/data.h
+/home/bonbonbaron/hack/fluidbean/src/include/botox/data.h
 string.h
 -
 stdlib.h

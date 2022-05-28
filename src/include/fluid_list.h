@@ -33,7 +33,7 @@
 
 typedef struct _fluid_list_t fluid_list_t;
 
-typedef int (*fluid_compare_func_t) (void *a, void *b);
+typedef S32 (*fluid_compare_func_t) (void *a, void *b);
 
 struct _fluid_list_t {
 	void *data;
@@ -50,10 +50,10 @@ fluid_list_t *fluid_list_prepend (fluid_list_t * list, void *data);
 fluid_list_t *fluid_list_remove (fluid_list_t * list, void *data);
 fluid_list_t *fluid_list_remove_link (fluid_list_t * list,
 																			fluid_list_t * llink);
-fluid_list_t *fluid_list_nth (fluid_list_t * list, int n);
+fluid_list_t *fluid_list_nth (fluid_list_t * list, S32 n);
 fluid_list_t *fluid_list_last (fluid_list_t * list);
-fluid_list_t *fluid_list_insert_at (fluid_list_t * list, int n, void *data);
-int fluid_list_size (fluid_list_t * list);
+fluid_list_t *fluid_list_insert_at (fluid_list_t * list, S32 n, void *data);
+S32 fluid_list_size (fluid_list_t * list);
 
 #define fluid_list_next(slist)	((slist) ? (((fluid_list_t *)(slist))->next) : NULL)
 #define fluid_list_get(slist)	((slist) ? ((slist)->data) : NULL)

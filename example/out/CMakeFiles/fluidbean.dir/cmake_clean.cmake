@@ -15,8 +15,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/fluidbean.dir/src/fluid_sys.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_tuning.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_voice.c.o"
+  "libfluidbean.a"
   "libfluidbean.pdb"
-  "libfluidbean.so"
 )
 
 # Per-language clean rules from dependency scanning.

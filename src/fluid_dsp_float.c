@@ -19,8 +19,6 @@
  */
 
 #include "include/fluidsynth_priv.h"
-#include "include/fluidsynth_priv.h"
-#include "include/fluid_phase.h"
 #include "include/fluid_phase.h"
 
 /* Purpose:
@@ -45,11 +43,7 @@
  * - dsp_buf: Output buffer of floating point values (FLUID_BUFSIZE in length)
  */
 
-#include "include/fluidsynth_priv.h"
-#include "include/fluidsynth_priv.h"
 #include "include/fluid_synth.h"
-#include "include/fluid_synth.h"
-#include "include/fluid_voice.h"
 #include "include/fluid_voice.h"
 
 
@@ -134,9 +128,9 @@ int fluid_dsp_float_interpolate_none (fluid_voice_t * voice) {
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
-	unsigned int dsp_i = 0;
-	unsigned int dsp_phase_index;
-	unsigned int end_index;
+	U32 dsp_i = 0;
+	U32 dsp_phase_index;
+	U32 end_index;
 	int looping;
 
 	/* Convert playback "speed" floating point value to phase index/fract */
@@ -194,9 +188,9 @@ int fluid_dsp_float_interpolate_linear (fluid_voice_t * voice) {
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
-	unsigned int dsp_i = 0;
-	unsigned int dsp_phase_index;
-	unsigned int end_index;
+	U32 dsp_i = 0;
+	U32 dsp_phase_index;
+	U32 end_index;
 	short int point;
 	fluid_real_t *coeffs;
 	int looping;
@@ -285,9 +279,9 @@ int fluid_dsp_float_interpolate_4th_order (fluid_voice_t * voice) {
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
-	unsigned int dsp_i = 0;
-	unsigned int dsp_phase_index;
-	unsigned int start_index, end_index;
+	U32 dsp_i = 0;
+	U32 dsp_phase_index;
+	U32 start_index, end_index;
 	short int start_point, end_point1, end_point2;
 	fluid_real_t *coeffs;
 	int looping;
@@ -427,9 +421,9 @@ int fluid_dsp_float_interpolate_7th_order (fluid_voice_t * voice) {
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
-	unsigned int dsp_i = 0;
-	unsigned int dsp_phase_index;
-	unsigned int start_index, end_index;
+	U32 dsp_i = 0;
+	U32 dsp_phase_index;
+	U32 start_index, end_index;
 	short int start_points[3];
 	short int end_points[3];
 	fluid_real_t *coeffs;

@@ -78,12 +78,21 @@ CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../include/fluidsynth/synth.
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../include/fluidsynth/types.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../include/fluidsynth/version.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../include/fluidsynth/voice.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../libbotox/src/include/data.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/fluid_defsfont.c
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_chorus.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_config.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_conv.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_defsfont.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_gen.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_list.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_mod.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_phase.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_rev.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_sfont.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_synth.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_sys.h
+CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluid_voice.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/include/fluidsynth_priv.h
 CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o: ../../src/stb_vorbis.c
 
@@ -259,6 +268,7 @@ CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_chan.h
 CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_chorus.h
 CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_config.h
 CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_conv.h
+CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_defsfont.h
 CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_gen.h
 CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_list.h
 CMakeFiles/fluidbean.dir/src/fluid_synth.c.o: ../../src/include/fluid_midi.h

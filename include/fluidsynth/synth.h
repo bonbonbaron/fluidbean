@@ -209,7 +209,7 @@ void fluid_synth_set_preset_callback(void* callback);
       \returns The ID of the loaded SoundFont, or -1 in case of error
   */
 FLUIDSYNTH_API 
-int fluid_synth_sfload(fluid_synth_t* synth, const char* filename, int reset_presets);
+int fluid_synth_sfload (fluid_synth_t * synth, void *sfDataP, unsigned int sfDataLen, int reset_presets);
 
   /** Reload a SoundFont. The reloaded SoundFont retains its ID and
       index on the stack.
@@ -218,7 +218,7 @@ int fluid_synth_sfload(fluid_synth_t* synth, const char* filename, int reset_pre
       \param id The id of the SoundFont
       \returns The ID of the loaded SoundFont, or -1 in case of error
   */
-FLUIDSYNTH_API int fluid_synth_sfreload(fluid_synth_t* synth, unsigned int id);
+int fluid_synth_sfreload (fluid_synth_t * synth, void *sfDataP, unsigned int sfDataLen, unsigned int id);
 
   /** Removes a SoundFont from the stack and deallocates it.
 

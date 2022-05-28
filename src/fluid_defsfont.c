@@ -23,6 +23,7 @@
 
 
 #include "include/fluid_defsfont.h"
+#include "data.h"
 #include "include/fluid_sfont.h"
 #include "include/fluid_sys.h"
 #include "stb_vorbis.c"
@@ -51,13 +52,13 @@
 
 #ifdef WORDS_BIGENDIAN
 #define readU32_(dst_, srcP_)    G_STMT_START {        \
-  unsigned int _temp;         \
+  U32 _temp;         \
   readNBytes_(srcP_, &_temp, 4); \
   dst_ = GINT32_FROM_BE(_temp);     \
 } G_STMT_END
 #else
 #define readU32_(dst_, srcP_)    G_STMT_START {        \
-  unsigned int _temp;         \
+  U32 _temp;         \
   readNBytes_(srcP_, &_temp, 4); \
   dst_ = GINT32_FROM_LE(_temp);     \
 } G_STMT_END
@@ -102,22 +103,22 @@
     delete1_fluid_list(_temp);        \
 } G_STMT_END
 
-static int load_body (void *sfDataP, int dataLen, unsigned char **inPP, SFData * sfP);
-static int read_listchunk (SFChunk * chunk, unsigned char **srcPP);
-static int process_info (int size, SFData *sfP, unsigned char **srcPP);
-static int process_sdta (int size, SFData * sf, void *sfDataP, unsigned char **inPP);
-static int pdtahelper (unsigned char ** srcPP, unsigned int expid, unsigned int reclen,
+static int load_body (void *sfDataP, int dataLen, U8 **srcPP, SFData * sfP);
+static int read_listchunk (SFChunk **chunkPP, U8 **srcPP);
+static int process_info (int size, SFData *sfP, U8 **srcPP);
+static int process_sdta (int size, SFData * sf, void *sfDataP, U8 **srcPP);
+static int pdtahelper (U8 ** srcPP, U32 expid, U32 reclen,
                        SFChunk * chunk, int *size);
-static int process_pdta (int size, SFData * sf, unsigned char **inPP);
-static int load_phdr (unsigned char **srcPP, int size, SFData *sf);
-static int load_pbag (unsigned char **srcPP, int size, SFData *sf);
-static int load_pmod (unsigned char **srcPP, int size, SFData *sf);
-static int load_pgen (unsigned char **srcPP, int size, SFData *sf);
-static int load_ihdr (unsigned char **srcPP, int size, SFData *sf);
-static int load_ibag (unsigned char **srcPP, int size, SFData *sf);
-static int load_imod (unsigned char **srcPP, int size, SFData *sf);
-static int load_igen (unsigned char **srcPP, int size, SFData *sf);
-static int load_shdr (unsigned char **srcPP, unsigned int size, SFData *sf);
+static int process_pdta (int size, SFData * sf, U8 **srcPP);
+static int load_phdr (U8 **srcPP, int size, SFData *sf);
+static int load_pbag (U8 **srcPP, int size, SFData *sf);
+static int load_pmod (U8 **srcPP, int size, SFData *sf);
+static int load_pgen (U8 **srcPP, int size, SFData *sf);
+static int load_ihdr (U8 **srcPP, int size, SFData *sf);
+static int load_ibag (U8 **srcPP, int size, SFData *sf);
+static int load_imod (U8 **srcPP, int size, SFData *sf);
+static int load_igen (U8 **srcPP, int size, SFData *sf);
+static int load_shdr (U8 **srcPP, U32 size, SFData *sf);
 static int fixup_pgen (SFData *sfP);
 static int fixup_igen (SFData *sfP);
 static int fixup_sample (SFData *sfP);
@@ -127,22 +128,18 @@ static int fixup_sample (SFData *sfP);
  *                          SFONT LOADER
  */
 
-fluid_sfont_t *fluid_defsfloader_load (void *sfontPrevDataP, void *sfDataP, int sfDataLen) {
+fluid_sfont_t *fluid_defsfloader_load(void *sfontPrevDataP, void *sfDataP, int sfDataLen) {
   fluid_defsfont_t *defsfont;
   fluid_sfont_t *sfont;
 
   defsfont = new_fluid_defsfont ();
-
-  if (defsfont == NULL)
-    return NULL;
+  if (defsfont == NULL) return NULL;
 
   sfont = sfontPrevDataP ? (fluid_sfont_t *) sfontPrevDataP : FLUID_NEW (fluid_sfont_t);
-  if (sfont == NULL) 
-    return NULL;
+  if (sfont == NULL) return NULL;
 
   sfont->data = defsfont;
   sfont->free = fluid_defsfont_sfont_delete;
-  sfont->get_name = fluid_defsfont_sfont_get_name;
   sfont->get_preset = fluid_defsfont_sfont_get_preset;
   sfont->iteration_start = fluid_defsfont_sfont_iteration_start;
   sfont->iteration_next = fluid_defsfont_sfont_iteration_next;
@@ -168,29 +165,23 @@ int fluid_defsfont_sfont_delete (fluid_sfont_t * sfont) {
 }
 
 fluid_preset_t *fluid_defsfont_sfont_get_preset (fluid_sfont_t * sfont,
-                                                 unsigned int bank,
-                                                 unsigned int prenum) {
+                                                 U32 bank,
+                                                 U32 prenum) {
   fluid_preset_t *preset;
   fluid_defpreset_t *defpreset;
 
-  defpreset =
-    fluid_defsfont_get_preset ((fluid_defsfont_t *) sfont->data, bank,
-                               prenum);
+  defpreset = fluid_defsfont_get_preset ((fluid_defsfont_t *) sfont->data, bank, prenum);
 
-  if (defpreset == NULL) {
+  if (defpreset == NULL) 
     return NULL;
-  }
 
   preset = FLUID_NEW (fluid_preset_t);
-  if (preset == NULL) {
-    FLUID_LOG (FLUID_ERR, "Out of memory");
+  if (preset == NULL) 
     return NULL;
-  }
 
   preset->sfont = sfont;
   preset->data = defpreset;
   preset->free = fluid_defpreset_preset_delete;
-  preset->get_name = fluid_defpreset_preset_get_name;
   preset->get_banknum = fluid_defpreset_preset_get_banknum;
   preset->get_num = fluid_defpreset_preset_get_num;
   preset->noteon = fluid_defpreset_preset_noteon;
@@ -207,7 +198,6 @@ int
 fluid_defsfont_sfont_iteration_next (fluid_sfont_t * sfont,
                                      fluid_preset_t * preset) {
   preset->free = fluid_defpreset_preset_delete;
-  preset->get_name = fluid_defpreset_preset_get_name;
   preset->get_banknum = fluid_defpreset_preset_get_banknum;
   preset->get_num = fluid_defpreset_preset_get_num;
   preset->noteon = fluid_defpreset_preset_noteon;
@@ -221,10 +211,6 @@ int fluid_defpreset_preset_delete (fluid_preset_t * preset) {
   FLUID_FREE (preset);
   /* TODO: free modulators */
   return 0;
-}
-
-char *fluid_defpreset_preset_get_name (fluid_preset_t * preset) {
-  return fluid_defpreset_get_name ((fluid_defpreset_t *) preset->data);
 }
 
 int fluid_defpreset_preset_get_banknum (fluid_preset_t * preset) {
@@ -300,7 +286,7 @@ int delete_fluid_defsfont (fluid_defsfont_t * sfont) {
   return FLUID_OK;
 }
 
-void (*preset_callback) (unsigned int bank, unsigned int num, char *name) =
+void (*preset_callback) (U32 bank, U32 num, char *name) =
   NULL;
 void fluid_synth_set_preset_callback (void *callback) {
   preset_callback = callback;
@@ -313,7 +299,7 @@ int fluid_defsfont_load (fluid_defsfont_t * sfont, void *sfDataP, int sfDataLen)
   SFSample *sfsample;
   fluid_sample_t *sample;
   fluid_defpreset_t *preset;
-  unsigned char *inP = (unsigned char*) sfDataP;
+  U8 *inP = (U8*) sfDataP;
 
   /* The actual loading is done in the sfont and sffile files */
   sfdata = sfLoadMem(sfDataP, sfDataLen, &inP);
@@ -420,7 +406,7 @@ int fluid_defsfont_add_preset (fluid_defsfont_t * sfont, fluid_defpreset_t * pre
 int fluid_defsfont_load_sampledata(fluid_defsfont_t *sfont, void *sfDataP) {
   unsigned short endian;
   // Put data at sample of interest.
-  unsigned char *dataP = ((unsigned char*) sfDataP) + sfont->samplepos;
+  U8 *dataP = ((U8*) sfDataP) + sfont->samplepos;
   sfont->sampledata = (short *) FLUID_MALLOC (sfont->samplesize);
   if (sfont->sampledata == NULL) 
     return FLUID_FAILED;
@@ -538,8 +524,8 @@ fluid_sample_t *fluid_defsfont_get_sample (fluid_defsfont_t * sfont, char *s) {
  *fluid_defsfont_get_preset
  */
 fluid_defpreset_t *fluid_defsfont_get_preset (fluid_defsfont_t * sfont,
-                                              unsigned int bank,
-                                              unsigned int num) {
+                                              U32 bank,
+                                              U32 num) {
   fluid_defpreset_t *preset = sfont->preset;
   while (preset != NULL) {
     if ((preset->bank == bank) && ((preset->num == num))) {
@@ -626,10 +612,6 @@ int fluid_defpreset_get_banknum (fluid_defpreset_t * preset) {
 
 int fluid_defpreset_get_num (fluid_defpreset_t * preset) {
   return preset->num;
-}
-
-char *fluid_defpreset_get_name (fluid_defpreset_t * preset) {
-  return preset->name;
 }
 
 /*
@@ -1699,11 +1681,11 @@ fluid_sample_import_sfont (fluid_sample_t * sample, SFSample * sfsample,
 */
 
 
-static unsigned int sdtachunk_size;
+static U32 sdtachunk_size;
 
 /* sound font file load functions */
 
-SFData *sfLoadMem (void *sfDataP, int dataLen, unsigned char **inPP) {
+SFData *sfLoadMem (void *sfDataP, int dataLen, U8 **srcPP) {
   SFData *sfP = NULL;
   int err = FALSE;
 
@@ -1713,7 +1695,7 @@ SFData *sfLoadMem (void *sfDataP, int dataLen, unsigned char **inPP) {
   }
   if (!err)
     memset(sfP, 0, sizeof (SFData));  /* zero sfdata */
-  if (!err && !load_body(sfDataP, dataLen, inPP, sfP))
+  if (!err && !load_body(sfDataP, dataLen, srcPP, sfP))
     err = TRUE;                 /* load the sfont */
   if (err) {
     if (sfP)
@@ -1756,37 +1738,52 @@ SFData *sfLoadMem (void *sfDataP, int dataLen, unsigned char **inPP) {
 #define igen_ (0x6e656769)
 #define shdr_ (0x72646873)
 
-static int load_body (void *sfDataP, int dataLen, unsigned char **inPP, SFData * sfP) {
+static int load_body (void *sfDataP, int dataLen, U8 **srcPP, SFData * sfP) {
   SFChunk chunk;                // 8 bytes; 4 for id, 4 for size
+  SFChunk *chunkP = &chunk;
 
-  unsigned char *inP = *inPP;
   // Load RIFF chunk.
-  readChunk_(&chunk, inP);
-  if (chunk.id != RIFF_) return FAIL;
+  readChunk_(&chunk, *srcPP);   // bytes 1 - 8
+  if (chunk.id != RIFF_)
+    return FAIL;
 
   // Sfbk (soundfont bank, I think?)
-  readId_(&chunk.id, inP);
-  if (chunk.id != sfbk_) return FAIL;
-  if (chunk.size != dataLen - 8) return FAIL;
+  readId_(&chunk.id, *srcPP);    // bytes 9 - 12 ("sfbk")
+  if (chunk.id != sfbk_)
+    return FAIL;
+  if (chunk.size != dataLen - 8)
+    return FAIL;
 
   /* Process INFO block */
-  if (!read_listchunk(&chunk, &inP)) return FAIL;
-  if (chunk.id != INFO_) return FAIL;
-  if (!process_info(chunk.size, sfP, &inP)) return FAIL;
+  if (!read_listchunk(&chunkP, srcPP))  // bytes 13 - 24 (skipping ifil??)
+    return FAIL;
+  if (chunk.id != INFO_)           // at this point, ifil is the next ID.
+    return FAIL;
+  if (!process_info(chunk.size, sfP, srcPP))
+    return FAIL;
 
   /* Process sample chunk */
-  if (!read_listchunk(&chunk, &inP)) return FAIL;
-  if (chunk.id != sdta_) return FAIL;
-  if (!process_sdta(chunk.size, sfP, sfDataP, &inP)) return FAIL;
+  if (!read_listchunk(&chunkP, srcPP))
+    return FAIL;
+  if (chunk.id != sdta_)
+    return FAIL;
+  if (!process_sdta(chunk.size, sfP, sfDataP, srcPP))
+    return FAIL;
 
   /* process HYDRA chunk */
-  if (!read_listchunk(&chunk, &inP)) return FAIL;
-  if (chunk.id != pdta_) return FAIL;
-  if (!process_pdta(chunk.size, sfP, &inP)) return FAIL;
+  if (!read_listchunk(&chunkP, srcPP))
+    return FAIL;
+  if (chunk.id != pdta_)
+    return FAIL;
+  if (!process_pdta(chunk.size, sfP, srcPP))
+    return FAIL;
 
-  if (!fixup_pgen(sfP)) return FAIL;
-  if (!fixup_igen(sfP)) return FAIL;
-  if (!fixup_sample(sfP)) return FAIL;
+  if (!fixup_pgen(sfP))
+    return FAIL;
+  if (!fixup_igen(sfP))
+    return FAIL;
+  if (!fixup_sample(sfP))
+    return FAIL;
 
   /* sort preset list by bank, preset # */
   sfP->preset = fluid_list_sort(sfP->preset, (fluid_compare_func_t) sfont_preset_compare_func);
@@ -1794,59 +1791,50 @@ static int load_body (void *sfDataP, int dataLen, unsigned char **inPP, SFData *
   return (OK);
 }
 
-static int read_listchunk(SFChunk *chunkP, unsigned char **srcPP) {
-  unsigned char *inP = *srcPP;
-  readChunk_ (chunkP, inP);        /* read list chunk */
+static int read_listchunk(SFChunk **chunkPP, U8 **srcPP) {
+  SFChunk *chunkP = *chunkPP;
+  readChunk_(chunkP, *srcPP);        /* read list chunk */
   if (chunkP->id != LIST_)  /* error if ! list chunk */
     return FAIL;
-  readId_(&chunkP->id, inP);  /* read id string */
+  readId_(&chunkP->id, *srcPP);  /* read id string */
   chunkP->size -= 4;
   return OK;
 }
 
-static int process_info (int size, SFData *sfP, unsigned char **srcPP) {
+static int process_info (int size, SFData *sfP, U8 **srcPP) {
   SFChunk chunk;
-  unsigned char id;
+  U32 id;
   char *item;
   unsigned short ver;
-  unsigned char *inP = *srcPP;
 
   while (size > 0) {
-    readChunk_(&chunk, inP);
+    readChunk_(&chunk, *srcPP);  // read 8 bytes 
     size -= 8;
 
     id = chunk.id;
 
     if (id == ifil_) {
-        if (chunk.size != 4)
-          return FAIL;
-
-        //readU16_ (inP, ver);
-        //readU16_ (inP, ver);
-        skip_(inP, 4);
-        break;
+      if (chunk.size != 4)
+        return FAIL;
+      skip_(*srcPP, 4);
     }
     else if (id == iver_) {
-        if (chunk.size != 4)
-          return FAIL;
-
-        //readU16_ (inP, ver);
-        //readU16_ (inP, ver);
-        skip_(inP, 4);
+      if (chunk.size != 4)
+        return FAIL;
+      skip_(*srcPP, 4);
     }
     else if (id != UNKN_) {
-          if ((id != ICMT_ && chunk.size > 256) || (chunk.size > 65536) || (chunk.size & 1))
-            return FAIL;
-          /* alloc for chunk id and da chunk */
-          if (!(item = FLUID_MALLOC(chunk.size + 1))) 
-            return FAIL;
-          /* attach to INFO list, sfont_close will cleanup if FAIL occurs */
-          sfP->info = fluid_list_append (sfP->info, item);
+      if ((id != ICMT_ && chunk.size > 256) || (chunk.size > 65536) || (chunk.size & 1))
+        return FAIL;
+      /* alloc for chunk id and da chunk */
+      if (!(item = FLUID_MALLOC(chunk.size + 1))) 
+        return E_NO_MEMORY;
+      /* attach to INFO list, sfont_close will cleanup if FAIL occurs */
+      sfP->info = fluid_list_append (sfP->info, item);
 
-          *(unsigned char *) item = id;
-          readNBytes_(inP, &item[1], chunk.size);
-          *(item + chunk.size) = '\0';
-          break;
+      *(U8 *) item = id;
+      readNBytes_(*srcPP, &item[1], chunk.size);
+      *(item + chunk.size) = '\0';
     } else
       return FAIL;
     size -= chunk.size;
@@ -1857,14 +1845,13 @@ static int process_info (int size, SFData *sfP, unsigned char **srcPP) {
   return OK;
 }
 
-static int process_sdta (int size, SFData * sf, void *sfDataP, unsigned char **inPP) {
+static int process_sdta (int size, SFData * sf, void *sfDataP, U8 **srcPP) {
   SFChunk chunk;
 
   if (size == 0) return (OK);  /* no sample data? */
 
-  unsigned char *inP = *inPP;
   /* read sub chunk */
-  readChunk_ (&chunk, inP);
+  readChunk_ (&chunk, *srcPP);
   size -= 8;
 
   if (chunk.id != smpl_)
@@ -1873,22 +1860,21 @@ static int process_sdta (int size, SFData * sf, void *sfDataP, unsigned char **i
   if (size != chunk.size) return FAIL;
 
   /* sample data follows */
-  sf->samplepos = inP - (unsigned char*) sfDataP;
+  sf->samplepos = *srcPP - (U8*) sfDataP;
 
   /* used in fixup_sample() to check validity of sample headers */
   sdtachunk_size = chunk.size;
   sf->samplesize = chunk.size;
 
-  skip_(inP, chunk.size);
+  skip_(*srcPP, chunk.size);
 
   return OK;
 }
 
-static int pdtahelper (unsigned char **inPP, unsigned int expid, unsigned int reclen, SFChunk * chunkP, int *size) {
-  unsigned int id;
-  unsigned char *inP = *inPP;
+static int pdtahelper (U8 **srcPP, U32 expid, U32 reclen, SFChunk * chunkP, int *size) {
+  U32 id;
 
-  readChunk_ (chunkP, inP);
+  readChunk_ (chunkP, *srcPP);
   *size -= 8;
 
   if ((id = chunkP->id) != expid)
@@ -1901,62 +1887,60 @@ static int pdtahelper (unsigned char **inPP, unsigned int expid, unsigned int re
   return (OK);
 }
 
-static int process_pdta (int size, SFData * sf, unsigned char **inPP) {
+static int process_pdta (int size, SFData * sf, U8 **srcPP) {
   SFChunk chunk;
-  unsigned char *inP = *inPP;
 
-  if (!pdtahelper (inPP, phdr_, SFPHDRSIZE, &chunk, &size))
+  if (!pdtahelper (srcPP, phdr_, SFPHDRSIZE, &chunk, &size))
     return FAIL;
-  if (!load_phdr (inPP, chunk.size, sf))
-    return FAIL;
-
-  if (!pdtahelper (inPP, pbag_, SFBAGSIZE, &chunk, &size))
-    return FAIL;
-  if (!load_pbag (inPP, chunk.size, sf))
+  if (!load_phdr (srcPP, chunk.size, sf))
     return FAIL;
 
-  if (!pdtahelper (inPP, pmod_, SFMODSIZE, &chunk, &size))
+  if (!pdtahelper (srcPP, pbag_, SFBAGSIZE, &chunk, &size))
     return FAIL;
-  if (!load_pmod (inPP, chunk.size, sf))
-    return FAIL;
-
-  if (!pdtahelper (inPP, pgen_, SFGENSIZE, &chunk, &size))
-    return FAIL;
-  if (!load_pgen (inPP, chunk.size, sf))
+  if (!load_pbag (srcPP, chunk.size, sf))
     return FAIL;
 
-  if (!pdtahelper (inPP, IHDR_ID, SFIHDRSIZE, &chunk, &size))
+  if (!pdtahelper (srcPP, pmod_, SFMODSIZE, &chunk, &size))
     return FAIL;
-  if (!load_ihdr (inPP, chunk.size, sf))
-    return FAIL;
-
-  if (!pdtahelper (inPP, ibag_, SFBAGSIZE, &chunk, &size))
-    return FAIL;
-  if (!load_ibag (inPP, chunk.size, sf))
+  if (!load_pmod (srcPP, chunk.size, sf))
     return FAIL;
 
-  if (!pdtahelper (inPP, imod_, SFMODSIZE, &chunk, &size))
+  if (!pdtahelper (srcPP, pgen_, SFGENSIZE, &chunk, &size))
     return FAIL;
-  if (!load_imod (inPP, chunk.size, sf))
-    return FAIL;
-
-  if (!pdtahelper (inPP, igen_, SFGENSIZE, &chunk, &size))
-    return FAIL;
-  if (!load_igen (inPP, chunk.size, sf))
+  if (!load_pgen (srcPP, chunk.size, sf))
     return FAIL;
 
-  if (!pdtahelper (inPP, shdr_, SFSHDRSIZE, &chunk, &size))
+  if (!pdtahelper (srcPP, inst_, SFIHDRSIZE, &chunk, &size))
     return FAIL;
-  if (!load_shdr (inPP, chunk.size, sf))
+  if (!load_ihdr (srcPP, chunk.size, sf))
+    return FAIL;
+
+  if (!pdtahelper (srcPP, ibag_, SFBAGSIZE, &chunk, &size))
+    return FAIL;
+  if (!load_ibag (srcPP, chunk.size, sf))
+    return FAIL;
+
+  if (!pdtahelper (srcPP, imod_, SFMODSIZE, &chunk, &size))
+    return FAIL;
+  if (!load_imod (srcPP, chunk.size, sf))
+    return FAIL;
+
+  if (!pdtahelper (srcPP, igen_, SFGENSIZE, &chunk, &size))
+    return FAIL;
+  if (!load_igen (srcPP, chunk.size, sf))
+    return FAIL;
+
+  if (!pdtahelper (srcPP, shdr_, SFSHDRSIZE, &chunk, &size))
+    return FAIL;
+  if (!load_shdr (srcPP, chunk.size, sf))
     return FAIL;
 
   return (OK);
 }
 
 /* preset header loader */
-static int load_phdr (unsigned char **inPP, int size, SFData * sf) {
+static int load_phdr (U8 **srcPP, int size, SFData * sf) {
   int i, i2;
-  unsigned char *inP = *inPP;
   SFPreset *p, *pr = NULL;      /* ptr to current & previous preset */
   unsigned short zndx, pzndx = 0;
 
@@ -1965,7 +1949,7 @@ static int load_phdr (unsigned char **inPP, int size, SFData * sf) {
 
   i = size / SFPHDRSIZE - 1;
   if (i == 0) {                 /* at least one preset + term record */
-    skip_(inP, SFPHDRSIZE);
+    skip_(*srcPP, SFPHDRSIZE);
     return (OK);
   }
 
@@ -1973,13 +1957,13 @@ static int load_phdr (unsigned char **inPP, int size, SFData * sf) {
     p = FLUID_NEW (SFPreset);
     sf->preset = fluid_list_append (sf->preset, p);
     p->zone = NULL;             /* In case of failure, sfont_close can cleanup */
-    readStr_(p->name, inP); /* possible read failure ^ */
-    readU16_(inP, p->prenum);
-    readU16_(inP, p->bank);
-    readU16_(inP, zndx);
-    readU32_(p->libr, inP);
-    readU32_(p->genre, inP);
-    readU32_(p->morph, inP);
+    readStr_(p->name, *srcPP); /* possible read failure ^ */
+    readU16_(*srcPP, p->prenum);
+    readU16_(*srcPP, p->bank);
+    readU16_(*srcPP, zndx);
+    readU32_(p->libr, *srcPP);
+    readU32_(p->genre, *srcPP);
+    readU32_(p->morph, *srcPP);
 
     if (pr) {                   /* not first preset? */
       if (zndx < pzndx) return FAIL;
@@ -1994,9 +1978,9 @@ static int load_phdr (unsigned char **inPP, int size, SFData * sf) {
     pzndx = zndx;
   }
 
-  skip_ (inP, 24);
-  readU16_ (inP, zndx);       /* Read terminal generator index */
-  skip_ (inP, 12);
+  skip_ (*srcPP, 24);
+  readU16_ (*srcPP, zndx);       /* Read terminal generator index */
+  skip_ (*srcPP, 12);
 
   if (zndx < pzndx)
     return FAIL;
@@ -2010,14 +1994,13 @@ static int load_phdr (unsigned char **inPP, int size, SFData * sf) {
 }
 
 /* preset bag loader */
-static int load_pbag (unsigned char **inPP, int size, SFData * sf) {
+static int load_pbag (U8 **srcPP, int size, SFData * sf) {
   fluid_list_t *p, *p2;
   SFZone *z, *pz = NULL;
   unsigned short genndx, modndx;
   unsigned short pgenndx = 0, pmodndx = 0;
   unsigned short i;
 
-  unsigned char *inP = *inPP;
   if (size % SFBAGSIZE || size == 0)  /* size is multiple of SFBAGSIZE? */
     return FAIL;
 
@@ -2031,8 +2014,8 @@ static int load_pbag (unsigned char **inPP, int size, SFData * sf) {
       p2->data = z;
       z->gen = NULL;            /* Init gen and mod before possible failure, */
       z->mod = NULL;            /* to ensure proper cleanup (sfont_close) */
-      readU16_(inP, genndx);  /* possible read failure ^ */
-      readU16_(inP, modndx);
+      readU16_(*srcPP, genndx);  /* possible read failure ^ */
+      readU16_(*srcPP, modndx);
       z->instsamp = NULL;
 
       if (pz) {                 /* if not first zone */
@@ -2059,8 +2042,8 @@ static int load_pbag (unsigned char **inPP, int size, SFData * sf) {
   if (size != 0)
     return FAIL;
 
-  readU16_ (inP, genndx);
-  readU16_ (inP, modndx);
+  readU16_ (*srcPP, genndx);
+  readU16_ (*srcPP, modndx);
 
   if (!pz) {
     if (genndx > 0)
@@ -2085,11 +2068,10 @@ static int load_pbag (unsigned char **inPP, int size, SFData * sf) {
 }
 
 /* preset modulator loader */
-static int load_pmod (unsigned char **inPP, int size, SFData * sf) {
+static int load_pmod (U8 **srcPP, int size, SFData * sf) {
   fluid_list_t *p, *p2, *p3;
   SFMod *m;
 
-  unsigned char *inP = *inPP;
   p = sf->preset;
   while (p) {                   /* traverse through all presets */
     p2 = ((SFPreset *) (p->data))->zone;
@@ -2100,11 +2082,11 @@ static int load_pmod (unsigned char **inPP, int size, SFData * sf) {
           return FAIL;
         m = FLUID_NEW (SFMod);
         p3->data = m;
-        readU16_ (inP, m->src);
-        readU16_ (inP, m->dest);
-        readU16_ (inP, m->amount);
-        readU16_ (inP, m->amtsrc);
-        readU16_ (inP, m->trans);
+        readU16_ (*srcPP, m->src);
+        readU16_ (*srcPP, m->dest);
+        readU16_ (*srcPP, m->amount);
+        readU16_ (*srcPP, m->amtsrc);
+        readU16_ (*srcPP, m->trans);
         p3 = fluid_list_next (p3);
       }
       p2 = fluid_list_next (p2);
@@ -2120,7 +2102,7 @@ static int load_pmod (unsigned char **inPP, int size, SFData * sf) {
 
   size -= SFMODSIZE;
   if (size != 0) return FAIL;
-  skip_ (inP, SFMODSIZE); /* terminal mod */
+  skip_ (*srcPP, SFMODSIZE); /* terminal mod */
 
   return (OK);
 }
@@ -2138,7 +2120,7 @@ static int load_pmod (unsigned char **inPP, int size, SFData * sf) {
  *if a generator follows an instrument discard it
  *if a duplicate generator exists replace previous one
  *------------------------------------------------------------------- */
-static int load_pgen (unsigned char **inPP, int size, SFData * sf) {
+static int load_pgen (U8 **srcPP, int size, SFData * sf) {
   fluid_list_t *p, *p2, *p3, *dup, **hz = NULL;
   SFZone *z;
   SFGen *g;
@@ -2146,7 +2128,6 @@ static int load_pgen (unsigned char **inPP, int size, SFData * sf) {
   unsigned short genid;
   int level, skip, drop, gzone, discarded;
 
-  unsigned char *inP = *inPP;
   p = sf->preset;
   while (p) {                   /* traverse through all presets */
     gzone = FALSE;
@@ -2165,31 +2146,31 @@ static int load_pgen (unsigned char **inPP, int size, SFData * sf) {
         if ((size -= SFGENSIZE) < 0)
           return FAIL;
 
-        readU16_ (inP, genid);
+        readU16_ (*srcPP, genid);
 
         if (genid == Gen_KeyRange) {  /* nothing precedes */
           if (level == 0) {
             level = 1;
-            readU8_(&genval.range.lo, inP);
-            readU8_(&genval.range.hi, inP);
+            readU8_(&genval.range.lo, *srcPP);
+            readU8_(&genval.range.hi, *srcPP);
           } else
             skip = TRUE;
         } else if (genid == Gen_VelRange) { /* only KeyRange precedes */
           if (level <= 1) {
             level = 2;
-            readU8_(&genval.range.lo, inP);
-            readU8_(&genval.range.hi, inP);
+            readU8_(&genval.range.lo, *srcPP);
+            readU8_(&genval.range.hi, *srcPP);
           } else
             skip = TRUE;
         } else if (genid == Gen_Instrument) { /* inst is last gen */
           level = 3;
-          readU16_(inP, genval.uword);
+          readU16_(*srcPP, genval.uword);
           ((SFZone *) (p2->data))->instsamp = GINT_TO_POINTER (genval.uword + 1);
           break;                /* break out of generator loop */
         } else {
           level = 2;
           if (gen_validp (genid)) { /* generator valid? */
-            readU16_ (inP, genval.sword);
+            readU16_ (*srcPP, genval.sword);
             dup = gen_inlist (genid, z->gen);
           } else
             skip = TRUE;
@@ -2208,7 +2189,7 @@ static int load_pgen (unsigned char **inPP, int size, SFData * sf) {
         } else {                /* Skip this generator */
           discarded = TRUE;
           drop = TRUE;
-          skipU16_(inP);
+          skipU16_(*srcPP);
         }
 
         if (!drop)
@@ -2246,7 +2227,7 @@ static int load_pgen (unsigned char **inPP, int size, SFData * sf) {
         discarded = TRUE;
         if ((size -= SFGENSIZE) < 0)
           return FAIL;
-        skip_ (inP, SFGENSIZE);
+        skip_ (*srcPP, SFGENSIZE);
         SLADVREM (z->gen, p3);
       }
 
@@ -2266,24 +2247,23 @@ static int load_pgen (unsigned char **inPP, int size, SFData * sf) {
   size -= SFGENSIZE;
   if (size != 0)
     return FAIL;
-  skip_ (inP, SFGENSIZE); /* terminal gen */
+  skip_ (*srcPP, SFGENSIZE); /* terminal gen */
 
   return (OK);
 }
 
 /* instrument header loader */
-static int load_ihdr (unsigned char **srcPP, int size, SFData *sf) {
+static int load_ihdr (U8 **srcPP, int size, SFData *sf) {
   int i, i2;
   SFInst *p, *pr = NULL;        /* ptr to current & previous instrument */
   unsigned short zndx, pzndx = 0;
-  unsigned char *inP = *srcPP;
 
   if (size % SFIHDRSIZE || size == 0) /* chunk size is valid? */
     return FAIL;
 
   size = size / SFIHDRSIZE - 1;
   if (size == 0) {              /* at least one preset + term record */
-    skip_ (inP, SFIHDRSIZE);
+    skip_ (*srcPP, SFIHDRSIZE);
     return (OK);
   }
 
@@ -2291,8 +2271,8 @@ static int load_ihdr (unsigned char **srcPP, int size, SFData *sf) {
     p = FLUID_NEW (SFInst);
     sf->inst = fluid_list_append (sf->inst, p);
     p->zone = NULL;             /* For proper cleanup if fail (sfont_close) */
-    readStr_ (p->name, inP);  /* Possible read failure ^ */
-    readU16_ (inP, zndx);
+    readStr_ (p->name, *srcPP);  /* Possible read failure ^ */
+    readU16_ (*srcPP, zndx);
 
     if (pr) {                   /* not first instrument? */
       if (zndx < pzndx)
@@ -2307,8 +2287,8 @@ static int load_ihdr (unsigned char **srcPP, int size, SFData *sf) {
     pr = p;                     /* update instrument ptr */
   }
 
-  skip_(inP, 20);
-  readU16_(inP, zndx);
+  skip_(*srcPP, 20);
+  readU16_(*srcPP, zndx);
 
   if (zndx < pzndx)
     return FAIL;
@@ -2320,12 +2300,11 @@ static int load_ihdr (unsigned char **srcPP, int size, SFData *sf) {
 }
 
 /* instrument bag loader */
-static int load_ibag (unsigned char **srcPP, int size, SFData *sf) {
+static int load_ibag (U8 **srcPP, int size, SFData *sf) {
   fluid_list_t *p, *p2;
   SFZone *z, *pz = NULL;
   unsigned short genndx, modndx, pgenndx = 0, pmodndx = 0;
   int i;
-  unsigned char *inP = *srcPP;
 
   if (size % SFBAGSIZE || size == 0)  /* size is multiple of SFBAGSIZE? */
     return FAIL;
@@ -2340,8 +2319,8 @@ static int load_ibag (unsigned char **srcPP, int size, SFData *sf) {
       p2->data = z;
       z->gen = NULL;            /* In case of failure, */
       z->mod = NULL;            /* sfont_close can clean up */
-      readU16_ (inP, genndx); /* readU16_ = possible read failure */
-      readU16_ (inP, modndx);
+      readU16_ (*srcPP, genndx); /* readU16_ = possible read failure */
+      readU16_ (*srcPP, modndx);
       z->instsamp = NULL;
 
       if (pz) {                 /* if not first zone */
@@ -2370,8 +2349,8 @@ static int load_ibag (unsigned char **srcPP, int size, SFData *sf) {
   if (size != 0)
     return FAIL;
 
-  readU16_ (inP, genndx);
-  readU16_ (inP, modndx);
+  readU16_ (*srcPP, genndx);
+  readU16_ (*srcPP, modndx);
 
   if (!pz) {                    /* in case that all are no zoners */
     if (genndx > 0)
@@ -2398,10 +2377,9 @@ static int load_ibag (unsigned char **srcPP, int size, SFData *sf) {
 }
 
 /* instrument modulator loader */
-static int load_imod (unsigned char **srcPP, int size, SFData *sf) {
+static int load_imod (U8 **srcPP, int size, SFData *sf) {
   fluid_list_t *p, *p2, *p3;
   SFMod *m;
-  unsigned char *inP = *srcPP;
 
   p = sf->inst;
   while (p) {                   /* traverse through all inst */
@@ -2413,11 +2391,11 @@ static int load_imod (unsigned char **srcPP, int size, SFData *sf) {
           return FAIL;
         m = FLUID_NEW (SFMod);
         p3->data = m;
-        readU16_ (inP, m->src);
-        readU16_ (inP, m->dest);
-        readU16_ (inP, m->amount);
-        readU16_ (inP, m->amtsrc);
-        readU16_ (inP, m->trans);
+        readU16_ (*srcPP, m->src);
+        readU16_ (*srcPP, m->dest);
+        readU16_ (*srcPP, m->amount);
+        readU16_ (*srcPP, m->amtsrc);
+        readU16_ (*srcPP, m->trans);
         p3 = fluid_list_next (p3);
       }
       p2 = fluid_list_next (p2);
@@ -2435,13 +2413,13 @@ static int load_imod (unsigned char **srcPP, int size, SFData *sf) {
   size -= SFMODSIZE;
   if (size != 0)
     return FAIL;
-  skip_ (inP, SFMODSIZE); /* terminal mod */
+  skip_ (*srcPP, SFMODSIZE); /* terminal mod */
 
   return (OK);
 }
 
 /* load instrument generators (see load_pgen for loading rules) */
-static int load_igen (unsigned char **srcPP, int size, SFData *sf) {
+static int load_igen (U8 **srcPP, int size, SFData *sf) {
   fluid_list_t *p, *p2, *p3, *dup, **hz = NULL;
   SFZone *z;
   SFGen *g;
@@ -2449,7 +2427,6 @@ static int load_igen (unsigned char **srcPP, int size, SFData *sf) {
   unsigned short genid;
   int level, skip, drop, gzone, discarded;
 
-  unsigned char *inP = *srcPP;
   p = sf->inst;
   while (p) {                   /* traverse through all instruments */
     gzone = FALSE;
@@ -2468,32 +2445,32 @@ static int load_igen (unsigned char **srcPP, int size, SFData *sf) {
         if ((size -= SFGENSIZE) < 0)
           return FAIL;
 
-        readU16_ (inP, genid);
+        readU16_ (*srcPP, genid);
 
         if (genid == Gen_KeyRange) {  /* nothing precedes */
           if (level == 0) {
             level = 1;
-            readU8_ (&genval.range.lo, inP);
-            readU8_ (&genval.range.hi, inP);
+            readU8_ (&genval.range.lo, *srcPP);
+            readU8_ (&genval.range.hi, *srcPP);
           } else
             skip = TRUE;
         } else if (genid == Gen_VelRange) { /* only KeyRange precedes */
           if (level <= 1) {
             level = 2;
-            readU8_ (&genval.range.lo, inP);
-            readU8_ (&genval.range.hi, inP);
+            readU8_ (&genval.range.lo, *srcPP);
+            readU8_ (&genval.range.hi, *srcPP);
           } else
             skip = TRUE;
         } else if (genid == Gen_SampleId) { /* sample is last gen */
           level = 3;
-          readU16_ (inP, genval.uword);
+          readU16_ (*srcPP, genval.uword);
           ((SFZone *) (p2->data))->instsamp =
             GINT_TO_POINTER (genval.uword + 1);
           break;                /* break out of generator loop */
         } else {
           level = 2;
           if (gen_valid (genid)) {  /* gen valid? */
-            readU16_ (inP, genval.sword);
+            readU16_ (*srcPP, genval.sword);
             dup = gen_inlist (genid, z->gen);
           } else
             skip = TRUE;
@@ -2512,7 +2489,7 @@ static int load_igen (unsigned char **srcPP, int size, SFData *sf) {
         } else {                /* skip this generator */
           discarded = TRUE;
           drop = TRUE;
-          skipU16_ (inP);
+          skipU16_ (*srcPP);
         }
 
         if (!drop)
@@ -2550,7 +2527,7 @@ static int load_igen (unsigned char **srcPP, int size, SFData *sf) {
         discarded = TRUE;
         if ((size -= SFGENSIZE) < 0)
           return FAIL;
-        skip_ (inP, SFGENSIZE);
+        skip_ (*srcPP, SFGENSIZE);
         SLADVREM (z->gen, p3);
       }
 
@@ -2571,24 +2548,23 @@ static int load_igen (unsigned char **srcPP, int size, SFData *sf) {
   size -= SFGENSIZE;
   if (size != 0)
     return FAIL;
-  skip_ (inP, SFGENSIZE); /* terminal gen */
+  skip_ (*srcPP, SFGENSIZE); /* terminal gen */
 
   return (OK);
 }
 
 /* sample header loader */
-static int load_shdr (unsigned char **srcPP, unsigned int size, SFData *sf) {
-  unsigned int i;
+static int load_shdr (U8 **srcPP, U32 size, SFData *sf) {
+  U32 i;
   SFSample *p;
 
-  unsigned char *inP = *srcPP;
   if (size % SFSHDRSIZE || size == 0) /* size is multiple of SHDR size? */
     return FAIL;
 
   size = size / SFSHDRSIZE - 1;
   if (size == 0) {              /* at least one sample + term record? */
     FLUID_LOG (FLUID_WARN, _("File contains no samples"));
-    skip_ (inP, SFSHDRSIZE);
+    skip_ (*srcPP, SFSHDRSIZE);
     return (OK);
   }
 
@@ -2596,20 +2572,20 @@ static int load_shdr (unsigned char **srcPP, unsigned int size, SFData *sf) {
   for (i = 0; i < size; i++) {
     p = FLUID_NEW (SFSample);
     sf->sample = fluid_list_append (sf->sample, p);
-    readStr_ (p->name, inP);
-    readU32_ (p->start, inP);
-    readU32_ (p->end, inP);   /* - end, loopstart and loopend */
-    readU32_ (p->loopstart, inP); /* - will be checked and turned into */
-    readU32_ (p->loopend, inP); /* - offsets in fixup_sample() */
-    readU32_ (p->samplerate, inP);
-    readU8_ (&p->origpitch, inP);
-    readU8_ (&p->pitchadj, inP);
-    skipU16_ (inP);         /* skip sample link */
-    readU16_ (inP, p->sampletype);
+    readStr_ (p->name, *srcPP);
+    readU32_ (p->start, *srcPP);
+    readU32_ (p->end, *srcPP);   /* - end, loopstart and loopend */
+    readU32_ (p->loopstart, *srcPP); /* - will be checked and turned into */
+    readU32_ (p->loopend, *srcPP); /* - offsets in fixup_sample() */
+    readU32_ (p->samplerate, *srcPP);
+    readU8_ (&p->origpitch, *srcPP);
+    readU8_ (&p->pitchadj, *srcPP);
+    skipU16_ (*srcPP);         /* skip sample link */
+    readU16_ (*srcPP, p->sampletype);
     p->samfile = 0;
   }
 
-  skip_ (inP, SFSHDRSIZE);  /* skip terminal shdr */
+  skip_ (*srcPP, SFSHDRSIZE);  /* skip terminal shdr */
 
   return (OK);
 }

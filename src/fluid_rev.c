@@ -31,7 +31,7 @@
  * is close enough to denormal level, the macro forces the number to
  * 0.0f.  The original macro is:
  *
- * #define undenormalise(sample) if(((*(unsigned int*)&sample)&0x7f800000)==0) sample=0.0f
+ * #define undenormalise(sample) if(((*(U32*)&sample)&0x7f800000)==0) sample=0.0f
  *
  * This will zero out a number when it reaches the denormal level.
  * Advantage: Maximum dynamic range Disadvantage: We'll have to check
@@ -42,7 +42,7 @@
  */
 
 #if defined(WITH_FLOATX)
-#define zap_almost_zero(sample) (((*(unsigned int*)&(sample))&0x7f800000) < 0x08000000)?0.0f:(sample)
+#define zap_almost_zero(sample) (((*(U32*)&(sample))&0x7f800000) < 0x08000000)?0.0f:(sample)
 #else
 /* 1e-20 was chosen as an arbitrary (small) threshold. */
 #define zap_almost_zero(sample) fabs(sample)<1e-10 ? 0 : sample;

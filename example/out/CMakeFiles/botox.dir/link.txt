@@ -1,0 +1,2 @@
+/usr/bin/ar qc libbotox.a CMakeFiles/botox.dir/libbotox/src/bt.c.o CMakeFiles/botox.dir/libbotox/src/data.c.o CMakeFiles/botox.dir/libbotox/src/x.c.o
+/usr/bin/ranlib libbotox.a

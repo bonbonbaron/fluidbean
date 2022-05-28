@@ -1,0 +1,62 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-Wall",
+      "-I./src/include",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-fno-ident",
+      "-fmerge-all-constants",
+      "-fomit-frame-pointer",
+      "-fno-stack-protector",
+      "-c",
+      "src/data.c",
+      "-o",
+      "build/data.o"
+    ],
+    "directory": "/home/bonbonbaron/hack/botox",
+    "file": "/home/bonbonbaron/hack/botox/src/data.c",
+    "output": "/home/bonbonbaron/hack/botox/build/data.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-Wall",
+      "-I./src/include",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-fno-ident",
+      "-fmerge-all-constants",
+      "-fomit-frame-pointer",
+      "-fno-stack-protector",
+      "-c",
+      "src/bt.c",
+      "-o",
+      "build/bt.o"
+    ],
+    "directory": "/home/bonbonbaron/hack/botox",
+    "file": "/home/bonbonbaron/hack/botox/src/bt.c",
+    "output": "/home/bonbonbaron/hack/botox/build/bt.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/arm-linux-gnueabihf-gcc-10",
+      "-Wall",
+      "-I./src/include",
+      "-ffunction-sections",
+      "-fdata-sections",
+      "-fno-ident",
+      "-fmerge-all-constants",
+      "-fomit-frame-pointer",
+      "-fno-stack-protector",
+      "-c",
+      "src/x.c",
+      "-o",
+      "build/x.o"
+    ],
+    "directory": "/home/bonbonbaron/hack/botox",
+    "file": "/home/bonbonbaron/hack/botox/src/x.c",
+    "output": "/home/bonbonbaron/hack/botox/build/x.o"
+  }
+]

@@ -40,7 +40,7 @@ enum fluid_voice_status {
  * envelope data
  */
 struct _fluid_env_data_t {
-	unsigned int count;
+	U32 count;
 	fluid_real_t coeff;
 	fluid_real_t incr;
 	fluid_real_t min;
@@ -63,19 +63,19 @@ enum fluid_voice_envelope_index_t {
  * fluid_voice_t
  */
 struct _fluid_voice_t {
-	unsigned int id;							/* the id is incremented for every new noteon.
+	U32 id;							/* the id is incremented for every new noteon.
 																   it's used for noteoff's  */
-	unsigned char status;
-	unsigned char chan;						/* the channel number, quick access for channel messages */
-	unsigned char key;						/* the key, quick acces for noteoff */
-	unsigned char vel;						/* the velocity */
+	U8 status;
+	U8 chan;						/* the channel number, quick access for channel messages */
+	U8 key;						/* the key, quick acces for noteoff */
+	U8 vel;						/* the velocity */
 	fluid_channel_t *channel;
 	fluid_gen_t gen[GEN_LAST];
 	fluid_mod_t mod[FLUID_NUM_MOD];
-	int mod_count;
-	int has_looped;								/* Flag that is set as soon as the first loop is completed. */
+	S32 mod_count;
+	S32 has_looped;								/* Flag that is set as soon as the first loop is completed. */
 	fluid_sample_t *sample;
-	int check_sample_sanity_flag;	/* Flag that initiates, that sample-related parameters
+	S32 check_sample_sanity_flag;	/* Flag that initiates, that sample-related parameters
 																   have to be checked. */
 #if 0
 	/* Instead of keeping a pointer to a fluid_sample_t structure,
@@ -85,27 +85,27 @@ struct _fluid_voice_t {
 	 *
 	 * The notify callback may be used also for streaming samples.
 	 */
-	short *sample_data;						/* pointer to the sample data */
-	int sample_data_offset;				/* the offset of data[0] in the whole sample */
-	int sample_data_length;				/* the length of the data array */
-	unsigned int sample_start;
-	unsigned int sample_end;
-	unsigned int sample_loopstart;
-	unsigned int sample_loopend;
-	unsigned int sample_rate;
-	int sample_origpitch;
-	int sample_pitchadj;
-	int sample_type;
-	int (*sample_notify) (fluid_voice_t * voice, int reason);
+	S16 *sample_data;						/* pointer to the sample data */
+	S32 sample_data_offset;				/* the offset of data[0] in the whole sample */
+	S32 sample_data_length;				/* the length of the data array */
+	U32 sample_start;
+	U32 sample_end;
+	U32 sample_loopstart;
+	U32 sample_loopend;
+	U32 sample_rate;
+	S32 sample_origpitch;
+	S32 sample_pitchadj;
+	S32 sample_type;
+	S32 (*sample_notify) (fluid_voice_t * voice, S32 reason);
 	void *sample_userdata;
 #endif
 
 	/* basic parameters */
 	fluid_real_t output_rate;			/* the sample rate of the synthesizer */
 
-	unsigned int start_time;
-	unsigned int ticks;
-	unsigned int noteoff_ticks;		/* Delay note-off until this tick */
+	U32 start_time;
+	U32 ticks;
+	U32 noteoff_ticks;		/* Delay note-off until this tick */
 
 	fluid_real_t amp;							/* current linear amplitude */
 	fluid_phase_t phase;					/* the phase of the sample wave */
@@ -126,33 +126,33 @@ struct _fluid_voice_t {
 	fluid_real_t root_pitch;
 
 	/* sample and loop start and end points (offset in sample memory).  */
-	int start;
-	int end;
-	int loopstart;
-	int loopend;									/* Note: first point following the loop (superimposed on loopstart) */
+	S32 start;
+	S32 end;
+	S32 loopstart;
+	S32 loopend;									/* Note: first point following the loop (superimposed on loopstart) */
 
 	/* master gain */
 	fluid_real_t synth_gain;
 
 	/* vol env */
 	fluid_env_data_t volenv_data[FLUID_VOICE_ENVLAST];
-	unsigned int volenv_count;
-	int volenv_section;
+	U32 volenv_count;
+	S32 volenv_section;
 	fluid_real_t volenv_val;
 	fluid_real_t amplitude_that_reaches_noise_floor_nonloop;
 	fluid_real_t amplitude_that_reaches_noise_floor_loop;
 
 	/* mod env */
 	fluid_env_data_t modenv_data[FLUID_VOICE_ENVLAST];
-	unsigned int modenv_count;
-	int modenv_section;
+	U32 modenv_count;
+	S32 modenv_section;
 	fluid_real_t modenv_val;			/* the value of the modulation envelope */
 	fluid_real_t modenv_to_fc;
 	fluid_real_t modenv_to_pitch;
 
 	/* mod lfo */
 	fluid_real_t modlfo_val;			/* the value of the modulation LFO */
-	unsigned int modlfo_delay;		/* the delay of the lfo in samples */
+	U32 modlfo_delay;		/* the delay of the lfo in samples */
 	fluid_real_t modlfo_incr;			/* the lfo frequency is converted to a per-buffer increment */
 	fluid_real_t modlfo_to_fc;
 	fluid_real_t modlfo_to_pitch;
@@ -160,7 +160,7 @@ struct _fluid_voice_t {
 
 	/* vib lfo */
 	fluid_real_t viblfo_val;			/* the value of the vibrato LFO */
-	unsigned int viblfo_delay;		/* the delay of the lfo in samples */
+	U32 viblfo_delay;		/* the delay of the lfo in samples */
 	fluid_real_t viblfo_incr;			/* the lfo frequency is converted to a per-buffer increment */
 	fluid_real_t viblfo_to_pitch;
 
@@ -172,7 +172,7 @@ struct _fluid_voice_t {
 	fluid_real_t q_lin;						/* the q-factor on a linear scale */
 	fluid_real_t filter_gain;			/* Gain correction factor, depends on q */
 	fluid_real_t hist1, hist2;		/* Sample history for the IIR filter */
-	int filter_startup;						/* Flag: If set, the filter will be set directly.
+	S32 filter_startup;						/* Flag: If set, the filter will be set directly.
 																   Else it changes smoothly. */
 
 	/* filter coefficients */
@@ -187,7 +187,7 @@ struct _fluid_voice_t {
 	fluid_real_t b1_incr;
 	fluid_real_t a1_incr;
 	fluid_real_t a2_incr;
-	int filter_coeff_incr_count;
+	S32 filter_coeff_incr_count;
 
 	/* pan */
 	fluid_real_t pan;
@@ -203,52 +203,52 @@ struct _fluid_voice_t {
 	fluid_real_t amp_chorus;
 
 	/* interpolation method, as in fluid_interp in fluidbean.h */
-	int interp_method;
+	S32 interp_method;
 
 	/* for debugging */
-	int debug;
+	S32 debug;
 };
 
 
 fluid_voice_t *new_fluid_voice (fluid_real_t output_rate);
-int delete_fluid_voice (fluid_voice_t * voice);
+S32 delete_fluid_voice (fluid_voice_t * voice);
 
 void fluid_voice_start (fluid_voice_t * voice);
 
-int fluid_voice_write (fluid_voice_t * voice,
+S32 fluid_voice_write (fluid_voice_t * voice,
 											 fluid_real_t * left, fluid_real_t * right,
 											 fluid_real_t * reverb_buf, fluid_real_t * chorus_buf);
 
-int fluid_voice_init (fluid_voice_t * voice, fluid_sample_t * sample,
-											fluid_channel_t * channel, int key, int vel,
-											unsigned int id, unsigned int time, fluid_real_t gain);
+S32 fluid_voice_init (fluid_voice_t * voice, fluid_sample_t * sample,
+											fluid_channel_t * channel, S32 key, S32 vel,
+											U32 id, U32 time, fluid_real_t gain);
 
-int fluid_voice_modulate (fluid_voice_t * voice, int cc, int ctrl);
-int fluid_voice_modulate_all (fluid_voice_t * voice);
+S32 fluid_voice_modulate (fluid_voice_t * voice, S32 cc, S32 ctrl);
+S32 fluid_voice_modulate_all (fluid_voice_t * voice);
 
 /** Set the NRPN value of a generator. */
-int fluid_voice_set_param (fluid_voice_t * voice, int gen, fluid_real_t value,
-													 int abs);
+S32 fluid_voice_set_param (fluid_voice_t * voice, S32 gen, fluid_real_t value,
+													 S32 abs);
 
 
 /** Set the gain. */
-int fluid_voice_set_gain (fluid_voice_t * voice, fluid_real_t gain);
+S32 fluid_voice_set_gain (fluid_voice_t * voice, fluid_real_t gain);
 
 
 /** Update all the synthesis parameters, which depend on generator
     'gen'. This is only necessary after changing a generator of an
     already operating voice.  Most applications will not need this
     function.*/
-void fluid_voice_update_param (fluid_voice_t * voice, int gen);
+void fluid_voice_update_param (fluid_voice_t * voice, S32 gen);
 
-int fluid_voice_noteoff (fluid_voice_t * voice);
-int fluid_voice_off (fluid_voice_t * voice);
-int fluid_voice_calculate_runtime_synthesis_parameters (fluid_voice_t *
+S32 fluid_voice_noteoff (fluid_voice_t * voice);
+S32 fluid_voice_off (fluid_voice_t * voice);
+S32 fluid_voice_calculate_runtime_synthesis_parameters (fluid_voice_t *
 																												voice);
 fluid_channel_t *fluid_voice_get_channel (fluid_voice_t * voice);
-int calculate_hold_decay_buffers (fluid_voice_t * voice, int gen_base,
-																	int gen_key2base, int is_decay);
-int fluid_voice_kill_excl (fluid_voice_t * voice);
+S32 calculate_hold_decay_buffers (fluid_voice_t * voice, S32 gen_base,
+																	S32 gen_key2base, S32 is_decay);
+S32 fluid_voice_kill_excl (fluid_voice_t * voice);
 fluid_real_t fluid_voice_get_lower_boundary_for_attenuation (fluid_voice_t *
 																														 voice);
 fluid_real_t
@@ -269,10 +269,10 @@ void fluid_voice_check_sample_sanity (fluid_voice_t * voice);
 #define _SUSTAINED(voice)  ((voice)->status == FLUID_VOICE_SUSTAINED)
 #define _AVAILABLE(voice)  (((voice)->status == FLUID_VOICE_CLEAN) || ((voice)->status == FLUID_VOICE_OFF))
 #define _RELEASED(voice)  ((voice)->chan == NO_CHANNEL)
-#define _SAMPLEMODE(voice) ((int)(voice)->gen[GEN_SAMPLEMODE].val)
+#define _SAMPLEMODE(voice) ((S32)(voice)->gen[GEN_SAMPLEMODE].val)
 
 
-fluid_real_t fluid_voice_gen_value (fluid_voice_t * voice, int num);
+fluid_real_t fluid_voice_gen_value (fluid_voice_t * voice, S32 num);
 
 #define _GEN(_voice, _n) \
   ((fluid_real_t)(_voice)->gen[_n].val \
@@ -286,9 +286,9 @@ fluid_real_t fluid_voice_gen_value (fluid_voice_t * voice, int num);
 /* defined in fluid_dsp_float.c */
 
 void fluid_dsp_float_config (void);
-int fluid_dsp_float_interpolate_none (fluid_voice_t * voice);
-int fluid_dsp_float_interpolate_linear (fluid_voice_t * voice);
-int fluid_dsp_float_interpolate_4th_order (fluid_voice_t * voice);
-int fluid_dsp_float_interpolate_7th_order (fluid_voice_t * voice);
+S32 fluid_dsp_float_interpolate_none (fluid_voice_t * voice);
+S32 fluid_dsp_float_interpolate_linear (fluid_voice_t * voice);
+S32 fluid_dsp_float_interpolate_4th_order (fluid_voice_t * voice);
+S32 fluid_dsp_float_interpolate_7th_order (fluid_voice_t * voice);
 
 #endif /* _FLUID_VOICE_H */

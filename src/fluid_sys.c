@@ -36,7 +36,7 @@ void fluid_sys_config () {
 }
 
 
-unsigned int fluid_debug_flags = 0;
+U32 fluid_debug_flags = 0;
 
 #if DEBUG
 /*

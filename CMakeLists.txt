@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
+set(CMAKE_BUILD_TYPE Debug)
 
-#set(CMAKE_BUILD_TYPE Debug)
 project(fluidbean)
 
 include(GNUInstallDirs)
@@ -22,7 +22,6 @@ list(APPEND SCOPED_HEADERS
     include/fluidsynth/version.h
 )
 
-
 list(APPEND SOURCES
     src/fluid_init.c
     src/fluid_chan.c
@@ -40,56 +39,52 @@ list(APPEND SOURCES
     src/fluid_sys.c
     src/fluid_tuning.c
     src/fluid_voice.c
+    #src/stb_vorbis.c
 )
-
-#target_include_directories(
-#  ${PROJECT_NAME} PUBLIC src/include/
-#)
-
-# Dependencies:
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-#if (STB_VORBIS)
-#    list(APPEND SOURCES
-#        stb/stb_vorbis.c)
-#
-#    include_directories(${CMAKE_SOURCE_DIR}/stb)
-#endif()
-
+set(FLUIDBEAN_STATIC_LIB ${PROJECT_NAME})
 option(FLUIDLITE_BUILD_STATIC "Build static library" TRUE)
-if(FLUIDLITE_BUILD_STATIC)
-    add_library(${PROJECT_NAME}-static STATIC ${SOURCES})
-    set_target_properties(${PROJECT_NAME}-static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-    set(FLUIDLITE_LIB_TARGET ${PROJECT_NAME}-static)
-    set(FLUIDLITE_INSTALL_TARGETS ${FLUIDLITE_INSTALL_TARGETS} ";fluidbean-static")
-    set_target_properties(${PROJECT_NAME}-static PROPERTIES C_STANDARD 99)
-    if(WIN32)
-        target_compile_definitions(${PROJECT_NAME}-static PRIVATE _CRT_SECURE_NO_WARNINGS)
-    endif()
+add_library(${FLUIDBEAN_STATIC_LIB} STATIC ${SOURCES})
+set_target_properties(${FLUIDBEAN_STATIC_LIB} PROPERTIES OUTPUT_NAME ${FLUIDBEAN_STATIC_LIB})
+set(FLUIDLITE_LIB_TARGET ${FLUIDBEAN_STATIC_LIB})
+set(FLUIDLITE_INSTALL_TARGETS ${FLUIDLITE_INSTALL_TARGETS} ";"${FLUIDBEAN_STATIC_LIB})
+set_target_properties(${FLUIDBEAN_STATIC_LIB} PROPERTIES C_STANDARD 99)
+if(WIN32)
+  target_compile_definitions(${FLUIDBEAN_STATIC_LIB} PRIVATE _CRT_SECURE_NO_WARNINGS)
 endif()
 
-option(FLUIDLITE_BUILD_SHARED "Build shared library" TRUE)
+list(APPEND BOTOX_SRC
+  libbotox/src/bt.c
+  libbotox/src/data.c
+  libbotox/src/x.c
+)
+
+set(BOTOX_LIB botox)
+add_library(${BOTOX_LIB} ${BOTOX_SRC})
+target_include_directories(${BOTOX_LIB} PUBLIC libbotox/src/include)
+
+# find the math lib
+find_library(M_LIBRARY m)
+message(STATUS "Math library: ${M_LIBRARY}")
+if(NOT M_LIBRARY)
+    set(M_LIBRARY "")
+endif()
+
+message("math library is set to " ${M_LIBRARY})
+
+# Link all the libraries.
+target_link_libraries(${FLUIDBEAN_STATIC_LIB} ${M_LIBRARY} ${BOTOX_LIB})
+
+option(FLUIDLITE_BUILD_SHARED "Build shared library" OFF)
 if(FLUIDLITE_BUILD_SHARED)
     add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-    # find the math lib
-    find_library(M_LIBRARY m)
-    message(STATUS "Math library: ${M_LIBRARY}")
-    if(NOT M_LIBRARY)
-        set(M_LIBRARY "")
-    endif()
 
-    target_link_libraries(${PROJECT_NAME}
-        ${LIBVORBIS_LIBRARIES}
-        ${LIBVORBISFILE_LIBRARIES}
-        ${LIBOGG_LIBRARIES}
-        ${M_LIBRARY}
-    )
     set(FLUIDLITE_LIB_TARGET ${PROJECT_NAME})
-    set(FLUIDLITE_INSTALL_TARGETS ${FLUIDLITE_INSTALL_TARGETS} ";fluidbean")
-    set_target_properties(${PROJECT_NAME} PROPERTIES C_STANDARD 99)
+    set(FLUIDLITE_INSTALL_TARGETS ${FLUIDLITE_INSTALL_TARGETS} ";"${PROJECT_NAME})
     if(WIN32)
         target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
     endif()
@@ -101,21 +96,15 @@ endif()
 
 if(FLUIDLITE_BUILD_SHARED AND FLUIDLITE_BUILD_STATIC)
     set_target_properties(${PROJECT_NAME} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-    set_target_properties(${PROJECT_NAME}-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+    set_target_properties(${FLUIDBEAN_STATIC_LIB} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 endif()
 
 if (ENABLE_SF3)
-    if (STB_VORBIS)
-        set(SF3_SUPPORT "SF3_STB_VORBIS")
-    else()
-        set(SF3_SUPPORT "SF3_XIPH_VORBIS")
-    endif()
-
     if(FLUIDLITE_BUILD_SHARED)
         target_compile_definitions(${PROJECT_NAME} PUBLIC SF3_SUPPORT=${SF3_SUPPORT})
     endif()
     if(FLUIDLITE_BUILD_STATIC)
-        target_compile_definitions(${PROJECT_NAME}-static PUBLIC SF3_SUPPORT=${SF3_SUPPORT})
+      target_compile_definitions(${FLUIDBEAN_STATIC_LIB} PUBLIC SF3_SUPPORT=${SF3_SUPPORT})
     endif()
 endif()
 

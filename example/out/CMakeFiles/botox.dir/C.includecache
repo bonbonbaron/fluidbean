@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../../libbotox/src/include/bt.h
+x.h
+../../libbotox/src/include/x.h
+
+../../libbotox/src/include/data.h
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+assert.h
+-
+
+../../libbotox/src/include/x.h
+data.h
+../../libbotox/src/include/data.h
+
+/home/bonbonbaron/hack/fluidbean/libbotox/src/bt.c
+bt.h
+/home/bonbonbaron/hack/fluidbean/libbotox/src/bt.h
+
+/home/bonbonbaron/hack/fluidbean/libbotox/src/data.c
+data.h
+/home/bonbonbaron/hack/fluidbean/libbotox/src/data.h
+string.h
+-
+
+/home/bonbonbaron/hack/fluidbean/libbotox/src/x.c
+x.h
+/home/bonbonbaron/hack/fluidbean/libbotox/src/x.h
+data.h
+/home/bonbonbaron/hack/fluidbean/libbotox/src/data.h
+

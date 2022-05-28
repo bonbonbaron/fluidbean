@@ -25,38 +25,38 @@
 
 
 /** returns 1 if the option was added, 0 otherwise */
-int fluid_settings_add_option (fluid_settings_t * settings, const char *name,
-															 char *s);
+S32 fluid_settings_add_option (fluid_settings_t * settings, const S8 *name,
+															 S8 *s);
 
 /** returns 1 if the option was added, 0 otherwise */
-int fluid_settings_remove_option (fluid_settings_t * settings,
-																	const char *name, char *s);
+S32 fluid_settings_remove_option (fluid_settings_t * settings,
+																	const S8 *name, S8 *s);
 
 
-typedef int (*fluid_num_update_t) (void *data, const char *name,
+typedef S32 (*fluid_num_update_t) (void *data, const S8 *name,
 																	 double value);
-typedef int (*fluid_str_update_t) (void *data, const char *name, char *value);
-typedef int (*fluid_int_update_t) (void *data, const char *name, int value);
+typedef S32 (*fluid_str_update_t) (void *data, const S8 *name, S8 *value);
+typedef S32 (*fluid_int_update_t) (void *data, const S8 *name, S32 value);
 
 /** returns 0 if the value has been resgister correctly, non-zero
     otherwise */
-int fluid_settings_register_str (fluid_settings_t * settings,
-																 const char *name, char *def, int hints,
+S32 fluid_settings_register_str (fluid_settings_t * settings,
+																 const S8 *name, S8 *def, S32 hints,
 																 fluid_str_update_t fun, void *data);
 
 /** returns 0 if the value has been resgister correctly, non-zero
     otherwise */
-int fluid_settings_register_num (fluid_settings_t * settings,
-																 const char *name, double min, double max,
-																 double def, int hints,
+S32 fluid_settings_register_num (fluid_settings_t * settings,
+																 const S8 *name, double min, double max,
+																 double def, S32 hints,
 																 fluid_num_update_t fun, void *data);
 
 
 /** returns 0 if the value has been resgister correctly, non-zero
     otherwise */
-int fluid_settings_register_int (fluid_settings_t * settings,
-																 const char *name, int min, int max, int def,
-																 int hints, fluid_int_update_t fun,
+S32 fluid_settings_register_int (fluid_settings_t * settings,
+																 const S8 *name, S32 min, S32 max, S32 def,
+																 S32 hints, fluid_int_update_t fun,
 																 void *data);
 
 

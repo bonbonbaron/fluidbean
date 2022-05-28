@@ -58,7 +58,7 @@ fluid_real_t fluid_revmodel_getwidth (fluid_revmodel_t * rev);
  * reverb preset
  */
 typedef struct _fluid_revmodel_presets_t {
-	char *name;
+	S8 *name;
 	fluid_real_t roomsize;
 	fluid_real_t damp;
 	fluid_real_t width;

@@ -19,20 +19,12 @@
  */
 
 #include "include/fluidsynth_priv.h"
-#include "include/fluidsynth_priv.h"
-#include "include/fluid_voice.h"
 #include "include/fluid_voice.h"
 #include "include/fluid_mod.h"
-#include "include/fluid_mod.h"
-#include "include/fluid_chan.h"
 #include "include/fluid_chan.h"
 #include "include/fluid_conv.h"
-#include "include/fluid_conv.h"
-#include "include/fluid_synth.h"
 #include "include/fluid_synth.h"
 #include "include/fluid_sys.h"
-#include "include/fluid_sys.h"
-#include "include/fluid_sfont.h"
 #include "include/fluid_sfont.h"
 
 /* used for filter turn off optimization - if filter cutoff is above the
@@ -127,7 +119,7 @@ int delete_fluid_voice (fluid_voice_t * voice) {
 int
 fluid_voice_init (fluid_voice_t * voice, fluid_sample_t * sample,
 									fluid_channel_t * channel, int key, int vel,
-									unsigned int id, unsigned int start_time,
+									U32 id, U32 start_time,
 									fluid_real_t gain) {
 	/* Note: The voice parameters will be initialized later, when the
 	 * generators have been retrieved from the sound font. Here, only
@@ -978,7 +970,7 @@ void fluid_voice_update_param (fluid_voice_t * voice, int gen) {
 	double q_dB;
 	fluid_real_t x;
 	fluid_real_t y;
-	unsigned int count;
+	U32 count;
 	// Alternate attenuation scale used by EMU10K1 cards when setting the attenuation at the preset or instrument level within the SoundFont bank.
 	static const float ALT_ATTENUATION_SCALE = 0.4;
 
@@ -1131,7 +1123,7 @@ void fluid_voice_update_param (fluid_voice_t * voice, int gen) {
 		x = _GEN (voice, GEN_MODLFODELAY);
 		fluid_clip (x, -12000.0f, 5000.0f);
 		voice->modlfo_delay =
-			(unsigned int) (voice->output_rate * fluid_tc2sec_delay (x));
+			(U32) (voice->output_rate * fluid_tc2sec_delay (x));
 		break;
 
 	case GEN_MODLFOFREQ:
@@ -1160,7 +1152,7 @@ void fluid_voice_update_param (fluid_voice_t * voice, int gen) {
 		x = _GEN (voice, GEN_VIBLFODELAY);
 		fluid_clip (x, -12000.0f, 5000.0f);
 		voice->viblfo_delay =
-			(unsigned int) (voice->output_rate * fluid_tc2sec_delay (x));
+			(U32) (voice->output_rate * fluid_tc2sec_delay (x));
 		break;
 
 	case GEN_VIBLFOTOPITCH:
@@ -1264,9 +1256,9 @@ void fluid_voice_update_param (fluid_voice_t * voice, int gen) {
 		break;
 
 		/* Conversion functions differ in range limit */
-#define NUM_BUFFERS_DELAY(_v)   (unsigned int) (voice->output_rate * fluid_tc2sec_delay(_v) / FLUID_BUFSIZE)
-#define NUM_BUFFERS_ATTACK(_v)  (unsigned int) (voice->output_rate * fluid_tc2sec_attack(_v) / FLUID_BUFSIZE)
-#define NUM_BUFFERS_RELEASE(_v) (unsigned int) (voice->output_rate * fluid_tc2sec_release(_v) / FLUID_BUFSIZE)
+#define NUM_BUFFERS_DELAY(_v)   (U32) (voice->output_rate * fluid_tc2sec_delay(_v) / FLUID_BUFSIZE)
+#define NUM_BUFFERS_ATTACK(_v)  (U32) (voice->output_rate * fluid_tc2sec_attack(_v) / FLUID_BUFSIZE)
+#define NUM_BUFFERS_RELEASE(_v) (U32) (voice->output_rate * fluid_tc2sec_release(_v) / FLUID_BUFSIZE)
 
 		/* volume envelope
 		 *
@@ -1510,7 +1502,7 @@ int fluid_voice_modulate_all (fluid_voice_t * voice) {
  * fluid_voice_noteoff
  */
 int fluid_voice_noteoff (fluid_voice_t * voice) {
-	unsigned int at_tick;
+	U32 at_tick;
 
 	at_tick = fluid_channel_get_min_note_length_ticks (voice->channel);
 
@@ -1679,7 +1671,7 @@ void fluid_voice_add_mod (fluid_voice_t * voice, fluid_mod_t * mod, int mode) {
 	}
 }
 
-unsigned int fluid_voice_get_id (fluid_voice_t * voice) {
+U32 fluid_voice_get_id (fluid_voice_t * voice) {
 	return voice->id;
 }
 

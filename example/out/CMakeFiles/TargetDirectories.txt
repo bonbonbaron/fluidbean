@@ -2,7 +2,7 @@
 /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/install.dir
 /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/list_install_components.dir
 /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/edit_cache.dir
+/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/botox.dir
 /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/install/local.dir
 /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/rebuild_cache.dir
 /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir
-/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean-static.dir

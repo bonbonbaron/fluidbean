@@ -258,7 +258,7 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Build shared library
-FLUIDLITE_BUILD_SHARED:BOOL=ON
+FLUIDLITE_BUILD_SHARED:BOOL=OFF
 
 //Build static library
 FLUIDLITE_BUILD_STATIC:BOOL=ON
@@ -270,7 +270,7 @@ M_LIBRARY:FILEPATH=/usr/lib/arm-linux-gnueabihf/libm.so
 fluidbean_BINARY_DIR:STATIC=/home/bonbonbaron/hack/fluidbean/build
 
 //Dependencies for the target
-fluidbean_LIB_DEPENDS:STATIC=general;/usr/lib/arm-linux-gnueabihf/libm.so;
+fluidbean_LIB_DEPENDS:STATIC=general;/usr/lib/arm-linux-gnueabihf/libm.so;general;botox;
 
 //Value Computed by CMake
 fluidbean_SOURCE_DIR:STATIC=/home/bonbonbaron/hack/fluidbean

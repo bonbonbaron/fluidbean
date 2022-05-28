@@ -1,0 +1,11 @@
+[mp3 @ 0x627530] Estimating duration from bitrate, this may be inaccurate
+Input #0, mp3, from 'http://prem2.di.fm/glitchhop_hi?b1e8ab696a279ebb68c48cab':
+  Metadata:
+    icy-br          : 320
+    icy-genre       : Glitch Hop
+    icy-name        : Glitch Hop - DI.FM Premium
+    icy-pub         : 0
+    icy-url         : https://www.di.fm
+    StreamTitle     : Eleksoul - My Muse Doesn’t Love Me
+  Duration: 11:29:04.72, start: 0.000000, bitrate: 320 kb/s
+    Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 320 kb/s

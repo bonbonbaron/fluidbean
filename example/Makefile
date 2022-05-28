@@ -23,10 +23,10 @@ example/%: out/example
 clean:
 	@rm -rf out
 
-out/example: src/main.c out/libfluidbean.a
-	@$(CC) -g -o $@ $< -I../include -Lout -lfluidbean
+out/example: src/main.c src/sf3Inf.c out/libfluidbean.a
+	@$(CC) -g -o $@ $< -I../include -Lout -lfluidbean -lbotox -lm src/sf3Inf.c
 
-.PHONY: $(addprefix out/libfluidbean.,a so)
-$(addprefix out/libfluidbean.,a so):
+.PHONY: $(addprefix out/libfluidbean.,a)
+$(addprefix out/libfluidbean.,a):
 	@mkdir -p out
 	@cd out && cmake $(cmake_args) ../../ && make

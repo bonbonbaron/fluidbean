@@ -23,6 +23,7 @@
 #define _FLUIDSYNTH_PRIV_H
 
 #include "fluid_config.h"
+#include "botox/data.h"
 
 #if HAVE_STRING_H
 #include <string.h>
@@ -79,12 +80,12 @@ typedef enum {
 /** Integer types  */
 
 #if 1 /**/
-typedef signed char sint8;
-typedef unsigned char uint8;
-typedef signed short sint16;
-typedef unsigned short uint16;
-typedef signed int sint32;
-typedef unsigned int uint32;
+typedef S8  sint8;
+typedef U8  uint8;
+typedef S16 sint16;
+typedef U16 uint16;
+typedef S32 sint32;
+typedef U32 uint32;
 typedef signed long long sint64;
 typedef unsigned long long uint64;
 
@@ -119,12 +120,15 @@ typedef unsigned __int64 uint64;
 
 #elif defined(MACOS9)
 /* Macintosh */
-typedef signed char sint8;
-typedef unsigned char uint8;
-typedef signed short sint16;
-typedef unsigned short uint16;
-typedef signed int sint32;
-typedef unsigned int uint32;
+typedef S8 sint8;
+typedef S8 sint8;
+typedef U8 uint8;
+typedef S16 sint16;
+typedef S16 sint16;
+typedef U16 uint16;
+typedef S32 sint32;
+typedef S32 sint32;
+typedef U32 uint32;
 /* FIXME: needs to be verified */
 typedef long long sint64;
 typedef unsigned long long uint64;
@@ -189,7 +193,7 @@ typedef struct _fluid_client_t fluid_client_t;
 #define FLUID_STRNCMP(_s,_t,_n)      strncmp(_s,_t,_n)
 #define FLUID_STRCPY(_dst,_src)      strcpy(_dst,_src)
 #define FLUID_STRCHR(_s,_c)          strchr(_s,_c)
-#define FLUID_STRDUP(s)              FLUID_STRCPY((char*)FLUID_MALLOC(FLUID_STRLEN(s) + 1), s)
+#define FLUID_STRDUP(s)              FLUID_STRCPY((S8*)FLUID_MALLOC(FLUID_STRLEN(s) + 1), s)
 #define FLUID_SPRINTF                sprintf
 #define FLUID_FPRINTF                fprintf
 
@@ -214,7 +218,7 @@ typedef struct _fluid_client_t fluid_client_t;
 #define FLUID_ASSERT(a,b)
 #define FLUID_ASSERT_P(a,b)
 
-char *fluid_error (void);
+S8 *fluid_error (void);
 
 
 /* Internationalization */

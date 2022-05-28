@@ -28,11 +28,11 @@
 typedef struct _fluid_midi_parser_t fluid_midi_parser_t;
 
 fluid_midi_parser_t *new_fluid_midi_parser (void);
-int delete_fluid_midi_parser (fluid_midi_parser_t * parser);
+S32 delete_fluid_midi_parser (fluid_midi_parser_t * parser);
 fluid_midi_event_t *fluid_midi_parser_parse (fluid_midi_parser_t * parser,
-																						 unsigned char c);
+																						 U8 c);
 
-int fluid_midi_send_event (fluid_synth_t * synth, fluid_player_t * player,
+S32 fluid_midi_send_event (fluid_synth_t * synth, fluid_player_t * player,
 													 fluid_midi_event_t * evt);
 
 
@@ -234,11 +234,11 @@ enum fluid_driver_status {
  */
 struct _fluid_midi_event_t {
 	fluid_midi_event_t *next;			/* Don't use it, it will dissappear. Used in midi tracks.  */
-	unsigned int dtime;						/* Delay (ticks) between this and previous event. midi tracks. */
-	unsigned char type;						/* MIDI event type */
-	unsigned char channel;				/* MIDI channel */
-	unsigned int param1;					/* First parameter */
-	unsigned int param2;					/* Second parameter */
+	U32 dtime;						/* Delay (ticks) between this and previous event. midi tracks. */
+	U8 type;						/* MIDI event type */
+	U8 channel;				/* MIDI channel */
+	U32 param1;					/* First parameter */
+	U32 param2;					/* Second parameter */
 };
 
 

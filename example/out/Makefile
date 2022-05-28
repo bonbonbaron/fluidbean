@@ -176,6 +176,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named botox
+
+# Build rule for target.
+botox: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 botox
+.PHONY : botox
+
+# fast build rule for target.
+botox/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/build
+.PHONY : botox/fast
+
+#=============================================================================
 # Target rules for targets named fluidbean
 
 # Build rule for target.
@@ -188,18 +201,86 @@ fluidbean/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/build
 .PHONY : fluidbean/fast
 
-#=============================================================================
-# Target rules for targets named fluidbean-static
+libbotox/src/bt.o: libbotox/src/bt.c.o
 
-# Build rule for target.
-fluidbean-static: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fluidbean-static
-.PHONY : fluidbean-static
+.PHONY : libbotox/src/bt.o
 
-# fast build rule for target.
-fluidbean-static/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/build
-.PHONY : fluidbean-static/fast
+# target to build an object file
+libbotox/src/bt.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/bt.c.o
+.PHONY : libbotox/src/bt.c.o
+
+libbotox/src/bt.i: libbotox/src/bt.c.i
+
+.PHONY : libbotox/src/bt.i
+
+# target to preprocess a source file
+libbotox/src/bt.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/bt.c.i
+.PHONY : libbotox/src/bt.c.i
+
+libbotox/src/bt.s: libbotox/src/bt.c.s
+
+.PHONY : libbotox/src/bt.s
+
+# target to generate assembly for a file
+libbotox/src/bt.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/bt.c.s
+.PHONY : libbotox/src/bt.c.s
+
+libbotox/src/data.o: libbotox/src/data.c.o
+
+.PHONY : libbotox/src/data.o
+
+# target to build an object file
+libbotox/src/data.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/data.c.o
+.PHONY : libbotox/src/data.c.o
+
+libbotox/src/data.i: libbotox/src/data.c.i
+
+.PHONY : libbotox/src/data.i
+
+# target to preprocess a source file
+libbotox/src/data.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/data.c.i
+.PHONY : libbotox/src/data.c.i
+
+libbotox/src/data.s: libbotox/src/data.c.s
+
+.PHONY : libbotox/src/data.s
+
+# target to generate assembly for a file
+libbotox/src/data.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/data.c.s
+.PHONY : libbotox/src/data.c.s
+
+libbotox/src/x.o: libbotox/src/x.c.o
+
+.PHONY : libbotox/src/x.o
+
+# target to build an object file
+libbotox/src/x.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/x.c.o
+.PHONY : libbotox/src/x.c.o
+
+libbotox/src/x.i: libbotox/src/x.c.i
+
+.PHONY : libbotox/src/x.i
+
+# target to preprocess a source file
+libbotox/src/x.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/x.c.i
+.PHONY : libbotox/src/x.c.i
+
+libbotox/src/x.s: libbotox/src/x.c.s
+
+.PHONY : libbotox/src/x.s
+
+# target to generate assembly for a file
+libbotox/src/x.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/botox.dir/build.make CMakeFiles/botox.dir/libbotox/src/x.c.s
+.PHONY : libbotox/src/x.c.s
 
 src/fluid_chan.o: src/fluid_chan.c.o
 
@@ -208,7 +289,6 @@ src/fluid_chan.o: src/fluid_chan.c.o
 # target to build an object file
 src/fluid_chan.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_chan.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_chan.c.o
 .PHONY : src/fluid_chan.c.o
 
 src/fluid_chan.i: src/fluid_chan.c.i
@@ -218,7 +298,6 @@ src/fluid_chan.i: src/fluid_chan.c.i
 # target to preprocess a source file
 src/fluid_chan.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_chan.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_chan.c.i
 .PHONY : src/fluid_chan.c.i
 
 src/fluid_chan.s: src/fluid_chan.c.s
@@ -228,7 +307,6 @@ src/fluid_chan.s: src/fluid_chan.c.s
 # target to generate assembly for a file
 src/fluid_chan.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_chan.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_chan.c.s
 .PHONY : src/fluid_chan.c.s
 
 src/fluid_chorus.o: src/fluid_chorus.c.o
@@ -238,7 +316,6 @@ src/fluid_chorus.o: src/fluid_chorus.c.o
 # target to build an object file
 src/fluid_chorus.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_chorus.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_chorus.c.o
 .PHONY : src/fluid_chorus.c.o
 
 src/fluid_chorus.i: src/fluid_chorus.c.i
@@ -248,7 +325,6 @@ src/fluid_chorus.i: src/fluid_chorus.c.i
 # target to preprocess a source file
 src/fluid_chorus.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_chorus.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_chorus.c.i
 .PHONY : src/fluid_chorus.c.i
 
 src/fluid_chorus.s: src/fluid_chorus.c.s
@@ -258,7 +334,6 @@ src/fluid_chorus.s: src/fluid_chorus.c.s
 # target to generate assembly for a file
 src/fluid_chorus.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_chorus.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_chorus.c.s
 .PHONY : src/fluid_chorus.c.s
 
 src/fluid_conv.o: src/fluid_conv.c.o
@@ -268,7 +343,6 @@ src/fluid_conv.o: src/fluid_conv.c.o
 # target to build an object file
 src/fluid_conv.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_conv.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_conv.c.o
 .PHONY : src/fluid_conv.c.o
 
 src/fluid_conv.i: src/fluid_conv.c.i
@@ -278,7 +352,6 @@ src/fluid_conv.i: src/fluid_conv.c.i
 # target to preprocess a source file
 src/fluid_conv.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_conv.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_conv.c.i
 .PHONY : src/fluid_conv.c.i
 
 src/fluid_conv.s: src/fluid_conv.c.s
@@ -288,7 +361,6 @@ src/fluid_conv.s: src/fluid_conv.c.s
 # target to generate assembly for a file
 src/fluid_conv.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_conv.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_conv.c.s
 .PHONY : src/fluid_conv.c.s
 
 src/fluid_defsfont.o: src/fluid_defsfont.c.o
@@ -298,7 +370,6 @@ src/fluid_defsfont.o: src/fluid_defsfont.c.o
 # target to build an object file
 src/fluid_defsfont.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_defsfont.c.o
 .PHONY : src/fluid_defsfont.c.o
 
 src/fluid_defsfont.i: src/fluid_defsfont.c.i
@@ -308,7 +379,6 @@ src/fluid_defsfont.i: src/fluid_defsfont.c.i
 # target to preprocess a source file
 src/fluid_defsfont.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_defsfont.c.i
 .PHONY : src/fluid_defsfont.c.i
 
 src/fluid_defsfont.s: src/fluid_defsfont.c.s
@@ -318,7 +388,6 @@ src/fluid_defsfont.s: src/fluid_defsfont.c.s
 # target to generate assembly for a file
 src/fluid_defsfont.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_defsfont.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_defsfont.c.s
 .PHONY : src/fluid_defsfont.c.s
 
 src/fluid_dsp_float.o: src/fluid_dsp_float.c.o
@@ -328,7 +397,6 @@ src/fluid_dsp_float.o: src/fluid_dsp_float.c.o
 # target to build an object file
 src/fluid_dsp_float.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_dsp_float.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_dsp_float.c.o
 .PHONY : src/fluid_dsp_float.c.o
 
 src/fluid_dsp_float.i: src/fluid_dsp_float.c.i
@@ -338,7 +406,6 @@ src/fluid_dsp_float.i: src/fluid_dsp_float.c.i
 # target to preprocess a source file
 src/fluid_dsp_float.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_dsp_float.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_dsp_float.c.i
 .PHONY : src/fluid_dsp_float.c.i
 
 src/fluid_dsp_float.s: src/fluid_dsp_float.c.s
@@ -348,7 +415,6 @@ src/fluid_dsp_float.s: src/fluid_dsp_float.c.s
 # target to generate assembly for a file
 src/fluid_dsp_float.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_dsp_float.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_dsp_float.c.s
 .PHONY : src/fluid_dsp_float.c.s
 
 src/fluid_gen.o: src/fluid_gen.c.o
@@ -358,7 +424,6 @@ src/fluid_gen.o: src/fluid_gen.c.o
 # target to build an object file
 src/fluid_gen.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_gen.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_gen.c.o
 .PHONY : src/fluid_gen.c.o
 
 src/fluid_gen.i: src/fluid_gen.c.i
@@ -368,7 +433,6 @@ src/fluid_gen.i: src/fluid_gen.c.i
 # target to preprocess a source file
 src/fluid_gen.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_gen.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_gen.c.i
 .PHONY : src/fluid_gen.c.i
 
 src/fluid_gen.s: src/fluid_gen.c.s
@@ -378,7 +442,6 @@ src/fluid_gen.s: src/fluid_gen.c.s
 # target to generate assembly for a file
 src/fluid_gen.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_gen.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_gen.c.s
 .PHONY : src/fluid_gen.c.s
 
 src/fluid_hash.o: src/fluid_hash.c.o
@@ -388,7 +451,6 @@ src/fluid_hash.o: src/fluid_hash.c.o
 # target to build an object file
 src/fluid_hash.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_hash.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_hash.c.o
 .PHONY : src/fluid_hash.c.o
 
 src/fluid_hash.i: src/fluid_hash.c.i
@@ -398,7 +460,6 @@ src/fluid_hash.i: src/fluid_hash.c.i
 # target to preprocess a source file
 src/fluid_hash.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_hash.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_hash.c.i
 .PHONY : src/fluid_hash.c.i
 
 src/fluid_hash.s: src/fluid_hash.c.s
@@ -408,7 +469,6 @@ src/fluid_hash.s: src/fluid_hash.c.s
 # target to generate assembly for a file
 src/fluid_hash.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_hash.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_hash.c.s
 .PHONY : src/fluid_hash.c.s
 
 src/fluid_init.o: src/fluid_init.c.o
@@ -418,7 +478,6 @@ src/fluid_init.o: src/fluid_init.c.o
 # target to build an object file
 src/fluid_init.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_init.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_init.c.o
 .PHONY : src/fluid_init.c.o
 
 src/fluid_init.i: src/fluid_init.c.i
@@ -428,7 +487,6 @@ src/fluid_init.i: src/fluid_init.c.i
 # target to preprocess a source file
 src/fluid_init.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_init.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_init.c.i
 .PHONY : src/fluid_init.c.i
 
 src/fluid_init.s: src/fluid_init.c.s
@@ -438,7 +496,6 @@ src/fluid_init.s: src/fluid_init.c.s
 # target to generate assembly for a file
 src/fluid_init.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_init.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_init.c.s
 .PHONY : src/fluid_init.c.s
 
 src/fluid_list.o: src/fluid_list.c.o
@@ -448,7 +505,6 @@ src/fluid_list.o: src/fluid_list.c.o
 # target to build an object file
 src/fluid_list.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_list.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_list.c.o
 .PHONY : src/fluid_list.c.o
 
 src/fluid_list.i: src/fluid_list.c.i
@@ -458,7 +514,6 @@ src/fluid_list.i: src/fluid_list.c.i
 # target to preprocess a source file
 src/fluid_list.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_list.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_list.c.i
 .PHONY : src/fluid_list.c.i
 
 src/fluid_list.s: src/fluid_list.c.s
@@ -468,7 +523,6 @@ src/fluid_list.s: src/fluid_list.c.s
 # target to generate assembly for a file
 src/fluid_list.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_list.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_list.c.s
 .PHONY : src/fluid_list.c.s
 
 src/fluid_mod.o: src/fluid_mod.c.o
@@ -478,7 +532,6 @@ src/fluid_mod.o: src/fluid_mod.c.o
 # target to build an object file
 src/fluid_mod.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_mod.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_mod.c.o
 .PHONY : src/fluid_mod.c.o
 
 src/fluid_mod.i: src/fluid_mod.c.i
@@ -488,7 +541,6 @@ src/fluid_mod.i: src/fluid_mod.c.i
 # target to preprocess a source file
 src/fluid_mod.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_mod.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_mod.c.i
 .PHONY : src/fluid_mod.c.i
 
 src/fluid_mod.s: src/fluid_mod.c.s
@@ -498,7 +550,6 @@ src/fluid_mod.s: src/fluid_mod.c.s
 # target to generate assembly for a file
 src/fluid_mod.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_mod.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_mod.c.s
 .PHONY : src/fluid_mod.c.s
 
 src/fluid_rev.o: src/fluid_rev.c.o
@@ -508,7 +559,6 @@ src/fluid_rev.o: src/fluid_rev.c.o
 # target to build an object file
 src/fluid_rev.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_rev.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_rev.c.o
 .PHONY : src/fluid_rev.c.o
 
 src/fluid_rev.i: src/fluid_rev.c.i
@@ -518,7 +568,6 @@ src/fluid_rev.i: src/fluid_rev.c.i
 # target to preprocess a source file
 src/fluid_rev.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_rev.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_rev.c.i
 .PHONY : src/fluid_rev.c.i
 
 src/fluid_rev.s: src/fluid_rev.c.s
@@ -528,7 +577,6 @@ src/fluid_rev.s: src/fluid_rev.c.s
 # target to generate assembly for a file
 src/fluid_rev.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_rev.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_rev.c.s
 .PHONY : src/fluid_rev.c.s
 
 src/fluid_settings.o: src/fluid_settings.c.o
@@ -538,7 +586,6 @@ src/fluid_settings.o: src/fluid_settings.c.o
 # target to build an object file
 src/fluid_settings.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_settings.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_settings.c.o
 .PHONY : src/fluid_settings.c.o
 
 src/fluid_settings.i: src/fluid_settings.c.i
@@ -548,7 +595,6 @@ src/fluid_settings.i: src/fluid_settings.c.i
 # target to preprocess a source file
 src/fluid_settings.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_settings.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_settings.c.i
 .PHONY : src/fluid_settings.c.i
 
 src/fluid_settings.s: src/fluid_settings.c.s
@@ -558,7 +604,6 @@ src/fluid_settings.s: src/fluid_settings.c.s
 # target to generate assembly for a file
 src/fluid_settings.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_settings.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_settings.c.s
 .PHONY : src/fluid_settings.c.s
 
 src/fluid_synth.o: src/fluid_synth.c.o
@@ -568,7 +613,6 @@ src/fluid_synth.o: src/fluid_synth.c.o
 # target to build an object file
 src/fluid_synth.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_synth.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_synth.c.o
 .PHONY : src/fluid_synth.c.o
 
 src/fluid_synth.i: src/fluid_synth.c.i
@@ -578,7 +622,6 @@ src/fluid_synth.i: src/fluid_synth.c.i
 # target to preprocess a source file
 src/fluid_synth.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_synth.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_synth.c.i
 .PHONY : src/fluid_synth.c.i
 
 src/fluid_synth.s: src/fluid_synth.c.s
@@ -588,7 +631,6 @@ src/fluid_synth.s: src/fluid_synth.c.s
 # target to generate assembly for a file
 src/fluid_synth.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_synth.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_synth.c.s
 .PHONY : src/fluid_synth.c.s
 
 src/fluid_sys.o: src/fluid_sys.c.o
@@ -598,7 +640,6 @@ src/fluid_sys.o: src/fluid_sys.c.o
 # target to build an object file
 src/fluid_sys.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_sys.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_sys.c.o
 .PHONY : src/fluid_sys.c.o
 
 src/fluid_sys.i: src/fluid_sys.c.i
@@ -608,7 +649,6 @@ src/fluid_sys.i: src/fluid_sys.c.i
 # target to preprocess a source file
 src/fluid_sys.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_sys.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_sys.c.i
 .PHONY : src/fluid_sys.c.i
 
 src/fluid_sys.s: src/fluid_sys.c.s
@@ -618,7 +658,6 @@ src/fluid_sys.s: src/fluid_sys.c.s
 # target to generate assembly for a file
 src/fluid_sys.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_sys.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_sys.c.s
 .PHONY : src/fluid_sys.c.s
 
 src/fluid_tuning.o: src/fluid_tuning.c.o
@@ -628,7 +667,6 @@ src/fluid_tuning.o: src/fluid_tuning.c.o
 # target to build an object file
 src/fluid_tuning.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_tuning.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_tuning.c.o
 .PHONY : src/fluid_tuning.c.o
 
 src/fluid_tuning.i: src/fluid_tuning.c.i
@@ -638,7 +676,6 @@ src/fluid_tuning.i: src/fluid_tuning.c.i
 # target to preprocess a source file
 src/fluid_tuning.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_tuning.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_tuning.c.i
 .PHONY : src/fluid_tuning.c.i
 
 src/fluid_tuning.s: src/fluid_tuning.c.s
@@ -648,7 +685,6 @@ src/fluid_tuning.s: src/fluid_tuning.c.s
 # target to generate assembly for a file
 src/fluid_tuning.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_tuning.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_tuning.c.s
 .PHONY : src/fluid_tuning.c.s
 
 src/fluid_voice.o: src/fluid_voice.c.o
@@ -658,7 +694,6 @@ src/fluid_voice.o: src/fluid_voice.c.o
 # target to build an object file
 src/fluid_voice.c.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_voice.c.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_voice.c.o
 .PHONY : src/fluid_voice.c.o
 
 src/fluid_voice.i: src/fluid_voice.c.i
@@ -668,7 +703,6 @@ src/fluid_voice.i: src/fluid_voice.c.i
 # target to preprocess a source file
 src/fluid_voice.c.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_voice.c.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_voice.c.i
 .PHONY : src/fluid_voice.c.i
 
 src/fluid_voice.s: src/fluid_voice.c.s
@@ -678,7 +712,6 @@ src/fluid_voice.s: src/fluid_voice.c.s
 # target to generate assembly for a file
 src/fluid_voice.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_voice.c.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean-static.dir/build.make CMakeFiles/fluidbean-static.dir/src/fluid_voice.c.s
 .PHONY : src/fluid_voice.c.s
 
 # Help Target
@@ -693,8 +726,17 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... botox"
 	@echo "... fluidbean"
-	@echo "... fluidbean-static"
+	@echo "... libbotox/src/bt.o"
+	@echo "... libbotox/src/bt.i"
+	@echo "... libbotox/src/bt.s"
+	@echo "... libbotox/src/data.o"
+	@echo "... libbotox/src/data.i"
+	@echo "... libbotox/src/data.s"
+	@echo "... libbotox/src/x.o"
+	@echo "... libbotox/src/x.i"
+	@echo "... libbotox/src/x.s"
 	@echo "... src/fluid_chan.o"
 	@echo "... src/fluid_chan.i"
 	@echo "... src/fluid_chan.s"

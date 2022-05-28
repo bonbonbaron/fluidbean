@@ -29,8 +29,6 @@
  */
 
 #include "include/fluidsynth_priv.h"
-#include "include/fluidsynth_priv.h"
-#include "include/fluid_hash.h"
 #include "include/fluid_hash.h"
 
 
@@ -55,8 +53,8 @@ static void delete_fluid_hashnodes (fluid_hashnode_t * hash_node,
 																		fluid_hash_delete_t del);
 
 struct _fluid_hashtable_t {
-	unsigned int size;
-	unsigned int nnodes;
+	U32 size;
+	U32 nnodes;
 	fluid_hashnode_t **nodes;
 	fluid_hash_delete_t del;
 };
@@ -80,7 +78,7 @@ static fluid_hashnode_t **fluid_hashtable_lookup_node (fluid_hashtable_t *
  **/
 fluid_hashtable_t *new_fluid_hashtable (fluid_hash_delete_t del) {
 	fluid_hashtable_t *hash_table;
-	unsigned int i;
+	U32 i;
 
 	hash_table = FLUID_NEW (fluid_hashtable_t);
 	hash_table->size = HASH_TABLE_MIN_SIZE;
@@ -106,7 +104,7 @@ fluid_hashtable_t *new_fluid_hashtable (fluid_hash_delete_t del) {
  * the #fluid_hashtable_t.
  **/
 void delete_fluid_hashtable (fluid_hashtable_t * hash_table) {
-	unsigned int i;
+	U32 i;
 
 	if (hash_table == NULL) {
 		return;
@@ -277,7 +275,7 @@ void
 fluid_hashtable_foreach (fluid_hashtable_t * hash_table,
 												 fluid_hash_iter_t func, void *data) {
 	fluid_hashnode_t *node = NULL;
-	unsigned int i;
+	U32 i;
 
 	for (i = 0; i < hash_table->size; i++) {
 		for (node = hash_table->nodes[i]; node != NULL; node = node->next) {
@@ -294,7 +292,7 @@ fluid_hashtable_foreach (fluid_hashtable_t * hash_table,
  *
  * Return value: the number of key/value pairs in the #fluid_hashtable_t.
  **/
-unsigned int fluid_hashtable_size (fluid_hashtable_t * hash_table) {
+U32 fluid_hashtable_size (fluid_hashtable_t * hash_table) {
 	return hash_table->nnodes;
 }
 
@@ -302,9 +300,9 @@ static void fluid_hashtable_resize (fluid_hashtable_t * hash_table) {
 	fluid_hashnode_t **new_nodes;
 	fluid_hashnode_t *node;
 	fluid_hashnode_t *next;
-	unsigned int hash_val;
+	U32 hash_val;
 	int new_size;
-	unsigned int i;
+	U32 i;
 
 	new_size = 3 * hash_table->size + 1;
 	new_size =
@@ -366,9 +364,9 @@ delete_fluid_hashnodes (fluid_hashnode_t * hash_node,
 
 
 /* 31 bit hash function */
-unsigned int fluid_str_hash (char *key) {
+U32 fluid_str_hash (char *key) {
 	char *p = key;
-	unsigned int h = *p;
+	U32 h = *p;
 
 	if (h) {
 		for (p += 1; *p != '\0'; p++) {
