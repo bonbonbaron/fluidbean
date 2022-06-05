@@ -1446,16 +1446,13 @@ fluid_preset_t *fluid_synth_get_preset (fluid_synth_t * synth,
 /*
  * fluid_synth_get_preset
  */
-fluid_preset_t *fluid_synth_find_preset (fluid_synth_t * synth,
-																				 U32 banknum,
-																				 U32 prognum) {
+fluid_preset_t *fluid_synth_find_preset (fluid_synth_t * synth, U32 banknum, U32 prognum) {
 	fluid_preset_t *preset = NULL;
 	fluid_sfont_t *sfont = NULL;
 	fluid_list_t *list = synth->sfont;
 	int offset;
 
 	while (list) {
-
 		sfont = (fluid_sfont_t *) fluid_list_get (list);
 		offset = fluid_synth_get_bank_offset (synth, fluid_sfont_get_id (sfont));
 		preset = fluid_sfont_get_preset (sfont, banknum - offset, prognum);
@@ -1466,7 +1463,6 @@ fluid_preset_t *fluid_synth_find_preset (fluid_synth_t * synth,
 		}
 
 		list = fluid_list_next (list);
-
 	}
 	return NULL;
 }

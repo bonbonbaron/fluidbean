@@ -4,6 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/home/bonbonbaron/hack/fluidbean/drivers/fluid_adriver.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o"
+  "/home/bonbonbaron/hack/fluidbean/drivers/fluid_alsa.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_chan.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_chan.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_chorus.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_chorus.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_conv.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_conv.c.o"
@@ -15,6 +17,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/home/bonbonbaron/hack/fluidbean/src/fluid_list.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_list.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_mod.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_mod.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_rev.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_rev.c.o"
+  "/home/bonbonbaron/hack/fluidbean/src/fluid_ringbuffer.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_settings.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_settings.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_synth.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_synth.c.o"
   "/home/bonbonbaron/hack/fluidbean/src/fluid_sys.c" "/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/fluidbean.dir/src/fluid_sys.c.o"
@@ -23,10 +26,17 @@ set(CMAKE_DEPENDS_CHECK_C
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
+# Preprocessor definitions for this target.
+set(CMAKE_TARGET_DEFINITIONS_C
+  "SF3_SUPPORT="
+  )
+
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH
   "../../src"
   "../../include"
+  "../../src/include"
+  "../../drivers/include"
   "../../libbotox/src/include"
   )
 

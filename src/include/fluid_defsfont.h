@@ -305,8 +305,8 @@ SFData *sfLoadMem (void *sfDataP, S32 dataLen, U8 **inPP);
 #define	TRUE	(!FALSE)
 #endif
 
-#define GPOINTER_TO_INT(p)	((uintptr)   (p))
-#define GINT_TO_POINTER(i)      ((void *)  (uintptr)(i))
+//#define GPOINTER_TO_INT(p)	((uintptr)   (p))
+//#define GINT_TO_POINTER(i)      ((void *)  (uintptr)(i))
 
 S8 *g_strdup (const S8 *str);
 
@@ -341,6 +341,7 @@ S8 *g_strdup (const S8 *str);
 
 /* Basic bit swapping functions
  */
+#if 0
 #define GUINT16_SWAP_LE_BE_CONSTANT(val)	((U16) ( \
     (((U16) (val) & (U16) 0x00ffU) << 8) | \
     (((U16) (val) & (U16) 0xff00U) >> 8)))
@@ -378,6 +379,7 @@ S8 *g_strdup (const S8 *str);
 #define GINT32_FROM_BE(val)	(GINT32_TO_BE (val))
 #define GUINT32_FROM_BE(val)	(GUINT32_TO_BE (val))
 
+#endif
 
 /*-----------------------------------util.h----------------------------*/
 /*

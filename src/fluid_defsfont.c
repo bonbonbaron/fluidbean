@@ -440,7 +440,7 @@ fluid_sample_t *fluid_defsfont_get_sample (fluid_defsfont_t * sfont, char *s) {
 
     if (FLUID_STRCMP (sample->name, s) == 0) {
 
-#if SF3_SUPPORT
+#if 0 // SF3_SUPPORT
       if (sample->sampletype & FLUID_SAMPLETYPE_OGG_VORBIS) {
         short *sampledata = NULL;
         int sampleframes = 0;
@@ -1604,12 +1604,10 @@ fluid_sample_t *new_fluid_sample () {
  *delete_fluid_sample
  */
 int delete_fluid_sample (fluid_sample_t * sample) {
-#if SF3_SUPPORT
   if (sample->sampletype & FLUID_SAMPLETYPE_OGG_VORBIS_UNPACKED) {
     if (sample->data != NULL)
       FLUID_FREE (sample->data);
   }
-#endif
 
   FLUID_FREE (sample);
   return FLUID_OK;

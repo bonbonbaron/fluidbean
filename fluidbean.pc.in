@@ -3,8 +3,10 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-Name: fluidlite
+Name: fluidbean
 Description: Software SoundFont synth
-Version: 1.2.1
-Libs: -L${libdir} -lfluidlite @ADDITIONAL_LIBS@
-Cflags: -I${includedir}
+Version: 1.0.0
+Requires.private: @PC_REQUIRES_PRIV_JOINED@
+Libs: -L${libdir} -lfluidbean 
+Libs.private: @LIBS_PRIVATE_JOINED@ @LIBS_PRIVATE_WITH_PATH_JOINED@
+Cflags: -I${includedir} -I/usr/include/glib-2.0/

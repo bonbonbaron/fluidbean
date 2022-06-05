@@ -1,10 +1,17 @@
-Input #0, mp3, from 'http://streaming.tendanceouest.com/poprock.mp3':
+Input #0, aac, from 'https://live-bauerse-fm.sharp-stream.com/vinylfm_instream_se_aacp?direct=true&listenerid=undefined&aw_0_1st.bauer_listenerid=undefined&amsparams=playerid:SBS_RP_WEB;skey:1602162911;&aw_0_1st.playerid=SBS_RP_WEB&aw_0_1st.skey=1602162911&aw_0_1st.bauer_loggedin=false&awparams=loggedin:false;&aw_0_req.userConsent=false':
   Metadata:
-    icy-br          : 128
-    icy-genre       : Rock
-    icy-name        : Tendance Ouest - Pop Rock
-    icy-pub         : 1
-    icy-url         : www.tendanceouest.com
-    StreamTitle     : BON JOVI - Limitless
-  Duration: N/A, start: 0.000000, bitrate: 128 kb/s
-    Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 128 kb/s
+    icy-br          : 56
+    icy-pub         : 0
+    icy-description : Vinyl STO
+    icy-audio-info  : bitrate=56
+    icy-url         : 
+    icy-genre       : 70/80/90
+    icy-name        : Vinyl STO
+    StreamTitle     : 
+    StreamUrl       : 
+    adw_ad          : true
+    durationMilliseconds: 20010
+    adId            : 131655
+    insertionType   : preroll
+  Duration: N/A, bitrate: 53 kb/s
+    Stream #0:0: Audio: aac (HE-AAC), 48000 Hz, stereo, fltp, 53 kb/s

@@ -286,10 +286,8 @@ fluid_settings_set (fluid_settings_t * settings,
 
 /** returns 1 if the value has been registered correctly, 0
     otherwise */
-int
-fluid_settings_register_str (fluid_settings_t * settings, const char *name,
-														 char *def, int hints, fluid_str_update_t fun,
-														 void *data) {
+#if 0
+int fluid_settings_register_str (fluid_settings_t * settings, const char *name, char *def, int hints, fluid_str_update_t fun, void *data) {
 	int type;
 	void *value;
 	char *tokens[MAX_SETTINGS_TOKENS];
@@ -319,6 +317,51 @@ fluid_settings_register_str (fluid_settings_t * settings, const char *name,
 		}
 	}
 }
+#else
+int
+fluid_settings_register_str(fluid_settings_t *settings, const char *name, const char *def, int hints)
+{
+    fluid_setting_node_t *node;
+    int retval = FLUID_FAILED;
+
+    fluid_return_val_if_fail(settings != NULL, retval);
+    fluid_return_val_if_fail(name != NULL, retval);
+    fluid_return_val_if_fail(name[0] != '\0', retval);
+
+    fluid_rec_mutex_lock(settings->mutex);
+
+    if(fluid_settings_get(settings, name, &node) != FLUID_OK)
+    {
+        node = new_fluid_str_setting(def, def, hints);
+        retval = fluid_settings_set(settings, name, node);
+
+        if(retval != FLUID_OK)
+        {
+            delete_fluid_str_setting(node);
+        }
+    }
+    else
+    {
+        /* if variable already exists, don't change its value. */
+        if(node->type == FLUID_STR_TYPE)
+        {
+            fluid_str_setting_t *setting = &node->str;
+            FLUID_FREE(setting->def);
+            setting->def = def ? FLUID_STRDUP(def) : NULL;
+            setting->hints = hints;
+            retval = FLUID_OK;
+        }
+        else
+        {
+            FLUID_LOG(FLUID_ERR, "Failed to register string setting '%s' as it already exists with a different type", name);
+        }
+    }
+
+    fluid_rec_mutex_unlock(settings->mutex);
+
+    return retval;
+}
+#endif
 
 /** returns 1 if the value has been register correctly, zero
     otherwise */
@@ -363,6 +406,7 @@ fluid_settings_register_num (fluid_settings_t * settings, const char *name,
 
 /** returns 1 if the value has been register correctly, zero
     otherwise */
+#if 0
 int
 fluid_settings_register_int (fluid_settings_t * settings, const char *name,
 														 int def, int min, int max, int hints,
@@ -401,6 +445,59 @@ fluid_settings_register_int (fluid_settings_t * settings, const char *name,
 		}
 	}
 }
+#else
+int
+fluid_settings_register_int(fluid_settings_t *settings, const char *name, int def,
+                            int min, int max, int hints)
+{
+    fluid_setting_node_t *node;
+    int retval = FLUID_FAILED;
+
+    fluid_return_val_if_fail(settings != NULL, retval);
+    fluid_return_val_if_fail(name != NULL, retval);
+    fluid_return_val_if_fail(name[0] != '\0', retval);
+
+    /* For now, all integer settings are bounded below and above */
+    hints |= FLUID_HINT_BOUNDED_BELOW | FLUID_HINT_BOUNDED_ABOVE;
+
+    fluid_rec_mutex_lock(settings->mutex);
+
+    if(fluid_settings_get(settings, name, &node) != FLUID_OK)
+    {
+        /* insert a new setting */
+        node = new_fluid_int_setting(min, max, def, hints);
+        retval = fluid_settings_set(settings, name, node);
+
+        if(retval != FLUID_OK)
+        {
+            delete_fluid_int_setting(node);
+        }
+    }
+    else
+    {
+        if(node->type == FLUID_INT_TYPE)
+        {
+            /* update the existing setting but don't change its value */
+            fluid_int_setting_t *setting = &node->i;
+            setting->min = min;
+            setting->max = max;
+            setting->def = def;
+            setting->hints = hints;
+            retval = FLUID_OK;
+        }
+        else
+        {
+            /* type mismatch */
+            FLUID_LOG(FLUID_ERR, "Failed to register int setting '%s' as it already exists with a different type", name);
+        }
+    }
+
+    fluid_rec_mutex_unlock(settings->mutex);
+
+    return retval;
+}
+#endif
+
 
 int fluid_settings_get_type (fluid_settings_t * settings, const char *name) {
 	int type;

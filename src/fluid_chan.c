@@ -18,10 +18,10 @@
  * 02111-1307, USA
  */
 
-#include "include/fluid_chan.h"
-#include "include/fluid_mod.h"
-#include "include/fluid_synth.h"
-#include "include/fluid_sfont.h"
+#include "fluid_chan.h"
+#include "fluid_mod.h"
+#include "fluid_synth.h"
+#include "fluid_sfont.h"
 
 #define SETCC(_c,_n,_v)  _c->cc[_n] = _v
 
@@ -54,8 +54,7 @@ void fluid_channel_init (fluid_channel_t * chan) {
 
 	if (chan->preset)
 		delete_fluid_preset (chan->preset);
-	chan->preset =
-		fluid_synth_find_preset (chan->synth, chan->banknum, chan->prognum);
+	chan->preset = fluid_synth_find_preset(chan->synth, chan->banknum, chan->prognum);
 
 	chan->interp_method = FLUID_INTERP_DEFAULT;
 	chan->tuning = NULL;

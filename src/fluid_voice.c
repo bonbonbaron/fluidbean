@@ -116,16 +116,11 @@ int delete_fluid_voice (fluid_voice_t * voice) {
  *
  * Initialize the synthesis process
  */
-int
-fluid_voice_init (fluid_voice_t * voice, fluid_sample_t * sample,
-									fluid_channel_t * channel, int key, int vel,
-									U32 id, U32 start_time,
-									fluid_real_t gain) {
+int fluid_voice_init (fluid_voice_t * voice, fluid_sample_t * sample, fluid_channel_t * channel, int key, int vel, U32 id, U32 start_time, fluid_real_t gain) {
 	/* Note: The voice parameters will be initialized later, when the
 	 * generators have been retrieved from the sound font. Here, only
 	 * the 'working memory' of the voice (position in envelopes, history
 	 * of IIR filters, position in sample etc) is initialized. */
-
 
 	voice->id = id;
 	voice->chan = fluid_channel_get_num (channel);

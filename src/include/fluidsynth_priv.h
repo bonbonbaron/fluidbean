@@ -22,8 +22,10 @@
 #ifndef _FLUIDSYNTH_PRIV_H
 #define _FLUIDSYNTH_PRIV_H
 
-#include "fluid_config.h"
+//#include "fluid_config.h"
+#include "config.h"
 #include "botox/data.h"
+#include <glib.h>
 
 #if HAVE_STRING_H
 #include <string.h>
@@ -147,6 +149,28 @@ typedef u_int64_t uint64;
 #endif
 #endif /* */
 
+#define fluid_return_if_fail(cond) \
+if(cond) \
+    ; \
+else \
+    return
+
+#define fluid_return_val_if_fail(cond, val) \
+ fluid_return_if_fail(cond) (val)
+
+/** Atomic types  */
+typedef int fluid_atomic_int_t;
+typedef unsigned int fluid_atomic_uint_t;
+typedef float fluid_atomic_float_t;
+#if defined(_MSC_VER) && (_MSC_VER < 1800)
+typedef __int64 fluid_long_long_t; // even on 32bit windows
+#else
+/**
+ * A typedef for C99's type long long, which is at least 64-bit wide, as guaranteed by the C99.
+ * @p __int64 will be used as replacement for VisualStudio 2010 and older.
+ */
+typedef long long fluid_long_long_t;
+#endif
 
 /***************************************************************
  *

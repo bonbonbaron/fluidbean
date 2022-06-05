@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/bonbonbaron/hack/fluidbean/src -I/home/bonbonbaron/hack/fluidbean/include -I/home/bonbonbaron/hack/fluidbean/libbotox/src/include
+C_INCLUDES = -I/home/bonbonbaron/hack/fluidbean/libbotox/src/include
 
 C_FLAGS = -g
 

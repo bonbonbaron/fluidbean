@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o"
+  "CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_chan.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_chorus.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_conv.c.o"
@@ -10,6 +12,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/fluidbean.dir/src/fluid_list.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_mod.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_rev.c.o"
+  "CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_settings.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_synth.c.o"
   "CMakeFiles/fluidbean.dir/src/fluid_sys.c.o"

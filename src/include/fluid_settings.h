@@ -40,9 +40,14 @@ typedef S32 (*fluid_int_update_t) (void *data, const S8 *name, S32 value);
 
 /** returns 0 if the value has been resgister correctly, non-zero
     otherwise */
+#if 0
 S32 fluid_settings_register_str (fluid_settings_t * settings,
 																 const S8 *name, S8 *def, S32 hints,
 																 fluid_str_update_t fun, void *data);
+#else
+S32 fluid_settings_register_str (fluid_settings_t * settings,
+																 const S8 *name, S8 *def, S32 hints);
+#endif
 
 /** returns 0 if the value has been resgister correctly, non-zero
     otherwise */
@@ -54,10 +59,15 @@ S32 fluid_settings_register_num (fluid_settings_t * settings,
 
 /** returns 0 if the value has been resgister correctly, non-zero
     otherwise */
+#if 0
 S32 fluid_settings_register_int (fluid_settings_t * settings,
 																 const S8 *name, S32 min, S32 max, S32 def,
 																 S32 hints, fluid_int_update_t fun,
 																 void *data);
+#else 
+S32 fluid_settings_register_int (fluid_settings_t * settings,
+																 const S8 *name, S32 min, S32 max, S32 def, S32 hints);
+#endif
 
 
 #endif /* _FLUID_SETTINGS_H */

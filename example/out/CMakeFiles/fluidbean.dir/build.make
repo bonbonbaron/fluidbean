@@ -284,6 +284,45 @@ CMakeFiles/fluidbean.dir/src/fluid_voice.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fluidbean.dir/src/fluid_voice.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/bonbonbaron/hack/fluidbean/src/fluid_voice.c -o CMakeFiles/fluidbean.dir/src/fluid_voice.c.s
 
+CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o: CMakeFiles/fluidbean.dir/flags.make
+CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o: ../../src/fluid_ringbuffer.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o -c /home/bonbonbaron/hack/fluidbean/src/fluid_ringbuffer.c
+
+CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/bonbonbaron/hack/fluidbean/src/fluid_ringbuffer.c > CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.i
+
+CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/bonbonbaron/hack/fluidbean/src/fluid_ringbuffer.c -o CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.s
+
+CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o: CMakeFiles/fluidbean.dir/flags.make
+CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o: ../../drivers/fluid_adriver.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o -c /home/bonbonbaron/hack/fluidbean/drivers/fluid_adriver.c
+
+CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/bonbonbaron/hack/fluidbean/drivers/fluid_adriver.c > CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.i
+
+CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/bonbonbaron/hack/fluidbean/drivers/fluid_adriver.c -o CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.s
+
+CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o: CMakeFiles/fluidbean.dir/flags.make
+CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o: ../../drivers/fluid_alsa.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o -c /home/bonbonbaron/hack/fluidbean/drivers/fluid_alsa.c
+
+CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/bonbonbaron/hack/fluidbean/drivers/fluid_alsa.c > CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.i
+
+CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/bonbonbaron/hack/fluidbean/drivers/fluid_alsa.c -o CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.s
+
 # Object files for target fluidbean
 fluidbean_OBJECTS = \
 "CMakeFiles/fluidbean.dir/src/fluid_init.c.o" \
@@ -301,7 +340,10 @@ fluidbean_OBJECTS = \
 "CMakeFiles/fluidbean.dir/src/fluid_synth.c.o" \
 "CMakeFiles/fluidbean.dir/src/fluid_sys.c.o" \
 "CMakeFiles/fluidbean.dir/src/fluid_tuning.c.o" \
-"CMakeFiles/fluidbean.dir/src/fluid_voice.c.o"
+"CMakeFiles/fluidbean.dir/src/fluid_voice.c.o" \
+"CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o" \
+"CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o" \
+"CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o"
 
 # External object files for target fluidbean
 fluidbean_EXTERNAL_OBJECTS =
@@ -322,9 +364,12 @@ libfluidbean.a: CMakeFiles/fluidbean.dir/src/fluid_synth.c.o
 libfluidbean.a: CMakeFiles/fluidbean.dir/src/fluid_sys.c.o
 libfluidbean.a: CMakeFiles/fluidbean.dir/src/fluid_tuning.c.o
 libfluidbean.a: CMakeFiles/fluidbean.dir/src/fluid_voice.c.o
+libfluidbean.a: CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o
+libfluidbean.a: CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o
+libfluidbean.a: CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o
 libfluidbean.a: CMakeFiles/fluidbean.dir/build.make
 libfluidbean.a: CMakeFiles/fluidbean.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking C static library libfluidbean.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking C static library libfluidbean.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/fluidbean.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fluidbean.dir/link.txt --verbose=$(VERBOSE)
 

@@ -201,6 +201,60 @@ fluidbean/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/build
 .PHONY : fluidbean/fast
 
+drivers/fluid_adriver.o: drivers/fluid_adriver.c.o
+
+.PHONY : drivers/fluid_adriver.o
+
+# target to build an object file
+drivers/fluid_adriver.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.o
+.PHONY : drivers/fluid_adriver.c.o
+
+drivers/fluid_adriver.i: drivers/fluid_adriver.c.i
+
+.PHONY : drivers/fluid_adriver.i
+
+# target to preprocess a source file
+drivers/fluid_adriver.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.i
+.PHONY : drivers/fluid_adriver.c.i
+
+drivers/fluid_adriver.s: drivers/fluid_adriver.c.s
+
+.PHONY : drivers/fluid_adriver.s
+
+# target to generate assembly for a file
+drivers/fluid_adriver.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/fluid_adriver.c.s
+.PHONY : drivers/fluid_adriver.c.s
+
+drivers/fluid_alsa.o: drivers/fluid_alsa.c.o
+
+.PHONY : drivers/fluid_alsa.o
+
+# target to build an object file
+drivers/fluid_alsa.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.o
+.PHONY : drivers/fluid_alsa.c.o
+
+drivers/fluid_alsa.i: drivers/fluid_alsa.c.i
+
+.PHONY : drivers/fluid_alsa.i
+
+# target to preprocess a source file
+drivers/fluid_alsa.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.i
+.PHONY : drivers/fluid_alsa.c.i
+
+drivers/fluid_alsa.s: drivers/fluid_alsa.c.s
+
+.PHONY : drivers/fluid_alsa.s
+
+# target to generate assembly for a file
+drivers/fluid_alsa.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/fluid_alsa.c.s
+.PHONY : drivers/fluid_alsa.c.s
+
 libbotox/src/bt.o: libbotox/src/bt.c.o
 
 .PHONY : libbotox/src/bt.o
@@ -579,6 +633,33 @@ src/fluid_rev.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_rev.c.s
 .PHONY : src/fluid_rev.c.s
 
+src/fluid_ringbuffer.o: src/fluid_ringbuffer.c.o
+
+.PHONY : src/fluid_ringbuffer.o
+
+# target to build an object file
+src/fluid_ringbuffer.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o
+.PHONY : src/fluid_ringbuffer.c.o
+
+src/fluid_ringbuffer.i: src/fluid_ringbuffer.c.i
+
+.PHONY : src/fluid_ringbuffer.i
+
+# target to preprocess a source file
+src/fluid_ringbuffer.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.i
+.PHONY : src/fluid_ringbuffer.c.i
+
+src/fluid_ringbuffer.s: src/fluid_ringbuffer.c.s
+
+.PHONY : src/fluid_ringbuffer.s
+
+# target to generate assembly for a file
+src/fluid_ringbuffer.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.s
+.PHONY : src/fluid_ringbuffer.c.s
+
 src/fluid_settings.o: src/fluid_settings.c.o
 
 .PHONY : src/fluid_settings.o
@@ -728,6 +809,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... botox"
 	@echo "... fluidbean"
+	@echo "... drivers/fluid_adriver.o"
+	@echo "... drivers/fluid_adriver.i"
+	@echo "... drivers/fluid_adriver.s"
+	@echo "... drivers/fluid_alsa.o"
+	@echo "... drivers/fluid_alsa.i"
+	@echo "... drivers/fluid_alsa.s"
 	@echo "... libbotox/src/bt.o"
 	@echo "... libbotox/src/bt.i"
 	@echo "... libbotox/src/bt.s"
@@ -770,6 +857,9 @@ help:
 	@echo "... src/fluid_rev.o"
 	@echo "... src/fluid_rev.i"
 	@echo "... src/fluid_rev.s"
+	@echo "... src/fluid_ringbuffer.o"
+	@echo "... src/fluid_ringbuffer.i"
+	@echo "... src/fluid_ringbuffer.s"
 	@echo "... src/fluid_settings.o"
 	@echo "... src/fluid_settings.i"
 	@echo "... src/fluid_settings.s"

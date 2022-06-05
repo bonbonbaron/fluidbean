@@ -415,3 +415,369 @@ Parsed CXX implicit link information from above output:
   implicit fwks: []
 
 
+Determining if files dlfcn.h;stdint.h;stddef.h;inttypes.h;stdlib.h;strings.h;string.h;float.h exist passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_2b758/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_2b758.dir/build.make CMakeFiles/cmTC_2b758.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_2b758.dir/StandardHeadersExist.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_2b758.dir/StandardHeadersExist.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CheckIncludeFiles/StandardHeadersExist.c
+Linking C executable cmTC_2b758
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2b758.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_2b758.dir/StandardHeadersExist.c.o -o cmTC_2b758 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Performing C SOURCE FILE Test memchrExists succeeded with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_187a0/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_187a0.dir/build.make CMakeFiles/cmTC_187a0.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_187a0.dir/src.c.o
+/usr/bin/cc   -DmemchrExists -o CMakeFiles/cmTC_187a0.dir/src.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_187a0
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_187a0.dir/link.txt --verbose=1
+/usr/bin/cc  -DmemchrExists -rdynamic CMakeFiles/cmTC_187a0.dir/src.c.o -o cmTC_187a0 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+#include <string.h>
+
+int main()
+{
+#ifndef memchr
+   int i = sizeof(&memchr);
+#endif
+  return 0;
+}
+
+Performing C SOURCE FILE Test freeExists succeeded with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_c31c8/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_c31c8.dir/build.make CMakeFiles/cmTC_c31c8.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_c31c8.dir/src.c.o
+/usr/bin/cc   -DfreeExists -o CMakeFiles/cmTC_c31c8.dir/src.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_c31c8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c31c8.dir/link.txt --verbose=1
+/usr/bin/cc  -DfreeExists -rdynamic CMakeFiles/cmTC_c31c8.dir/src.c.o -o cmTC_c31c8 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+
+#include <stdlib.h>
+
+int main()
+{
+#ifndef free
+   int i = sizeof(&free);
+#endif
+  return 0;
+}
+
+Determining if files unistd.h exist passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_24ec4/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_24ec4.dir/build.make CMakeFiles/cmTC_24ec4.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_24ec4.dir/HAVE_UNISTD_H.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_24ec4.dir/HAVE_UNISTD_H.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CheckIncludeFiles/HAVE_UNISTD_H.c
+Linking C executable cmTC_24ec4
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_24ec4.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_24ec4.dir/HAVE_UNISTD_H.c.o -o cmTC_24ec4 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the DIR symbol is defined as in AC_HEADER_DIRENT passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_e8cc7/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_e8cc7.dir/build.make CMakeFiles/cmTC_e8cc7.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_e8cc7.dir/CheckDIRSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_e8cc7.dir/CheckDIRSymbolExists.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c
+Linking C executable cmTC_e8cc7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e8cc7.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_e8cc7.dir/CheckDIRSymbolExists.c.o -o cmTC_e8cc7 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+File /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c:
+/* */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+int main()
+{if ((DIR *) 0) return 0;}
+
+Determining if the include file stdio.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_34fa2/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_34fa2.dir/build.make CMakeFiles/cmTC_34fa2.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_34fa2.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_34fa2.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_34fa2
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_34fa2.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_34fa2.dir/CheckIncludeFile.c.o -o cmTC_34fa2 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file math.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_48385/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_48385.dir/build.make CMakeFiles/cmTC_48385.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_48385.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_48385.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_48385
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48385.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_48385.dir/CheckIncludeFile.c.o -o cmTC_48385 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file errno.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_6868e/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_6868e.dir/build.make CMakeFiles/cmTC_6868e.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_6868e.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_6868e.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_6868e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6868e.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_6868e.dir/CheckIncludeFile.c.o -o cmTC_6868e 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file stdarg.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_5607c/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_5607c.dir/build.make CMakeFiles/cmTC_5607c.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_5607c.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_5607c.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_5607c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5607c.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_5607c.dir/CheckIncludeFile.c.o -o cmTC_5607c 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file sys/mman.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_55aee/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_55aee.dir/build.make CMakeFiles/cmTC_55aee.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_55aee.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_55aee.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_55aee
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_55aee.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_55aee.dir/CheckIncludeFile.c.o -o cmTC_55aee 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file sys/time.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_08484/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_08484.dir/build.make CMakeFiles/cmTC_08484.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_08484.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_08484.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_08484
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_08484.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_08484.dir/CheckIncludeFile.c.o -o cmTC_08484 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file fcntl.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_639e7/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_639e7.dir/build.make CMakeFiles/cmTC_639e7.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_639e7.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_639e7.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_639e7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_639e7.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_639e7.dir/CheckIncludeFile.c.o -o cmTC_639e7 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file sys/socket.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_d1411/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_d1411.dir/build.make CMakeFiles/cmTC_d1411.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_d1411.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_d1411.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_d1411
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d1411.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_d1411.dir/CheckIncludeFile.c.o -o cmTC_d1411 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file netinet/in.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_c6c2e/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_c6c2e.dir/build.make CMakeFiles/cmTC_c6c2e.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_c6c2e.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_c6c2e.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_c6c2e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c6c2e.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_c6c2e.dir/CheckIncludeFile.c.o -o cmTC_c6c2e 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file netinet/tcp.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_502f6/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_502f6.dir/build.make CMakeFiles/cmTC_502f6.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_502f6.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_502f6.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_502f6
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_502f6.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_502f6.dir/CheckIncludeFile.c.o -o cmTC_502f6 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file arpa/inet.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_750b9/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_750b9.dir/build.make CMakeFiles/cmTC_750b9.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_750b9.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_750b9.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_750b9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_750b9.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_750b9.dir/CheckIncludeFile.c.o -o cmTC_750b9 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file limits.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_a472a/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_a472a.dir/build.make CMakeFiles/cmTC_a472a.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_a472a.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_a472a.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_a472a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a472a.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_a472a.dir/CheckIncludeFile.c.o -o cmTC_a472a 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file pthread.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_44e5f/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_44e5f.dir/build.make CMakeFiles/cmTC_44e5f.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_44e5f.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_44e5f.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_44e5f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_44e5f.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_44e5f.dir/CheckIncludeFile.c.o -o cmTC_44e5f 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file signal.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_0effa/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_0effa.dir/build.make CMakeFiles/cmTC_0effa.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_0effa.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_0effa.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_0effa
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0effa.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_0effa.dir/CheckIncludeFile.c.o -o cmTC_0effa 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the include file getopt.h exists passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_7ec07/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_7ec07.dir/build.make CMakeFiles/cmTC_7ec07.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7ec07.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_7ec07.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_7ec07
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7ec07.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_7ec07.dir/CheckIncludeFile.c.o -o cmTC_7ec07 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
+Determining size of long long passed with the following output:
+Change Dir: /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_31212/fast && gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+/usr/bin/gmake  -f CMakeFiles/cmTC_31212.dir/build.make CMakeFiles/cmTC_31212.dir/build
+gmake[2]: Entering directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_31212.dir/LONG_LONG.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_31212.dir/LONG_LONG.c.o -c /home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CheckTypeSize/LONG_LONG.c
+Linking C executable cmTC_31212
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_31212.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_31212.dir/LONG_LONG.c.o -o cmTC_31212 
+gmake[2]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/example/out/CMakeFiles/CMakeTmp'
+
+
+
