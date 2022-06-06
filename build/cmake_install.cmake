@@ -53,15 +53,11 @@ endif()
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/fluidbean" TYPE FILE FILES
     "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/types.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/settings.h"
     "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/synth.h"
     "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/sfont.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/log.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/misc.h"
     "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/mod.h"
     "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/gen.h"
     "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/voice.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/version.h"
     )
 endif()
 

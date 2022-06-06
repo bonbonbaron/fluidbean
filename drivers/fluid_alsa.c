@@ -48,8 +48,7 @@
  * This structure should not be accessed directly. Use audio port
  * functions instead.
  */
-typedef struct
-{
+typedef struct {
   fluid_audio_driver_t driver;
   snd_pcm_t *pcm;
   fluid_audio_func_t callback;
@@ -59,21 +58,17 @@ typedef struct
   int cont;
 } fluid_alsa_audio_driver_t;
 
-
 static fluid_thread_return_t fluid_alsa_audio_run_float(void *d);
 static fluid_thread_return_t fluid_alsa_audio_run_s16(void *d);
 
-
-typedef struct
-{
+typedef struct {
   char *name;
   snd_pcm_format_t format;
   snd_pcm_access_t access;
   fluid_thread_func_t run;
 } fluid_alsa_formats_t;
 
-static const fluid_alsa_formats_t fluid_alsa_formats[] =
-{
+static const fluid_alsa_formats_t fluid_alsa_formats[] = {
   {
     "s16, rw, interleaved",
     SND_PCM_FORMAT_S16,
@@ -115,8 +110,7 @@ static fluid_thread_return_t fluid_alsa_midi_run(void *d);
  * fluid_alsa_seq_driver_t
  *
  */
-typedef struct
-{
+typedef struct {
   fluid_midi_driver_t driver;
   snd_seq_t *seq_handle;
   struct pollfd *pfd;
@@ -130,29 +124,18 @@ typedef struct
 
 static fluid_thread_return_t fluid_alsa_seq_run(void *d);
 
-/**************************************************************
- *
- *    Alsa audio driver
- *
- */
+/* Alsa audio driver */
 
-void fluid_alsa_audio_driver_settings(fluid_settings_t *settings)
-{
+void fluid_alsa_audio_driver_settings(fluid_settings_t *settings) {
   fluid_settings_register_str(settings, "audio.alsa.device", "default", 0);
 }
 
 
-fluid_audio_driver_t *
-new_fluid_alsa_audio_driver(fluid_settings_t *settings,
-              fluid_synth_t *synth)
-{
+fluid_audio_driver_t * new_fluid_alsa_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth) {
   return new_fluid_alsa_audio_driver2(settings, NULL, synth);
 }
 
-fluid_audio_driver_t *
-new_fluid_alsa_audio_driver2(fluid_settings_t *settings,
-               fluid_audio_func_t func, void *data)
-{
+fluid_audio_driver_t * new_fluid_alsa_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data) {
   fluid_alsa_audio_driver_t *dev;
   double sample_rate;
   int periods, period_size;
@@ -211,25 +194,20 @@ new_fluid_alsa_audio_driver2(fluid_settings_t *settings,
      memory mapped access fails we try regular IO methods. (not
      finished, yet). */
 
-  for(i = 0; fluid_alsa_formats[i].name != NULL; i++)
-  {
-
+  for(i = 0; fluid_alsa_formats[i].name != NULL; i++) {
     snd_pcm_hw_params_any(dev->pcm, hwparams);
 
-    if(snd_pcm_hw_params_set_access(dev->pcm, hwparams, fluid_alsa_formats[i].access) < 0)
-    {
+    if(snd_pcm_hw_params_set_access(dev->pcm, hwparams, fluid_alsa_formats[i].access) < 0) {
       FLUID_LOG(FLUID_DBG, "snd_pcm_hw_params_set_access() failed with audio format '%s'", fluid_alsa_formats[i].name);
       continue;
     }
 
-    if(snd_pcm_hw_params_set_format(dev->pcm, hwparams, fluid_alsa_formats[i].format) < 0)
-    {
+    if(snd_pcm_hw_params_set_format(dev->pcm, hwparams, fluid_alsa_formats[i].format) < 0) {
       FLUID_LOG(FLUID_DBG, "snd_pcm_hw_params_set_format() failed with audio format '%s'", fluid_alsa_formats[i].name);
       continue;
     }
 
-    if((err = snd_pcm_hw_params_set_channels(dev->pcm, hwparams, 2)) < 0)
-    {
+    if((err = snd_pcm_hw_params_set_channels(dev->pcm, hwparams, 2)) < 0) {
       FLUID_LOG(FLUID_ERR, "Failed to set the channels: %s",
             snd_strerror(err));
       goto error_recovery;
@@ -237,15 +215,13 @@ new_fluid_alsa_audio_driver2(fluid_settings_t *settings,
 
     tmp = (unsigned int) sample_rate;
 
-    if((err = snd_pcm_hw_params_set_rate_near(dev->pcm, hwparams, &tmp, NULL)) < 0)
-    {
+    if((err = snd_pcm_hw_params_set_rate_near(dev->pcm, hwparams, &tmp, NULL)) < 0) {
       FLUID_LOG(FLUID_ERR, "Failed to set the sample rate: %s",
             snd_strerror(err));
       goto error_recovery;
     }
 
-    if(tmp != sample_rate)
-    {
+    if(tmp != sample_rate) {
       /* There's currently no way to change the sampling rate of the
       synthesizer after it's been created. */
       FLUID_LOG(FLUID_WARN, "Requested sample rate of %u, got %u instead, "
@@ -549,25 +525,18 @@ static fluid_thread_return_t fluid_alsa_audio_run_s16(void *d) {
       (*dev->callback)(dev->data, buffer_size, 0, NULL, 2, handle);
 
       /* convert floating point data to 16 bit (with dithering) */
-      fluid_synth_dither_s16(&dither_index, buffer_size, left, right,
-                   buf, 0, 2, buf, 1, 2);
+      fluid_synth_dither_s16(&dither_index, buffer_size, left, right, buf, 0, 2, buf, 1, 2);
       offset = 0;
 
       while(offset < buffer_size) {
-        n = snd_pcm_writei(dev->pcm, (void *)(buf + 2 * offset),
-                   buffer_size - offset);
+        n = snd_pcm_writei(dev->pcm, (void *)(buf + 2 * offset), buffer_size - offset);
 
-        if(n < 0)	/* error occurred? */
-        {
+        if(n < 0)	{
           if(fluid_alsa_handle_write_error(dev->pcm, n) != FLUID_OK)
-          {
             goto error_recovery;
-          }
         }
         else
-        {
           offset += n;  /* no error occurred */
-        }
       }	/* while (offset < buffer_size) */
     }	/* while (dev->cont) */
   }
@@ -605,8 +574,7 @@ error_recovery:
  */
 
 
-void fluid_alsa_rawmidi_driver_settings(fluid_settings_t *settings)
-{
+void fluid_alsa_rawmidi_driver_settings(fluid_settings_t *settings) {
   fluid_settings_register_str(settings, "midi.alsa.device", "default", 0);
 }
 

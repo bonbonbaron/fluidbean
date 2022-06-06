@@ -10,7 +10,6 @@
 */
 
 #include "include/fluid_rev.h"
-#include "include/fluid_rev.h"
 
 /***************************************************************
  *

@@ -109,11 +109,8 @@
 #include <signal.h>
 #endif
 
-
-
 /** Integer types  */
-//#if HAVE_STDINT_H
-#if 0
+#if HAVE_STDINT_H
 #include <stdint.h>
 
 #else
@@ -159,6 +156,8 @@ typedef gintptr  intptr_t;
 #ifdef LADSPA
 #include <gmodule.h>
 #endif
+
+#include <glib/gstdio.h>
 
 /**
  * Macro used for safely accessing a message from a GError and using a default
@@ -218,13 +217,19 @@ typedef int socklen_t;
 #endif
 #endif
 
-/** Time functions */
+/**
+    Time functions
+
+ */
 
 unsigned int fluid_curtime(void);
 double fluid_utime(void);
 
 
-/** Timers */
+/**
+    Timers
+
+ */
 
 /* if the callback function returns 1 the timer will continue; if it
    returns 0 it will stop */
@@ -440,26 +445,6 @@ typedef void *fluid_thread_return_t;
 
 typedef GThread fluid_thread_t;
 typedef fluid_thread_return_t (*fluid_thread_func_t)(void *data);
-#if defined(WIN32)
-typedef SOCKET fluid_socket_t;
-#else
-typedef int fluid_socket_t;
-#endif
-
-/* The function should return 0 if no error occurred, non-zero
-   otherwise. If the function return non-zero, the socket will be
-   closed by the server. */
-typedef int (*fluid_server_func_t)(void *data, fluid_socket_t client_socket, char *addr);
-
-struct _fluid_server_socket_t {
-    fluid_socket_t socket;
-    fluid_thread_t *thread;
-    int cont;
-    fluid_server_func_t func;
-    void *data;
-};
-
-typedef struct _fluid_server_socket_t fluid_server_socket_t;
 
 #define FLUID_THREAD_ID_NULL            NULL                    /* A NULL "ID" value */
 #define fluid_thread_id_t               GThread *               /* Data type for a thread ID */
@@ -500,16 +485,15 @@ typedef int fluid_socket_t;
    closed by the server. */
 typedef int (*fluid_server_func_t)(void *data, fluid_socket_t client_socket, char *addr);
 
-fluid_server_socket_t *new_fluid_server_socket(int port, fluid_server_func_t func, void *data);
-void delete_fluid_server_socket(fluid_server_socket_t *sock);
-int fluid_server_socket_join(fluid_server_socket_t *sock);
+fluid_socket_t *new_fluid_server_socket(int port, fluid_server_func_t func, void *data);
+void delete_fluid_server_socket(fluid_socket_t *sock);
+int fluid_server_socket_join(fluid_socket_t *sock);
 void fluid_socket_close(fluid_socket_t sock);
 fluid_istream_t fluid_socket_get_istream(fluid_socket_t sock);
 fluid_ostream_t fluid_socket_get_ostream(fluid_socket_t sock);
 
 /* File access */
 #define fluid_stat(_filename, _statbuf)   g_stat((_filename), (_statbuf))
-#if 0
 #if !GLIB_CHECK_VERSION(2, 26, 0)
     /* GStatBuf has not been introduced yet, manually typedef to what they had at that time:
      * https://github.com/GNOME/glib/blob/e7763678b56e3be073cc55d707a6e92fc2055ee0/glib/gstdio.h#L98-L115
@@ -526,7 +510,6 @@ fluid_ostream_t fluid_socket_get_ostream(fluid_socket_t sock);
     #endif
 #else
 typedef GStatBuf fluid_stat_buf_t;
-#endif
 #endif
 
 FILE* fluid_file_open(const char* filename, const char** errMsg);
@@ -778,7 +761,6 @@ static FLUID_INLINE void *fluid_align_ptr(const void *ptr, unsigned int alignmen
     ptr_int += add;
 
     /* assert alignment is power of two */
-    //FLUID_ASSERT(!(alignment == 0) && !(alignment & (alignment - 1)));
 
     return (void *)ptr_int;
 }

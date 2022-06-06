@@ -20,6 +20,7 @@
 
 #include "include/fluidsynth_priv.h"
 #include "include/fluid_phase.h"
+#include "include/fluid_list.h"
 
 /* Purpose:
  *

@@ -17,15 +17,11 @@ set(DRIVER_DIR ${CMAKE_SOURCE_DIR}/drivers)
 
 list(APPEND SCOPED_HEADERS
     include/fluidsynth/types.h
-    include/fluidsynth/settings.h
     include/fluidsynth/synth.h
     include/fluidsynth/sfont.h
-    include/fluidsynth/log.h
-    include/fluidsynth/misc.h
     include/fluidsynth/mod.h
     include/fluidsynth/gen.h
     include/fluidsynth/voice.h
-    include/fluidsynth/version.h
 )
 
 list(APPEND SOURCES
@@ -36,17 +32,14 @@ list(APPEND SOURCES
     src/fluid_defsfont.c
     src/fluid_dsp_float.c
     src/fluid_gen.c
-    src/fluid_hash.c
     src/fluid_list.c
     src/fluid_mod.c
     src/fluid_rev.c
-    src/fluid_settings.c
     src/fluid_synth.c
     src/fluid_sys.c
     src/fluid_tuning.c
     src/fluid_voice.c
     src/fluid_ringbuffer.c
-    src/fluid_sys.c
     ${DRIVER_DIR}/fluid_adriver.c
     ${DRIVER_DIR}/fluid_alsa.c
 )
@@ -118,10 +111,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${DRIVER_DIR}/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/fluidsynth)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC SF3_SUPPORT=${SF3_SUPPORT})
 
 install(TARGETS ${FLUIDBEAN_INSTALL_TARGETS}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}

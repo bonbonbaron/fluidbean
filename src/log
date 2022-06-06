@@ -1,9 +1,0 @@
-[mp3 @ 0x187a530] Skipping 275 bytes of junk at 0.
-Input #0, mp3, from 'http://icecast1.play.cz/kissproton128.mp3':
-  Metadata:
-    icy-br          : 128
-    icy-name        : Radio Kiss
-    icy-pub         : 0
-    StreamTitle     : 
-  Duration: N/A, start: 0.000000, bitrate: 128 kb/s
-    Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 128 kb/s

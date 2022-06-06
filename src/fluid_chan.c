@@ -18,10 +18,10 @@
  * 02111-1307, USA
  */
 
-#include "fluid_chan.h"
-#include "fluid_mod.h"
-#include "fluid_synth.h"
-#include "fluid_sfont.h"
+#include "include/fluid_chan.h"
+#include "include/fluid_synth.h"
+#include "include/fluid_voice.h"
+#include "include/fluid_sfont.h"
 
 #define SETCC(_c,_n,_v)  _c->cc[_n] = _v
 
@@ -32,10 +32,8 @@ fluid_channel_t *new_fluid_channel (fluid_synth_t * synth, int num) {
 	fluid_channel_t *chan;
 
 	chan = FLUID_NEW (fluid_channel_t);
-	if (chan == NULL) {
-		FLUID_LOG (FLUID_ERR, "Out of memory");
+	if (chan == NULL) 
 		return NULL;
-	}
 
 	chan->synth = synth;
 	chan->channum = num;
@@ -226,11 +224,8 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 
 	case BANK_SELECT_MSB:
 		{
-			if (chan->channum == 9
-					&& fluid_settings_str_equal (chan->synth->settings,
-																			 "synth.drums-channel.active", "yes")) {
+			if (chan->channum == 9 && chan->synth->settingsP->flags & DRUM_CHANNEL_IS_ACTIVE)
 				return FLUID_OK;				/* ignored */
-			}
 
 			chan->bank_msb = (unsigned char) (value & 0x7f);
 /*      printf("** bank select msb recieved: %d\n", value); */
@@ -249,11 +244,8 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 
 	case BANK_SELECT_LSB:
 		{
-			if (chan->channum == 9
-					&& fluid_settings_str_equal (chan->synth->settings,
-																			 "synth.drums-channel.active", "yes")) {
+			if (chan->channum == 9 && chan->synth->settingsP->flags & DRUM_CHANNEL_IS_ACTIVE)
 				return FLUID_OK;				/* ignored */
-			}
 			/* FIXME: according to the Downloadable Sounds II specification,
 			   bit 31 should be set when we receive the message on channel
 			   10 (drum channel) */

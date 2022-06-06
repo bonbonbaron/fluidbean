@@ -28,13 +28,8 @@
  */
 
 #include "fluid_synth.h"
-#define fluid_fileapi_delete(_fileapi) {  \
-    if ((_fileapi) && (_fileapi)->free)   \
-      (*(_fileapi)->free)(_fileapi);      \
-}
 #define fluid_sfloader_delete(_loader) {                 \
     if (_loader) {                                       \
-       fluid_fileapi_delete((_loader)->fileapi);         \
        if ((_loader)->free) (*(_loader)->free)(_loader); \
     }                                                    \
   }

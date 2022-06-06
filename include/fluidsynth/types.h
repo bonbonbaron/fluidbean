@@ -27,7 +27,15 @@
 extern "C" {
 #endif
 
+// trying this out for now, came from priv but didn't make any sense being there
+typedef struct _fluid_env_data_t fluid_env_data_t;
+typedef struct _fluid_adriver_definition_t fluid_adriver_definition_t;
+typedef struct _fluid_channel_t fluid_channel_t;
+typedef struct _fluid_tuning_t fluid_tuning_t;
+//typedef struct _fluid_hashtable_t fluid_hashtable_t;
+typedef struct _fluid_client_t fluid_client_t;
 
+typedef struct _FluidSettings FluidSettings;
 /*
 
   Forward declarations

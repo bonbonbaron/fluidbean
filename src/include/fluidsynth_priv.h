@@ -55,9 +55,7 @@
 #include <limits.h>
 #endif
 
-
 #include "fluidbean.h"
-
 
 /***************************************************************
  *
@@ -176,12 +174,6 @@ typedef long long fluid_long_long_t;
  *
  *       FORWARD DECLARATIONS
  */
-typedef struct _fluid_env_data_t fluid_env_data_t;
-typedef struct _fluid_adriver_definition_t fluid_adriver_definition_t;
-typedef struct _fluid_channel_t fluid_channel_t;
-typedef struct _fluid_tuning_t fluid_tuning_t;
-typedef struct _fluid_hashtable_t fluid_hashtable_t;
-typedef struct _fluid_client_t fluid_client_t;
 
 /***************************************************************
  *
@@ -248,5 +240,7 @@ S8 *fluid_error (void);
 /* Internationalization */
 #define _(s) s
 
+
+#include "fluidbean.h"
 
 #endif /* _FLUIDSYNTH_PRIV_H */

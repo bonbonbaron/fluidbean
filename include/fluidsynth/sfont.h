@@ -83,64 +83,15 @@ struct _fluid_sfloader_t {
   /** Load a file. Returns NULL if an error occured. */
   fluid_sfont_t* (*load)(fluid_sfloader_t* loader, const char* filename);
 
-  /** Callback structure specifying file operations used during soundfont loading to allow custom loading, such as from memory */
-  fluid_fileapi_t* fileapi;
 };
 
 /**
  * File callback structure to enable custom soundfont loading (e.g. from memory).
  */
-struct _fluid_fileapi_t {
-  /** Private data */
-  void* data;
 
-  /**
-   * The free must free the memory allocated for the loader in
-   * addition to any private data. It should return 0 if no error
-   * occured, non-zero otherwise.
-   */
-  int (*free)(fluid_fileapi_t* fileapi);
+fluid_sfloader_t* new_fluid_defsfloader();
 
-  /**
-   * Opens the file or memory indicated by \c filename in binary read mode.
-   * \c filename matches the one provided during the fluid_synth_sfload() call.
-   *
-   * @return returns a file handle on success, NULL otherwise
-   */
-  void *(*fopen)(fluid_fileapi_t* fileapi, const char * filename);
-
-  /**
-   * Reads \c count bytes to the specified buffer \c buf.
-   *
-   * @return returns #FLUID_OK if exactly \c count bytes were successfully read, else #FLUID_FAILED
-   */
-  int (*fread)(void *buf, int count, void* handle);
-
-  /**
-   * Same purpose and behaviour as fseek.
-   *
-   * @param origin either \c SEEK_SET, \c SEEK_CUR or \c SEEK_END
-   *
-   * @return returns #FLUID_OK if the seek was successfully performed while not seeking beyond a buffer or file, #FLUID_FAILED otherwise */
-  int (*fseek)(void* handle, long offset, int origin);
-
-  /**
-   * Closes the handle and frees used ressources.
-   *
-   * @return returns #FLUID_OK on success, #FLUID_FAILED on error */
-  int (*fclose)(void* handle);
-
-  /** @return returns current file offset or #FLUID_FAILED on error */
-  long (*ftell)(void* handle);
-};
-
-FLUIDSYNTH_API void fluid_init_default_fileapi(fluid_fileapi_t* fileapi);
-
-FLUIDSYNTH_API void fluid_set_default_fileapi(fluid_fileapi_t* fileapi);
-
-FLUIDSYNTH_API fluid_sfloader_t* new_fluid_defsfloader();
-
-FLUIDSYNTH_API int delete_fluid_defsfloader(fluid_sfloader_t* loader);
+int delete_fluid_defsfloader(fluid_sfloader_t* loader);
 
 /*
  * fluid_sfont_t

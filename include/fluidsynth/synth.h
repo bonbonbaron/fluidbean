@@ -26,7 +26,6 @@
 extern "C" {
 #endif
 
-
   /**   Embedded synthesizer
    *  
    *    You create a new synthesizer with new_fluid_synth() and you destroy
@@ -53,7 +52,8 @@ extern "C" {
    * \param settings a pointer to a settings structure
    * \return a newly allocated synthesizer or NULL in case of error
    */
-FLUIDSYNTH_API fluid_synth_t* new_fluid_synth(fluid_settings_t* settings);
+ 
+FLUIDSYNTH_API fluid_synth_t* new_fluid_synth(FluidSettings *settingsP);
 
 FLUIDSYNTH_API void fluid_synth_set_sample_rate(fluid_synth_t* synth, float sample_rate);
 
@@ -72,8 +72,6 @@ FLUIDSYNTH_API int delete_fluid_synth(fluid_synth_t* synth);
    * \param synth the synthesizer object
    * \return pointer to the settings
    */
-FLUIDSYNTH_API fluid_settings_t* fluid_synth_get_settings(fluid_synth_t* synth);
-
 
   /*
    * 

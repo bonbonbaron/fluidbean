@@ -28,13 +28,11 @@
  *                         INCLUDES
  */
 
-#include "fluid_config.h"
-#include "fluidsynth_priv.h"
-#include "fluid_list.h"
-#include "fluid_rev.h"
-#include "fluid_voice.h"
+//#include "fluid_sfont.h"
 #include "fluid_chorus.h"
-#include "fluid_sys.h"
+#include "fluid_mod.h"
+#include "fluid_rev.h"
+#include "fluid_list.h"
 
 /***************************************************************
  *
@@ -49,6 +47,38 @@
 #define FLUID_SAMPLE_FORMAT     FLUID_SAMPLE_DOUBLE
 #endif
 
+
+typedef enum {
+  VERBOSE = 0x01,
+  DUMP    = 0x02,
+  REVERB_IS_ACTIVE = 0x04,
+  CHORUS_IS_ACTIVE = 0x08,
+  LADSPA_IS_ACTIVE = 0x10,
+  DRUM_CHANNEL_IS_ACTIVE = 0x11
+} SettingsFlag;
+
+typedef struct {
+  S32 val, min, max;
+} Setting;
+
+struct _FluidSettings {
+  U8   flags;    //  Refer to SettingsFlag definition above.
+  S8   midiPortName[100];  // TODO: There must be a better way to do this.
+  //  synth settings
+  Setting synthNAudioChannels;
+  Setting synthNAudioGroups;
+  Setting synthNEffectsChannels;
+  Setting synthSampleRate;
+  Setting synthMinNoteLen;
+  Setting synthPolyphony;
+  Setting synthNMidiChannels;
+  Setting synthGain;
+};
+
+#define settingSet_(setting_, val_, min_, max_) \
+  setting_.val = val_; \
+  setting_.min = min_; \
+  setting_.max = max_; 
 
 /***************************************************************
  *
@@ -83,7 +113,7 @@ struct _fluid_bank_offset_t {
 
 struct _fluid_synth_t {
 	/* fluid_settings_old_t settings_old;  the old synthesizer settings */
-	fluid_settings_t *settings;					/** the synthesizer settings */
+  struct _FluidSettings *settingsP;
 	S32 polyphony;										 /** maximum polyphony */
 	S8 with_reverb;									 /** Should the synth use the built-in reverb unit? */
 	S8 with_chorus;									 /** Should the synth use the built-in chorus unit? */
@@ -134,6 +164,8 @@ struct _fluid_synth_t {
 	U32 min_note_length_ticks;	/**< If note-offs are triggered just after a note-on, they will be delayed */
 };
 
+
+fluid_synth_t *new_fluid_synth (FluidSettings *settingsP);
 /** returns 1 if the value has been set, 0 otherwise */
 S32 fluid_synth_setstr (fluid_synth_t * synth, S8 *name, S8 *str);
 
@@ -202,7 +234,7 @@ void fluid_synth_dither_s16 (S32 *dither_index, S32 len, float *lin,
  * misc
  */
 
-void fluid_synth_settings (fluid_settings_t * settings);
+void fluid_synth_settings (FluidSettings *settingsP);
 
 S32 fluid_synth_sfload (fluid_synth_t * synth, void *sfDataP, U32 sfDataLen, S32 reset_presets);
 #endif /* _FLUID_SYNTH_H */

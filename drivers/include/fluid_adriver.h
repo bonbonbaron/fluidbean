@@ -23,19 +23,56 @@
 
 #include "fluidsynth_priv.h"
 #include "audio.h"
+#include "include/fluid_synth.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*
- * fluid_audio_driver_t
- */
+//******************
+//******************
+// ENUMS
+//******************
+//******************
+
+/* Available audio drivers, listed in order of preference */
+typedef enum {
+  ALSA, 
+  JACK,
+  PULSEAUDIO,
+  PIPEWIRE,
+  OSS,
+  OBOE,
+  OPENSLES,
+  COREAUDIO,
+  DSOUND,
+  WASAPI,
+  WAVEOUT,
+  SNDMAN,
+  PORTAUDIO,
+  DART,
+  SDL2,
+  AUFILE
+} AudioDriverId;
+
+typedef enum {
+  _8_BITS,
+  _16_BITS,
+  _24_BITS    // MB: i don't think this is supported yet
+} AudioSampleFormat;
+  
+typedef struct {
+  Setting audioSampleFormat;
+  Setting audioPeriodSize;
+  Setting audioPeriods;
+  Setting audioRealTimePrio;
+  Setting audioDriver;
+} AudioSettings;
+
 
 typedef struct _fluid_audriver_definition_t fluid_audriver_definition_t;
 
-struct _fluid_audio_driver_t
-{
+struct _fluid_audio_driver_t {
     const fluid_audriver_definition_t *define;
 };
 
