@@ -47,7 +47,6 @@
 #define FLUID_SAMPLE_FORMAT     FLUID_SAMPLE_DOUBLE
 #endif
 
-
 typedef enum {
   VERBOSE = 0x01,
   DUMP    = 0x02,
@@ -61,7 +60,7 @@ typedef struct {
   S32 val, min, max;
 } Setting;
 
-struct _FluidSettings {
+struct _SynthSettings {
   U8   flags;    //  Refer to SettingsFlag definition above.
   S8   midiPortName[100];  // TODO: There must be a better way to do this.
   //  synth settings
@@ -74,6 +73,8 @@ struct _FluidSettings {
   Setting synthNMidiChannels;
   Setting synthGain;
 };
+
+extern struct _SynthSettings synthSettings;
 
 #define settingSet_(setting_, val_, min_, max_) \
   setting_.val = val_; \
@@ -113,7 +114,7 @@ struct _fluid_bank_offset_t {
 
 struct _fluid_synth_t {
 	/* fluid_settings_old_t settings_old;  the old synthesizer settings */
-  struct _FluidSettings *settingsP;
+  struct _SynthSettings *settingsP;
 	S32 polyphony;										 /** maximum polyphony */
 	S8 with_reverb;									 /** Should the synth use the built-in reverb unit? */
 	S8 with_chorus;									 /** Should the synth use the built-in chorus unit? */
@@ -165,7 +166,7 @@ struct _fluid_synth_t {
 };
 
 
-fluid_synth_t *new_fluid_synth (FluidSettings *settingsP);
+fluid_synth_t *new_fluid_synth ();
 /** returns 1 if the value has been set, 0 otherwise */
 S32 fluid_synth_setstr (fluid_synth_t * synth, S8 *name, S8 *str);
 

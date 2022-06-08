@@ -28,7 +28,6 @@
 #include "fluid_midi.h"
 #include "fluid_adriver.h"
 #include "fluid_mdriver.h"
-#include "fluid_settings.h"
 
 #if ALSA_SUPPORT
 
@@ -68,6 +67,7 @@ typedef struct {
   fluid_thread_func_t run;
 } fluid_alsa_formats_t;
 
+//MB get rid of float
 static const fluid_alsa_formats_t fluid_alsa_formats[] = {
   {
     "s16, rw, interleaved",

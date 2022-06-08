@@ -109,10 +109,10 @@ typedef int (*fluid_audio_func_t)(void *data, int len,
                                   int nout, float *out[]);
 
 /** @startlifecycle{Audio Driver} */
-FLUIDSYNTH_API fluid_audio_driver_t *new_fluid_audio_driver(fluid_settings_t *settings,
+FLUIDSYNTH_API fluid_audio_driver_t *new_fluid_audio_driver(AuDriverId auDriverId,
         fluid_synth_t *synth);
 
-FLUIDSYNTH_API fluid_audio_driver_t *new_fluid_audio_driver2(fluid_settings_t *settings,
+FLUIDSYNTH_API fluid_audio_driver_t *new_fluid_audio_driver2(AuDriverId auDriverId,
         fluid_audio_func_t func,
         void *data);
 

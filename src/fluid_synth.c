@@ -98,19 +98,18 @@ static fluid_revmodel_presets_t revmodel_preset[] = {
 
 
 /*************** INITIALIZATION & UTILITIES */
-
-void fluid_synth_settings (FluidSettings *settingsP) {
-  settingsP->flags = REVERB_IS_ACTIVE | CHORUS_IS_ACTIVE | DRUM_CHANNEL_IS_ACTIVE;
-  settingsP->midiPortName[0] = '\0';
-  settingSet_(settingsP->synthPolyphony, 256, 16, 4096);
-  settingSet_(settingsP->synthNMidiChannels, 16, 16, 256);
-  settingSet_(settingsP->synthGain, 1, 1, 1);  // 0.2, 0.o, 10.0... figure out later
-  settingSet_(settingsP->synthNAudioChannels, 1, 1, 256);
-  settingSet_(settingsP->synthNAudioGroups, 1, 1, 256);
-  settingSet_(settingsP->synthNEffectsChannels, 2, 2, 2);
-  settingSet_(settingsP->synthSampleRate, 44100, 22050, 96000);
-  settingSet_(settingsP->synthMinNoteLen, 10, 0, 65535);
-}
+struct _SynthSettings synthSettings = {
+  0,  // flags
+  "", // midi port name (limited to 100 characters)
+  {256, 16, 4096},        // polyphony
+  {16, 16, 256},          // # midi channels
+  {1, 1, 1},              // gain
+  {1, 1, 256},            // # audio channels
+  {1, 1, 256},            // # audio groups
+  {2, 2, 2},              // # effects channels
+  {44100, 22050, 96000},  // sample rate
+  {10, 0, 65535}          // min note length
+};
 
 /*
  * void fluid_synth_init
@@ -287,7 +286,7 @@ static void fluid_synth_init () {
 /*
  * new_fluid_synth
  */
-fluid_synth_t *new_fluid_synth (FluidSettings *settingsP) {
+fluid_synth_t *new_fluid_synth () {
 	int i;
 	fluid_synth_t *synth;
 	fluid_sfloader_t *loader;
@@ -303,43 +302,30 @@ fluid_synth_t *new_fluid_synth (FluidSettings *settingsP) {
 		return NULL;
 	FLUID_MEMSET (synth, 0, sizeof (fluid_synth_t));
 
-	//fluid_mutex_init(synth->busy);
-
-	synth->settingsP = settingsP;
-
-	synth->with_reverb           = settingsP->flags & REVERB_IS_ACTIVE;
-	synth->with_chorus           = settingsP->flags & CHORUS_IS_ACTIVE;
-	synth->verbose               = settingsP->flags & VERBOSE;
-	synth->dump                  = settingsP->flags & DUMP;
-  synth->polyphony             = settingsP->synthPolyphony.val;
-  synth->sample_rate           = settingsP->synthSampleRate.val;
-  synth->midi_channels         = settingsP->synthNMidiChannels.val;
-  synth->audio_channels        = settingsP->synthNAudioChannels.val;
-  synth->audio_groups          = settingsP->synthNAudioGroups.val;
-  synth->effects_channels      = settingsP->synthNEffectsChannels.val;
-  synth->gain                  = (double) settingsP->synthGain.val;
-  synth->min_note_length_ticks = (U32) (settingsP->synthMinNoteLen.val*synth->sample_rate/1000.0f);
-#if 0
-	/* register the callbacks */
-	fluid_settings_register_num (settingsP, "synth.gain",
-															 0.2f, 0.0f, 10.0f, 0,
-															 (fluid_num_update_t) fluid_synth_update_gain,
-															 synth);
-	fluid_settings_register_int (settingsP, "synth.polyphony", synth->polyphony,
-															 16, 4096, 0, (fluid_int_update_t)
-															 fluid_synth_update_polyphony, synth);
-#endif
+	synth->settingsP             = &synthSettings;
+	synth->with_reverb           = synthSettings.flags & REVERB_IS_ACTIVE;
+	synth->with_chorus           = synthSettings.flags & CHORUS_IS_ACTIVE;
+	synth->verbose               = synthSettings.flags & VERBOSE;
+	synth->dump                  = synthSettings.flags & DUMP;
+  synth->polyphony             = synthSettings.synthPolyphony.val;
+  synth->sample_rate           = synthSettings.synthSampleRate.val;
+  synth->midi_channels         = synthSettings.synthNMidiChannels.val;
+  synth->audio_channels        = synthSettings.synthNAudioChannels.val;
+  synth->audio_groups          = synthSettings.synthNAudioGroups.val;
+  synth->effects_channels      = synthSettings.synthNEffectsChannels.val;
+  synth->gain                  = (double) synthSettings.synthGain.val;
+  synth->min_note_length_ticks = (U32) (synthSettings.synthMinNoteLen.val*synth->sample_rate/1000.0f);
 
 	/* do some basic sanity checking on the settings */
 #define clipSetting_(synthSetting_, setting_) \
   if (synthSetting_ < setting_.min) synthSetting_ = setting_.min; \
   else if (synthSetting_ > setting_.max) synthSetting_ = setting_.max;
 	if (synth->midi_channels % 16 != 0) 
-		settingsP->synthNMidiChannels.val = synth->midi_channels = ((synth->midi_channels/16)+1)*16;
+		synthSettings.synthNMidiChannels.val = synth->midi_channels = ((synth->midi_channels/16)+1)*16;
 
-  clipSetting_(synth->audio_channels,   settingsP->synthNAudioChannels);
-  clipSetting_(synth->audio_groups,     settingsP->synthNAudioGroups);
-  clipSetting_(synth->effects_channels, settingsP->synthNEffectsChannels);
+  clipSetting_(synth->audio_channels,   synthSettings.synthNAudioChannels);
+  clipSetting_(synth->audio_groups,     synthSettings.synthNAudioGroups);
+  clipSetting_(synth->effects_channels, synthSettings.synthNEffectsChannels);
 
 	/* The number of buffers is determined by the higher number of nr
 	 * groups / nr audio channels.  If LADSPA is unused, they should be
@@ -449,7 +435,7 @@ fluid_synth_t *new_fluid_synth (FluidSettings *settingsP) {
 	if (synth->chorus == NULL) 
 		goto error_recovery;
 
-	if (settingsP->flags & DRUM_CHANNEL_IS_ACTIVE)
+	if (synthSettings.flags & DRUM_CHANNEL_IS_ACTIVE)
 		fluid_synth_bank_select (synth, 9, DRUM_INST_BANK);
 
 	return synth;
@@ -1985,11 +1971,12 @@ int fluid_synth_one_block (fluid_synth_t * synth, int do_not_mix_fx_to_out) {
 	fluid_real_t *right_buf;
 	fluid_real_t *reverb_buf;
 	fluid_real_t *chorus_buf;
-	int byte_size = FLUID_BUFSIZE * sizeof (fluid_real_t);
+	int byte_size = FLUID_BUFSIZE * sizeof (fluid_real_t);  // 64 * 4?
 
 /*   fluid_mutex_lock(synth->busy); /\* Here comes the audio thread. Lock the synth. *\/ */
 
 	/* clean the audio buffers */
+  // MB TODO: look at how this is defined so you can memset it in one fell swoop. This is lame.
 	for (i = 0; i < synth->nbuf; i++) {
 		FLUID_MEMSET (synth->left_buf[i], 0, byte_size);
 		FLUID_MEMSET (synth->right_buf[i], 0, byte_size);

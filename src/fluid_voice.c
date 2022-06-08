@@ -232,6 +232,7 @@ fluid_real_t fluid_voice_gen_value (fluid_voice_t * voice, int num) {
  * the dsp parameters (all the control data boil down to only a few
  * dsp parameters). The dsp routine is #included in several places (fluid_dsp_core.c).
  */
+// MB: Hmmm, okay... So what does dsp do then? 
 int
 fluid_voice_write (fluid_voice_t * voice,
 									 fluid_real_t * dsp_left_buf, fluid_real_t * dsp_right_buf,
@@ -263,6 +264,7 @@ fluid_voice_write (fluid_voice_t * voice,
 
 	/* Range checking for sample- and loop-related parameters
 	 * Initial phase is calculated here*/
+  // MB: This should be done offline, not at runtime.
 	fluid_voice_check_sample_sanity (voice);
 
 	/******************* vol env **********************/
@@ -533,7 +535,7 @@ fluid_voice_write (fluid_voice_t * voice,
 	}
 
 
-																					/*********************** run the dsp chain ************************
+  /*********************** run the dsp chain ************************
    * The sample is mixed with the output buffer.
    * The buffer has to be filled from 0 to FLUID_BUFSIZE-1.
    * Depending on the position in the loop and the loop size, this

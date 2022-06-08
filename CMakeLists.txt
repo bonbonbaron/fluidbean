@@ -14,6 +14,8 @@ list(APPEND HEADERS
 )
 
 set(DRIVER_DIR ${CMAKE_SOURCE_DIR}/drivers)
+set(AUDIO_DRIVER_DIR ${DRIVER_DIR}/audio)
+set(MIDI_DRIVER_DIR ${DRIVER_DIR}/midi)
 
 list(APPEND SCOPED_HEADERS
     include/fluidsynth/types.h
@@ -40,8 +42,16 @@ list(APPEND SOURCES
     src/fluid_tuning.c
     src/fluid_voice.c
     src/fluid_ringbuffer.c
-    ${DRIVER_DIR}/fluid_adriver.c
-    ${DRIVER_DIR}/fluid_alsa.c
+    # AUdio driver files
+    ${AUDIO_DRIVER_DIR}/fluid_adriver.c
+    ${AUDIO_DRIVER_DIR}/fluid_alsa.c
+    # Midi driver files
+    ${MIDI_DRIVER_DIR}/fluid_midi.c
+    ${MIDI_DRIVER_DIR}/fluid_midi_router.c
+    ${MIDI_DRIVER_DIR}/fluid_seq.c
+    ${MIDI_DRIVER_DIR}/fluid_seqbind.c
+    ${MIDI_DRIVER_DIR}/fluid_seqbind_notes.cpp
+    ${MIDI_DRIVER_DIR}/fluid_seq_queue.cpp
 )
 
 # Basic C library checks
@@ -110,6 +120,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${M_LIBRARY} PRIVATE ${BOTOX_LIB})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${MIDI_DRIVER_DIR}/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${AUDIO_DRIVER_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${DRIVER_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include/fluidsynth)
 
@@ -133,6 +145,10 @@ find_package ( PkgConfig REQUIRED )
 pkg_check_modules ( GLIB REQUIRED glib-2.0>=2.6.5 gthread-2.0>=2.6.5 IMPORTED_TARGET )
 list( APPEND PC_REQUIRES_PRIV "glib-2.0" "gthread-2.0")
 message("fs bin dir is " ${CMAKE_BINARY_DIR})
+
+
+
+
 
 # generate_pkgconfig_spec    template                 outfile                   target )
 #generate_pkgconfig_spec(fluidbean.pc.in ${CMAKE_BINARY_DIR}/fluidbean.pc libfluidbean-OBJ)

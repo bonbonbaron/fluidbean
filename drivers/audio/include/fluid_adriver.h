@@ -36,38 +36,81 @@ extern "C" {
 //******************
 
 /* Available audio drivers, listed in order of preference */
-typedef enum {
-  ALSA, 
-  JACK,
-  PULSEAUDIO,
-  PIPEWIRE,
-  OSS,
-  OBOE,
-  OPENSLES,
-  COREAUDIO,
-  DSOUND,
-  WASAPI,
-  WAVEOUT,
-  SNDMAN,
-  PORTAUDIO,
-  DART,
-  SDL2,
-  AUFILE
-} AudioDriverId;
+// NOTE: It's critical this stays in the same order as the array in fluid_adriver.c.
+enum _AuDriverId {
+#if ALSA_SUPPORT
+  ALSA,
+#endif
 
-typedef enum {
-  _8_BITS,
-  _16_BITS,
-  _24_BITS    // MB: i don't think this is supported yet
-} AudioSampleFormat;
+#if JACK_SUPPORT
+  JACK,
+#endif
+
+#if PULSE_SUPPORT
+  PULSEAUDIO,
+#endif
+
+#if PIPEWIRE_SUPPORT
+  PIPEWIRE,
+#endif
+
+#if OSS_SUPPORT
+  OSS,
+#endif
+
+#if OBOE_SUPPORT
+  OBOE,
+#endif
+
+#if OPENSLES_SUPPORT
+  OPENSLES,
+#endif
+
+#if COREAUDIO_SUPPORT
+  COREAUDIO,
+#endif
+
+#if DSOUND_SUPPORT
+  DSOUND,
+#endif
+
+#if WASAPI_SUPPORT
+  WASAPI,
+#endif
+
+#if WAVEOUT_SUPPORT
+  WAVEOUT,
+#endif
+
+#if SNDMAN_SUPPORT
+  SNDMAN
+#endif
+
+#if PORTAUDIO_SUPPORT
+    PORTAUDIO,
+#endif
+
+#if DART_SUPPORT
+  DART,
+#endif
+
+#if SDL2_SUPPORT
+  SDL2,
+#endif
+
+#if AUFILE_SUPPORT
+  AUFILE,
+#endif
+  N_AUDIO_DRIVER_DEFS  // not used, just here to make compiler happy
+};
   
-typedef struct {
+struct _AudioSettings {
   Setting audioSampleFormat;
   Setting audioPeriodSize;
   Setting audioPeriods;
   Setting audioRealTimePrio;
   Setting audioDriver;
-} AudioSettings;
+};
 
 
 typedef struct _fluid_audriver_definition_t fluid_audriver_definition_t;

@@ -53,7 +53,7 @@ extern "C" {
    * \return a newly allocated synthesizer or NULL in case of error
    */
  
-FLUIDSYNTH_API fluid_synth_t* new_fluid_synth(FluidSettings *settingsP);
+FLUIDSYNTH_API fluid_synth_t* new_fluid_synth();
 
 FLUIDSYNTH_API void fluid_synth_set_sample_rate(fluid_synth_t* synth, float sample_rate);
 
