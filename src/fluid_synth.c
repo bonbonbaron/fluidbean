@@ -1212,105 +1212,30 @@ fluid_synth_key_pressure (fluid_synth_t * synth, int chan, int key, int val) {
 	return result;
 }
 
-/**
- * Set the MIDI pitch bend controller value.
- * @param synth FluidSynth instance
- * @param chan MIDI channel number
- * @param val MIDI pitch bend value (14 bit, 0-16383 with 8192 being center)
- * @return FLUID_OK on success
- *
- * Assign to the MIDI pitch bend controller value on a specific MIDI channel
- * in real time.
- */
 int fluid_synth_pitch_bend (fluid_synth_t * synth, int chan, int val) {
-
 /*   fluid_mutex_lock(synth->busy); /\* Don't interfere with the audio thread *\/ */
 /*   fluid_mutex_unlock(synth->busy); */
-
-	/* check the ranges of the arguments */
 	if ((chan < 0) || (chan >= synth->midi_channels)) {
-		FLUID_LOG (FLUID_WARN, "Channel out of range");
 		return FLUID_FAILED;
-	}
-
-	if (synth->verbose) {
-		FLUID_LOG (FLUID_INFO, "pitchb\t%d\t%d", chan, val);
-	}
-
-	/* set the pitch-bend value in the channel */
 	fluid_channel_pitch_bend (synth->channel[chan], val);
-
 	return FLUID_OK;
 }
 
-/*
- * fluid_synth_pitch_bend
- */
-int
-fluid_synth_get_pitch_bend (fluid_synth_t * synth, int chan,
-														int *ppitch_bend) {
-	/* check the ranges of the arguments */
-	if ((chan < 0) || (chan >= synth->midi_channels)) {
-		FLUID_LOG (FLUID_WARN, "Channel out of range");
-		return FLUID_FAILED;
-	}
-
-	*ppitch_bend = synth->channel[chan]->pitch_bend;
-	return FLUID_OK;
-}
-
-/*
- * Fluid_synth_pitch_wheel_sens
- */
 int fluid_synth_pitch_wheel_sens (fluid_synth_t * synth, int chan, int val) {
-
-	/* check the ranges of the arguments */
-	if ((chan < 0) || (chan >= synth->midi_channels)) {
-		FLUID_LOG (FLUID_WARN, "Channel out of range");
+	if ((chan < 0) || (chan >= synth->midi_channels)) 
 		return FLUID_FAILED;
-	}
-
-	if (synth->verbose) {
-		FLUID_LOG (FLUID_INFO, "pitchsens\t%d\t%d", chan, val);
-	}
-
-	/* set the pitch-bend value in the channel */
 	fluid_channel_pitch_wheel_sens (synth->channel[chan], val);
-
 	return FLUID_OK;
 }
 
-/*
- * fluid_synth_get_pitch_wheel_sens
- *
- * Note : this function was added after version 1.0 API freeze.
- * So its API is not in the synth.h file. It should be added in some later
- * version of fluidsynth. Maybe v2.0 ? -- Antoine Schmitt May 2003
- */
-
-int
-fluid_synth_get_pitch_wheel_sens (fluid_synth_t * synth, int chan,
-																	int *pval) {
-
-	// check the ranges of the arguments
-	if ((chan < 0) || (chan >= synth->midi_channels)) {
-		FLUID_LOG (FLUID_WARN, "Channel out of range");
+int fluid_synth_get_pitch_wheel_sens (fluid_synth_t * synth, int chan, int *pval) {
+	if ((chan < 0) || (chan >= synth->midi_channels)) 
 		return FLUID_FAILED;
-	}
-
-	// get the pitch-bend value in the channel
 	*pval = synth->channel[chan]->pitch_wheel_sensitivity;
-
 	return FLUID_OK;
 }
 
-/*
- * fluid_synth_get_preset
- */
-fluid_preset_t *fluid_synth_get_preset (fluid_synth_t * synth,
-																				U32 sfontnum,
-																				U32 banknum,
-																				U32 prognum) {
+fluid_preset_t *fluid_synth_get_preset (fluid_synth_t * synth, U32 sfontnum, U32 banknum, U32 prognum) {
 	fluid_preset_t *preset = NULL;
 	fluid_sfont_t *sfont = NULL;
 	int offset;
@@ -1320,9 +1245,8 @@ fluid_preset_t *fluid_synth_get_preset (fluid_synth_t * synth,
 	if (sfont != NULL) {
 		offset = fluid_synth_get_bank_offset (synth, sfontnum);
 		preset = fluid_sfont_get_preset (sfont, banknum - offset, prognum);
-		if (preset != NULL) {
+		if (preset != NULL) 
 			return preset;
-		}
 	}
 	return NULL;
 }
@@ -1352,9 +1276,6 @@ fluid_preset_t *fluid_synth_find_preset (fluid_synth_t * synth, U32 banknum, U32
 }
 
 
-/*
- * fluid_synth_program_change
- */
 int fluid_synth_program_change (fluid_synth_t * synth, int chan, int prognum) {
 	fluid_preset_t *preset = NULL;
 	fluid_channel_t *channel;

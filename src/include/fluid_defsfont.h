@@ -124,7 +124,7 @@ typedef struct _SFData {				/* Sound font data structure */
 	fluid_list_t *info;						/* linked list of info strings (1st byte is ID) */
 	fluid_list_t *preset;					/* linked list of preset info */
 	fluid_list_t *inst;						/* linked list of instrument info */
-	fluid_list_t *sample;					/* linked list of sample info */
+	fluid_list_t *sampleDstP;					/* linked list of sample info */
 } SFData;
 
 typedef struct {
@@ -452,11 +452,37 @@ struct _fluid_defsfont_t {
 	S16 *sampledata;						/* the sample data, loaded in ram */
 	fluid_list_t *sample;					/* the samples in this soundfont */
 	fluid_defpreset_t *preset;		/* the presets of this soundfont */
-
 	fluid_preset_t iter_preset;		/* preset interface used in the iteration */
 	fluid_defpreset_t *iter_cur;	/* the current preset in the iteration */
 };
 
+/*
+ * fluid_preset_t
+ */
+struct _fluid_defpreset_t {
+	fluid_defpreset_t *next;
+	fluid_defsfont_t *sfont;			/* the soundfont this preset belongs to */
+	S8 name[21];								/* the name of the preset */
+	U32 bank;						/* the bank number */
+	U32 num;							/* the preset number */
+	fluid_preset_zone_t *global_zone;	/* the global zone of the preset */
+	fluid_preset_zone_t *zone;		/* the chained list of preset zones */
+};
+
+/*
+ * fluid_preset_zone
+ */
+struct _fluid_preset_zone_t {
+	fluid_preset_zone_t *next;
+	S8 *name;
+	fluid_inst_t *inst;
+	S32 keylo;
+	S32 keyhi;
+	S32 vello;
+	S32 velhi;
+	fluid_gen_t gen[GEN_LAST];
+	fluid_mod_t *mod;							/* List of modulators */
+};
 
 fluid_defsfont_t *new_fluid_defsfont (void);
 S32 delete_fluid_defsfont (fluid_defsfont_t * sfont);
@@ -475,19 +501,6 @@ S32 fluid_defsfont_add_preset (fluid_defsfont_t * sfont,
 fluid_sample_t *fluid_defsfont_get_sample (fluid_defsfont_t * sfont, S8 *s);
 
 
-/*
- * fluid_preset_t
- */
-struct _fluid_defpreset_t {
-	fluid_defpreset_t *next;
-	fluid_defsfont_t *sfont;			/* the soundfont this preset belongs to */
-	S8 name[21];								/* the name of the preset */
-	U32 bank;						/* the bank number */
-	U32 num;							/* the preset number */
-	fluid_preset_zone_t *global_zone;	/* the global zone of the preset */
-	fluid_preset_zone_t *zone;		/* the chained list of preset zones */
-};
-
 fluid_defpreset_t *new_fluid_defpreset (fluid_defsfont_t * sfont);
 S32 delete_fluid_defpreset (fluid_defpreset_t * preset);
 fluid_defpreset_t *fluid_defpreset_next (fluid_defpreset_t * preset);
@@ -505,21 +518,6 @@ S32 fluid_defpreset_get_banknum (fluid_defpreset_t * preset);
 S32 fluid_defpreset_get_num (fluid_defpreset_t * preset);
 S32 fluid_defpreset_noteon (fluid_defpreset_t * preset, fluid_synth_t * synth,
 														S32 chan, S32 key, S32 vel);
-
-/*
- * fluid_preset_zone
- */
-struct _fluid_preset_zone_t {
-	fluid_preset_zone_t *next;
-	S8 *name;
-	fluid_inst_t *inst;
-	S32 keylo;
-	S32 keyhi;
-	S32 vello;
-	S32 velhi;
-	fluid_gen_t gen[GEN_LAST];
-	fluid_mod_t *mod;							/* List of modulators */
-};
 
 fluid_preset_zone_t *new_fluid_preset_zone (S8 *name);
 S32 delete_fluid_preset_zone (fluid_preset_zone_t * zone);

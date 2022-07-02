@@ -28,10 +28,10 @@ The CXX compiler identification is GNU, found in "/home/bonbonbaron/hack/fluidbe
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_d53d0/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_d53d0.dir/build.make CMakeFiles/cmTC_d53d0.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_f0f5f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f0f5f.dir/build.make CMakeFiles/cmTC_f0f5f.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o
-/usr/bin/cc   -v -o CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c
+Building C object CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o
+/usr/bin/cc   -v -o CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c
 Using built-in specs.
 COLLECT_GCC=/usr/bin/cc
 Target: arm-linux-gnueabihf
@@ -39,8 +39,8 @@ Configured with: ../src/configure -v --with-pkgversion='Raspbian 10.2.1-6+rpi1' 
 Thread model: posix
 Supported LTO compression algorithms: zlib zstd
 gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
- /usr/lib/gcc/arm-linux-gnueabihf/10/cc1 -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccm7VQFN.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+ /usr/lib/gcc/arm-linux-gnueabihf/10/cc1 -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccY0T4oU.s
 GNU C17 (Raspbian 10.2.1-6+rpi1) version 10.2.1 20210110 (arm-linux-gnueabihf)
 	compiled by GNU C version 10.2.1 20210110, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.0, isl version isl-0.23-GMP
 
@@ -60,15 +60,15 @@ GNU C17 (Raspbian 10.2.1-6+rpi1) version 10.2.1 20210110 (arm-linux-gnueabihf)
 
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 Compiler executable checksum: b0c2f0ffcfbe7fc710aaf45c31c63944
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
- as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o /tmp/ccm7VQFN.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+ as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o /tmp/ccY0T4oU.s
 GNU assembler version 2.35.2 (arm-linux-gnueabihf) using BFD version (GNU Binutils for Raspbian) 2.35.2
 COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/
 LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
-Linking C executable cmTC_d53d0
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d53d0.dir/link.txt --verbose=1
-/usr/bin/cc  -v -rdynamic CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -o cmTC_d53d0 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+Linking C executable cmTC_f0f5f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f0f5f.dir/link.txt --verbose=1
+/usr/bin/cc  -v -rdynamic CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -o cmTC_f0f5f 
 Using built-in specs.
 COLLECT_GCC=/usr/bin/cc
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper
@@ -79,9 +79,9 @@ Supported LTO compression algorithms: zlib zstd
 gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) 
 COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/
 LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_d53d0'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
- /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/cc5fDyog.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_d53d0 /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_d53d0'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_f0f5f'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+ /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/cc2dRLnt.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_f0f5f /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_f0f5f'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -105,10 +105,10 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_d53d0/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_d53d0.dir/build.make CMakeFiles/cmTC_d53d0.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_f0f5f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f0f5f.dir/build.make CMakeFiles/cmTC_f0f5f.dir/build]
   ignore line: [gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c]
+  ignore line: [Building C object CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/bin/cc   -v -o CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -c /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/cc]
   ignore line: [Target: arm-linux-gnueabihf]
@@ -116,8 +116,8 @@ Parsed C implicit link information from above output:
   ignore line: [Thread model: posix]
   ignore line: [Supported LTO compression algorithms: zlib zstd]
   ignore line: [gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  ignore line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/cc1 -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccm7VQFN.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  ignore line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/cc1 -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf /usr/share/cmake-3.18/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccY0T4oU.s]
   ignore line: [GNU C17 (Raspbian 10.2.1-6+rpi1) version 10.2.1 20210110 (arm-linux-gnueabihf)]
   ignore line: [	compiled by GNU C version 10.2.1 20210110  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.0  isl version isl-0.23-GMP]
   ignore line: []
@@ -137,15 +137,15 @@ Parsed C implicit link information from above output:
   ignore line: []
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
   ignore line: [Compiler executable checksum: b0c2f0ffcfbe7fc710aaf45c31c63944]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  ignore line: [ as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o /tmp/ccm7VQFN.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  ignore line: [ as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o /tmp/ccY0T4oU.s]
   ignore line: [GNU assembler version 2.35.2 (arm-linux-gnueabihf) using BFD version (GNU Binutils for Raspbian) 2.35.2]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  ignore line: [Linking C executable cmTC_d53d0]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d53d0.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/cc  -v -rdynamic CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -o cmTC_d53d0 ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o' '-c'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  ignore line: [Linking C executable cmTC_f0f5f]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f0f5f.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/cc  -v -rdynamic CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -o cmTC_f0f5f ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/cc]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper]
@@ -156,13 +156,13 @@ Parsed C implicit link information from above output:
   ignore line: [gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_d53d0'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  link line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/cc5fDyog.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_d53d0 /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_f0f5f'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  link line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/cc2dRLnt.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_f0f5f /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o]
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc5fDyog.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cc2dRLnt.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -179,7 +179,7 @@ Parsed C implicit link information from above output:
     arg [-m] ==> ignore
     arg [armelf_linux_eabi] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_d53d0] ==> ignore
+    arg [cmTC_f0f5f] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o] ==> ignore
@@ -188,7 +188,7 @@ Parsed C implicit link information from above output:
     arg [-L/usr/lib/gcc/arm-linux-gnueabihf/10/../../..] ==> dir [/usr/lib/gcc/arm-linux-gnueabihf/10/../../..]
     arg [-L/lib/arm-linux-gnueabihf] ==> dir [/lib/arm-linux-gnueabihf]
     arg [-L/usr/lib/arm-linux-gnueabihf] ==> dir [/usr/lib/arm-linux-gnueabihf]
-    arg [CMakeFiles/cmTC_d53d0.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_f0f5f.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [--push-state] ==> ignore
     arg [--as-needed] ==> ignore
@@ -215,10 +215,10 @@ Parsed C implicit link information from above output:
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_ddc4e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ddc4e.dir/build.make CMakeFiles/cmTC_ddc4e.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_dd255/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_dd255.dir/build.make CMakeFiles/cmTC_dd255.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o
-/usr/bin/c++   -v -o CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp
+Building CXX object CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o
+/usr/bin/c++   -v -o CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp
 Using built-in specs.
 COLLECT_GCC=/usr/bin/c++
 Target: arm-linux-gnueabihf
@@ -226,8 +226,8 @@ Configured with: ../src/configure -v --with-pkgversion='Raspbian 10.2.1-6+rpi1' 
 Thread model: posix
 Supported LTO compression algorithms: zlib zstd
 gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
- /usr/lib/gcc/arm-linux-gnueabihf/10/cc1plus -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -D_GNU_SOURCE /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccuqjHIM.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+ /usr/lib/gcc/arm-linux-gnueabihf/10/cc1plus -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -D_GNU_SOURCE /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/cclohq3Y.s
 GNU C++14 (Raspbian 10.2.1-6+rpi1) version 10.2.1 20210110 (arm-linux-gnueabihf)
 	compiled by GNU C version 10.2.1 20210110, GMP version 6.2.1, MPFR version 4.1.0, MPC version 1.2.0, isl version isl-0.23-GMP
 
@@ -251,15 +251,15 @@ GNU C++14 (Raspbian 10.2.1-6+rpi1) version 10.2.1 20210110 (arm-linux-gnueabihf)
 
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 Compiler executable checksum: db87415434a7c3b71e7ddc297314da99
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
- as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccuqjHIM.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+ as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o /tmp/cclohq3Y.s
 GNU assembler version 2.35.2 (arm-linux-gnueabihf) using BFD version (GNU Binutils for Raspbian) 2.35.2
 COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/
 LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
-Linking CXX executable cmTC_ddc4e
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ddc4e.dir/link.txt --verbose=1
-/usr/bin/c++  -v -rdynamic CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_ddc4e 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+Linking CXX executable cmTC_dd255
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dd255.dir/link.txt --verbose=1
+/usr/bin/c++  -v -rdynamic CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_dd255 
 Using built-in specs.
 COLLECT_GCC=/usr/bin/c++
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper
@@ -270,9 +270,9 @@ Supported LTO compression algorithms: zlib zstd
 gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) 
 COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/
 LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_ddc4e' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
- /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8poslc.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_ddc4e /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_ddc4e' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_dd255' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
+ /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/ccjhbC2o.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_dd255 /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_dd255' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp'
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -302,10 +302,10 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_ddc4e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ddc4e.dir/build.make CMakeFiles/cmTC_ddc4e.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_dd255/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_dd255.dir/build.make CMakeFiles/cmTC_dd255.dir/build]
   ignore line: [gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Building CXX object CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/bin/c++   -v -o CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/c++]
   ignore line: [Target: arm-linux-gnueabihf]
@@ -313,8 +313,8 @@ Parsed CXX implicit link information from above output:
   ignore line: [Thread model: posix]
   ignore line: [Supported LTO compression algorithms: zlib zstd]
   ignore line: [gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  ignore line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/cc1plus -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -D_GNU_SOURCE /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccuqjHIM.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  ignore line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/cc1plus -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -D_GNU_SOURCE /usr/share/cmake-3.18/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mfloat-abi=hard -mfpu=vfp -mtls-dialect=gnu -marm -march=armv6+fp -auxbase-strip CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/cclohq3Y.s]
   ignore line: [GNU C++14 (Raspbian 10.2.1-6+rpi1) version 10.2.1 20210110 (arm-linux-gnueabihf)]
   ignore line: [	compiled by GNU C version 10.2.1 20210110  GMP version 6.2.1  MPFR version 4.1.0  MPC version 1.2.0  isl version isl-0.23-GMP]
   ignore line: []
@@ -338,15 +338,15 @@ Parsed CXX implicit link information from above output:
   ignore line: []
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
   ignore line: [Compiler executable checksum: db87415434a7c3b71e7ddc297314da99]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  ignore line: [ as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccuqjHIM.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  ignore line: [ as -v -march=armv6 -mfloat-abi=hard -mfpu=vfp -meabi=5 -o CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o /tmp/cclohq3Y.s]
   ignore line: [GNU assembler version 2.35.2 (arm-linux-gnueabihf) using BFD version (GNU Binutils for Raspbian) 2.35.2]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  ignore line: [Linking CXX executable cmTC_ddc4e]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ddc4e.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/c++  -v -rdynamic CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_ddc4e ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  ignore line: [Linking CXX executable cmTC_dd255]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dd255.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/c++  -v -rdynamic CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_dd255 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/c++]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper]
@@ -357,13 +357,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/arm-linux-gnueabihf/10/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/:/usr/lib/gcc/arm-linux-gnueabihf/10/../../../:/lib/arm-linux-gnueabihf/:/lib/:/usr/lib/arm-linux-gnueabihf/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_ddc4e' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
-  link line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8poslc.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_ddc4e /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_dd255' '-shared-libgcc'  '-mfloat-abi=hard' '-mfpu=vfp' '-mtls-dialect=gnu' '-marm' '-march=armv6+fp']
+  link line: [ /usr/lib/gcc/arm-linux-gnueabihf/10/collect2 -plugin /usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so -plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper -plugin-opt=-fresolution=/tmp/ccjhbC2o.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -export-dynamic -dynamic-linker /lib/ld-linux-armhf.so.3 -X --hash-style=gnu --as-needed -m armelf_linux_eabi -o cmTC_dd255 /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o /usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o -L/usr/lib/gcc/arm-linux-gnueabihf/10 -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf -L/usr/lib/gcc/arm-linux-gnueabihf/10/../../.. -L/lib/arm-linux-gnueabihf -L/usr/lib/arm-linux-gnueabihf CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/arm-linux-gnueabihf/10/crtend.o /usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crtn.o]
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/arm-linux-gnueabihf/10/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc8poslc.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccjhbC2o.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -380,7 +380,7 @@ Parsed CXX implicit link information from above output:
     arg [-m] ==> ignore
     arg [armelf_linux_eabi] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_ddc4e] ==> ignore
+    arg [cmTC_dd255] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crt1.o] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/../../../arm-linux-gnueabihf/crti.o] ==> ignore
     arg [/usr/lib/gcc/arm-linux-gnueabihf/10/crtbegin.o] ==> ignore
@@ -389,7 +389,7 @@ Parsed CXX implicit link information from above output:
     arg [-L/usr/lib/gcc/arm-linux-gnueabihf/10/../../..] ==> dir [/usr/lib/gcc/arm-linux-gnueabihf/10/../../..]
     arg [-L/lib/arm-linux-gnueabihf] ==> dir [/lib/arm-linux-gnueabihf]
     arg [-L/usr/lib/arm-linux-gnueabihf] ==> dir [/usr/lib/arm-linux-gnueabihf]
-    arg [CMakeFiles/cmTC_ddc4e.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_dd255.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -412,13 +412,13 @@ Parsed CXX implicit link information from above output:
 Determining if files dlfcn.h;stdint.h;stddef.h;inttypes.h;stdlib.h;strings.h;string.h;float.h exist passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_9de96/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_9de96.dir/build.make CMakeFiles/cmTC_9de96.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_b0b1e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b0b1e.dir/build.make CMakeFiles/cmTC_b0b1e.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_9de96.dir/StandardHeadersExist.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_9de96.dir/StandardHeadersExist.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CheckIncludeFiles/StandardHeadersExist.c
-Linking C executable cmTC_9de96
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9de96.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_9de96.dir/StandardHeadersExist.c.o -o cmTC_9de96 
+Building C object CMakeFiles/cmTC_b0b1e.dir/StandardHeadersExist.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_b0b1e.dir/StandardHeadersExist.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CheckIncludeFiles/StandardHeadersExist.c
+Linking C executable cmTC_b0b1e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b0b1e.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_b0b1e.dir/StandardHeadersExist.c.o -o cmTC_b0b1e 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -426,13 +426,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Performing C SOURCE FILE Test memchrExists succeeded with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_7dad8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_7dad8.dir/build.make CMakeFiles/cmTC_7dad8.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_07c62/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_07c62.dir/build.make CMakeFiles/cmTC_07c62.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_7dad8.dir/src.c.o
-/usr/bin/cc   -DmemchrExists -o CMakeFiles/cmTC_7dad8.dir/src.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_7dad8
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7dad8.dir/link.txt --verbose=1
-/usr/bin/cc  -DmemchrExists -rdynamic CMakeFiles/cmTC_7dad8.dir/src.c.o -o cmTC_7dad8 
+Building C object CMakeFiles/cmTC_07c62.dir/src.c.o
+/usr/bin/cc   -DmemchrExists -o CMakeFiles/cmTC_07c62.dir/src.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_07c62
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_07c62.dir/link.txt --verbose=1
+/usr/bin/cc  -DmemchrExists -rdynamic CMakeFiles/cmTC_07c62.dir/src.c.o -o cmTC_07c62 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -451,13 +451,13 @@ int main()
 Performing C SOURCE FILE Test freeExists succeeded with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_baf4e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_baf4e.dir/build.make CMakeFiles/cmTC_baf4e.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_0dde5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_0dde5.dir/build.make CMakeFiles/cmTC_0dde5.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_baf4e.dir/src.c.o
-/usr/bin/cc   -DfreeExists -o CMakeFiles/cmTC_baf4e.dir/src.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_baf4e
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_baf4e.dir/link.txt --verbose=1
-/usr/bin/cc  -DfreeExists -rdynamic CMakeFiles/cmTC_baf4e.dir/src.c.o -o cmTC_baf4e 
+Building C object CMakeFiles/cmTC_0dde5.dir/src.c.o
+/usr/bin/cc   -DfreeExists -o CMakeFiles/cmTC_0dde5.dir/src.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_0dde5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0dde5.dir/link.txt --verbose=1
+/usr/bin/cc  -DfreeExists -rdynamic CMakeFiles/cmTC_0dde5.dir/src.c.o -o cmTC_0dde5 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -476,13 +476,13 @@ int main()
 Determining if files unistd.h exist passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_4a55c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_4a55c.dir/build.make CMakeFiles/cmTC_4a55c.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_3b166/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_3b166.dir/build.make CMakeFiles/cmTC_3b166.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_4a55c.dir/HAVE_UNISTD_H.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_4a55c.dir/HAVE_UNISTD_H.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CheckIncludeFiles/HAVE_UNISTD_H.c
-Linking C executable cmTC_4a55c
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4a55c.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_4a55c.dir/HAVE_UNISTD_H.c.o -o cmTC_4a55c 
+Building C object CMakeFiles/cmTC_3b166.dir/HAVE_UNISTD_H.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_3b166.dir/HAVE_UNISTD_H.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CheckIncludeFiles/HAVE_UNISTD_H.c
+Linking C executable cmTC_3b166
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3b166.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_3b166.dir/HAVE_UNISTD_H.c.o -o cmTC_3b166 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -490,13 +490,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the DIR symbol is defined as in AC_HEADER_DIRENT passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_8895d/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_8895d.dir/build.make CMakeFiles/cmTC_8895d.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_dee64/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_dee64.dir/build.make CMakeFiles/cmTC_dee64.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_8895d.dir/CheckDIRSymbolExists.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_8895d.dir/CheckDIRSymbolExists.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c
-Linking C executable cmTC_8895d
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8895d.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_8895d.dir/CheckDIRSymbolExists.c.o -o cmTC_8895d 
+Building C object CMakeFiles/cmTC_dee64.dir/CheckDIRSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_dee64.dir/CheckDIRSymbolExists.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c
+Linking C executable cmTC_dee64
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_dee64.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_dee64.dir/CheckDIRSymbolExists.c.o -o cmTC_dee64 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -512,13 +512,13 @@ int main()
 Determining if the include file stdio.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_ad37c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ad37c.dir/build.make CMakeFiles/cmTC_ad37c.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_d6f77/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_d6f77.dir/build.make CMakeFiles/cmTC_d6f77.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_ad37c.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_ad37c.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_ad37c
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ad37c.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_ad37c.dir/CheckIncludeFile.c.o -o cmTC_ad37c 
+Building C object CMakeFiles/cmTC_d6f77.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_d6f77.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_d6f77
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d6f77.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_d6f77.dir/CheckIncludeFile.c.o -o cmTC_d6f77 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -526,13 +526,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file math.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_2fa13/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2fa13.dir/build.make CMakeFiles/cmTC_2fa13.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_453b2/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_453b2.dir/build.make CMakeFiles/cmTC_453b2.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_2fa13.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_2fa13.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_2fa13
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2fa13.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_2fa13.dir/CheckIncludeFile.c.o -o cmTC_2fa13 
+Building C object CMakeFiles/cmTC_453b2.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_453b2.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_453b2
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_453b2.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_453b2.dir/CheckIncludeFile.c.o -o cmTC_453b2 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -540,13 +540,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file errno.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_aa9dd/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_aa9dd.dir/build.make CMakeFiles/cmTC_aa9dd.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_f495e/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f495e.dir/build.make CMakeFiles/cmTC_f495e.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_aa9dd.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_aa9dd.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_aa9dd
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_aa9dd.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_aa9dd.dir/CheckIncludeFile.c.o -o cmTC_aa9dd 
+Building C object CMakeFiles/cmTC_f495e.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_f495e.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_f495e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f495e.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_f495e.dir/CheckIncludeFile.c.o -o cmTC_f495e 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -554,13 +554,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file stdarg.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_5bc02/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_5bc02.dir/build.make CMakeFiles/cmTC_5bc02.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_d587c/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_d587c.dir/build.make CMakeFiles/cmTC_d587c.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_5bc02.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_5bc02.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_5bc02
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5bc02.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_5bc02.dir/CheckIncludeFile.c.o -o cmTC_5bc02 
+Building C object CMakeFiles/cmTC_d587c.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_d587c.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_d587c
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d587c.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_d587c.dir/CheckIncludeFile.c.o -o cmTC_d587c 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -568,13 +568,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file sys/mman.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_98cd5/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_98cd5.dir/build.make CMakeFiles/cmTC_98cd5.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_fbea0/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_fbea0.dir/build.make CMakeFiles/cmTC_fbea0.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_98cd5.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_98cd5.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_98cd5
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_98cd5.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_98cd5.dir/CheckIncludeFile.c.o -o cmTC_98cd5 
+Building C object CMakeFiles/cmTC_fbea0.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_fbea0.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_fbea0
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fbea0.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_fbea0.dir/CheckIncludeFile.c.o -o cmTC_fbea0 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -582,13 +582,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file sys/time.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_1cd05/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_1cd05.dir/build.make CMakeFiles/cmTC_1cd05.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_2085f/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2085f.dir/build.make CMakeFiles/cmTC_2085f.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_1cd05.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_1cd05.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_1cd05
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1cd05.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_1cd05.dir/CheckIncludeFile.c.o -o cmTC_1cd05 
+Building C object CMakeFiles/cmTC_2085f.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_2085f.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_2085f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2085f.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_2085f.dir/CheckIncludeFile.c.o -o cmTC_2085f 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -596,13 +596,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file fcntl.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_041ac/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_041ac.dir/build.make CMakeFiles/cmTC_041ac.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_74a85/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_74a85.dir/build.make CMakeFiles/cmTC_74a85.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_041ac.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_041ac.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_041ac
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_041ac.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_041ac.dir/CheckIncludeFile.c.o -o cmTC_041ac 
+Building C object CMakeFiles/cmTC_74a85.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_74a85.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_74a85
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_74a85.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_74a85.dir/CheckIncludeFile.c.o -o cmTC_74a85 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -610,13 +610,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file sys/socket.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_605cf/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_605cf.dir/build.make CMakeFiles/cmTC_605cf.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_27db9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_27db9.dir/build.make CMakeFiles/cmTC_27db9.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_605cf.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_605cf.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_605cf
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_605cf.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_605cf.dir/CheckIncludeFile.c.o -o cmTC_605cf 
+Building C object CMakeFiles/cmTC_27db9.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_27db9.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_27db9
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_27db9.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_27db9.dir/CheckIncludeFile.c.o -o cmTC_27db9 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -624,13 +624,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file netinet/in.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_029c1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_029c1.dir/build.make CMakeFiles/cmTC_029c1.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_92297/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_92297.dir/build.make CMakeFiles/cmTC_92297.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_029c1.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_029c1.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_029c1
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_029c1.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_029c1.dir/CheckIncludeFile.c.o -o cmTC_029c1 
+Building C object CMakeFiles/cmTC_92297.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_92297.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_92297
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_92297.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_92297.dir/CheckIncludeFile.c.o -o cmTC_92297 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -638,13 +638,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file netinet/tcp.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_2fec2/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_2fec2.dir/build.make CMakeFiles/cmTC_2fec2.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_0d71d/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_0d71d.dir/build.make CMakeFiles/cmTC_0d71d.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_2fec2.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_2fec2.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_2fec2
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2fec2.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_2fec2.dir/CheckIncludeFile.c.o -o cmTC_2fec2 
+Building C object CMakeFiles/cmTC_0d71d.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_0d71d.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_0d71d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0d71d.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_0d71d.dir/CheckIncludeFile.c.o -o cmTC_0d71d 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -652,13 +652,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file arpa/inet.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_a81a9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_a81a9.dir/build.make CMakeFiles/cmTC_a81a9.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_b69e7/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_b69e7.dir/build.make CMakeFiles/cmTC_b69e7.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_a81a9.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_a81a9.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_a81a9
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a81a9.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_a81a9.dir/CheckIncludeFile.c.o -o cmTC_a81a9 
+Building C object CMakeFiles/cmTC_b69e7.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_b69e7.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_b69e7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b69e7.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_b69e7.dir/CheckIncludeFile.c.o -o cmTC_b69e7 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -666,13 +666,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file limits.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_7810d/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_7810d.dir/build.make CMakeFiles/cmTC_7810d.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_c5b29/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_c5b29.dir/build.make CMakeFiles/cmTC_c5b29.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_7810d.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_7810d.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_7810d
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7810d.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_7810d.dir/CheckIncludeFile.c.o -o cmTC_7810d 
+Building C object CMakeFiles/cmTC_c5b29.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_c5b29.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_c5b29
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c5b29.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_c5b29.dir/CheckIncludeFile.c.o -o cmTC_c5b29 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -680,13 +680,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file pthread.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_5f3b1/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_5f3b1.dir/build.make CMakeFiles/cmTC_5f3b1.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_cc0b0/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_cc0b0.dir/build.make CMakeFiles/cmTC_cc0b0.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_5f3b1.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_5f3b1.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_5f3b1
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5f3b1.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_5f3b1.dir/CheckIncludeFile.c.o -o cmTC_5f3b1 
+Building C object CMakeFiles/cmTC_cc0b0.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_cc0b0.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_cc0b0
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cc0b0.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_cc0b0.dir/CheckIncludeFile.c.o -o cmTC_cc0b0 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -694,13 +694,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file signal.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_4c7fa/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_4c7fa.dir/build.make CMakeFiles/cmTC_4c7fa.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_1d175/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_1d175.dir/build.make CMakeFiles/cmTC_1d175.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_4c7fa.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_4c7fa.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_4c7fa
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4c7fa.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_4c7fa.dir/CheckIncludeFile.c.o -o cmTC_4c7fa 
+Building C object CMakeFiles/cmTC_1d175.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_1d175.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_1d175
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1d175.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_1d175.dir/CheckIncludeFile.c.o -o cmTC_1d175 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -708,13 +708,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining if the include file getopt.h exists passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_754d9/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_754d9.dir/build.make CMakeFiles/cmTC_754d9.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_22ee3/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_22ee3.dir/build.make CMakeFiles/cmTC_22ee3.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_754d9.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_754d9.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_754d9
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_754d9.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_754d9.dir/CheckIncludeFile.c.o -o cmTC_754d9 
+Building C object CMakeFiles/cmTC_22ee3.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_22ee3.dir/CheckIncludeFile.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_22ee3
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_22ee3.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_22ee3.dir/CheckIncludeFile.c.o -o cmTC_22ee3 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 
@@ -722,13 +722,13 @@ gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/C
 Determining size of long long passed with the following output:
 Change Dir: /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake cmTC_f7737/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_f7737.dir/build.make CMakeFiles/cmTC_f7737.dir/build
+Run Build Command(s):/usr/bin/gmake cmTC_59385/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_59385.dir/build.make CMakeFiles/cmTC_59385.dir/build
 gmake[1]: Entering directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_f7737.dir/LONG_LONG.c.o
-/usr/bin/cc    -o CMakeFiles/cmTC_f7737.dir/LONG_LONG.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CheckTypeSize/LONG_LONG.c
-Linking C executable cmTC_f7737
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f7737.dir/link.txt --verbose=1
-/usr/bin/cc -rdynamic CMakeFiles/cmTC_f7737.dir/LONG_LONG.c.o -o cmTC_f7737 
+Building C object CMakeFiles/cmTC_59385.dir/LONG_LONG.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_59385.dir/LONG_LONG.c.o -c /home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CheckTypeSize/LONG_LONG.c
+Linking C executable cmTC_59385
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_59385.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_59385.dir/LONG_LONG.c.o -o cmTC_59385 
 gmake[1]: Leaving directory '/home/bonbonbaron/hack/fluidbean/build/CMakeFiles/CMakeTmp'
 
 

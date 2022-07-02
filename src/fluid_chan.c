@@ -97,9 +97,8 @@ void fluid_channel_init_ctrl (fluid_channel_t * chan, int is_all_ctrl_off) {
 	}
 
 	/* Reset polyphonic key pressure on all voices */
-	for (i = 0; i < 128; i++) {
-		fluid_channel_set_key_pressure (chan, i, 0);
-	}
+	for (i = 0; i < 128; i++) 
+    chan->pressure = 0;
 
 	/* Set RPN controllers to NULL state */
 	SETCC (chan, RPN_LSB, 127);
@@ -150,56 +149,6 @@ int delete_fluid_channel (fluid_channel_t * chan) {
 	if (chan->preset)
 		delete_fluid_preset (chan->preset);
 	FLUID_FREE (chan);
-	return FLUID_OK;
-}
-
-/*
- * fluid_channel_set_preset
- */
-int fluid_channel_set_preset (fluid_channel_t * chan, fluid_preset_t * preset) {
-	fluid_preset_notify (chan->preset, FLUID_PRESET_UNSELECTED, chan->channum);
-	fluid_preset_notify (preset, FLUID_PRESET_SELECTED, chan->channum);
-
-	if (chan->preset)
-		delete_fluid_preset (chan->preset);
-	chan->preset = preset;
-	return FLUID_OK;
-}
-
-/*
- * fluid_channel_get_preset
- */
-fluid_preset_t *fluid_channel_get_preset (fluid_channel_t * chan) {
-	return chan->preset;
-}
-
-/*
- * fluid_channel_get_banknum
- */
-U32 fluid_channel_get_banknum (fluid_channel_t * chan) {
-	return chan->banknum;
-}
-
-/*
- * fluid_channel_set_prognum
- */
-int fluid_channel_set_prognum (fluid_channel_t * chan, int prognum) {
-	chan->prognum = prognum;
-	return FLUID_OK;
-}
-
-/*
- * fluid_channel_get_prognum
- */
-int fluid_channel_get_prognum (fluid_channel_t * chan) {
-	return chan->prognum;
-}
-
-/*
- * fluid_channel_set_banknum
- */
-int fluid_channel_set_banknum (fluid_channel_t * chan, U32 banknum) {
-	chan->banknum = banknum;
 	return FLUID_OK;
 }
 
@@ -346,13 +295,6 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 }
 
 /*
- * fluid_channel_get_cc
- */
-int fluid_channel_get_cc (fluid_channel_t * chan, int num) {
-	return ((num >= 0) && (num < 128)) ? chan->cc[num] : 0;
-}
-
-/*
  * fluid_channel_pressure
  */
 int fluid_channel_pressure (fluid_channel_t * chan, int val) {
@@ -382,34 +324,3 @@ int fluid_channel_pitch_wheel_sens (fluid_channel_t * chan, int val) {
 	return FLUID_OK;
 }
 
-/*
- * fluid_channel_get_num
- */
-int fluid_channel_get_num (fluid_channel_t * chan) {
-	return chan->channum;
-}
-
-/* Purpose:
- * Sets the index of the interpolation method used on this channel,
- * as in fluid_interp in fluidlite.h
- */
-void fluid_channel_set_interp_method (fluid_channel_t * chan, int new_method) {
-	chan->interp_method = new_method;
-}
-
-/* Purpose:
- * Returns the index of the interpolation method used on this channel,
- * as in fluid_interp in fluidlite.h
- */
-int fluid_channel_get_interp_method (fluid_channel_t * chan) {
-	return chan->interp_method;
-}
-
-U32 fluid_channel_get_sfontnum (fluid_channel_t * chan) {
-	return chan->sfontnum;
-}
-
-int fluid_channel_set_sfontnum (fluid_channel_t * chan, U32 sfontnum) {
-	chan->sfontnum = sfontnum;
-	return FLUID_OK;
-}

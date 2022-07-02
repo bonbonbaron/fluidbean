@@ -1434,8 +1434,7 @@ int fluid_voice_modulate (fluid_voice_t * voice, int cc, int ctrl) {
 			 * value of its associated generator */
 			for (k = 0; k < voice->mod_count; k++) {
 				if (fluid_mod_has_dest (&voice->mod[k], gen)) {
-					modval +=
-						fluid_mod_get_value (&voice->mod[k], voice->channel, voice);
+					modval += fluid_mod_get_value (&voice->mod[k], voice->channel, voice);
 				}
 			}
 

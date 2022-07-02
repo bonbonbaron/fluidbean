@@ -33,6 +33,10 @@ extern "C" {
 /**
  * Generator (effect) numbers (Soundfont 2.01 specifications section 8.1.3)
  */
+  // My current interpretation of this is these are things that contribute
+  // to the nature of a sound. They can be perceived as static values.
+  // Modulating them makes them dynamic; modulation itself is dynamic.
+  // So generator = static, and modulation = making generators dynamic.
 enum fluid_gen_type {
   GEN_STARTADDROFS,		/**< Sample start address offset (0-32767) */
   GEN_ENDADDROFS,		/**< Sample end address offset (-32767-0) */
@@ -106,6 +110,7 @@ enum fluid_gen_type {
 /**
  * SoundFont generator structure.
  */
+// MB: see about de-floating this
 typedef struct _fluid_gen_t
 {
   unsigned char flags; /**< Is the generator set or not (#fluid_gen_flags) */

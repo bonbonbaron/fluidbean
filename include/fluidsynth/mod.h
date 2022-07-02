@@ -33,8 +33,7 @@ extern "C" {
   /*
    *  fluid_mod_t
    */
-struct _fluid_mod_t
-{
+struct _fluid_mod_t {
   unsigned char dest;
   unsigned char src1;
   unsigned char flags1;
