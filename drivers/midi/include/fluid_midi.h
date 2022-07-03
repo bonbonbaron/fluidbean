@@ -230,8 +230,7 @@ enum fluid_driver_status
 /*
  * fluid_midi_event_t
  */
-struct _fluid_midi_event_t
-{
+struct _fluid_midi_event_t {
     fluid_midi_event_t *next; /* Link to next event */
     void *paramptr;           /* Pointer parameter (for SYSEX data), size is stored to param1, param2 indicates if pointer should be freed (dynamic if TRUE) */
     unsigned int dtime;       /* Delay (ticks) between this and previous event. midi tracks. */
@@ -245,8 +244,7 @@ struct _fluid_midi_event_t
 /*
  * fluid_track_t
  */
-struct _fluid_track_t
-{
+struct _fluid_track_t {
     char *name;
     int num;
     fluid_midi_event_t *first;
