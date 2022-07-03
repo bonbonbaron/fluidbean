@@ -1,10 +1,9 @@
-#include "include/fluid_defsfont.h"
 #include "data.h"
-#include "include/fluid_sfont.h"
+#include "include/soundfont.h"
 #include "include/fluid_sys.h"
 #include "stb_vorbis.c"
 
-int fluid_defpreset_noteon (fluid_defpreset_t * preset, fluid_synth_t * synth, int chan, int key, int vel) {
+int fluid_defpreset_noteon (Preset *presetP, fluid_synth_t * synth, int chan, int key, int vel) {
   fluid_preset_zone_t *preset_zone, *global_preset_zone;
   fluid_inst_t *inst;
   fluid_inst_zone_t *inst_zone, *global_inst_zone, *z;

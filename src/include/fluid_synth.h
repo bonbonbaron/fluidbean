@@ -32,7 +32,7 @@
 #include "fluid_chorus.h"
 #include "fluid_mod.h"
 #include "fluid_rev.h"
-#include "fluid_list.h"
+#include "soundfont.h"
 
 /***************************************************************
  *
@@ -128,15 +128,6 @@ struct _fluid_synth_t {
 	S32 effects_channels;							 /** the number of effects channels (= 2) */
 	U32 state;								 /** the synthesizer state */
 	U32 ticks;								 /** the number of audio samples since the start */
-
-	fluid_list_t *loaders;							/** the soundfont loaders */
-	fluid_list_t *sfont;								/** the loaded soundfont */
-	U32 sfont_id;
-	fluid_list_t *bank_offsets;				/** the offsets of the soundfont banks */
-
-#if defined(MACOS9)
-	fluid_list_t *unloading;						/** the soundfonts that need to be unloaded */
-#endif
 
 	double gain;												/** master gain */
 	fluid_channel_t **channel;					/** the channels */

@@ -687,33 +687,6 @@ src/fluid_init.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_init.c.s
 .PHONY : src/fluid_init.c.s
 
-src/fluid_list.o: src/fluid_list.c.o
-
-.PHONY : src/fluid_list.o
-
-# target to build an object file
-src/fluid_list.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_list.c.o
-.PHONY : src/fluid_list.c.o
-
-src/fluid_list.i: src/fluid_list.c.i
-
-.PHONY : src/fluid_list.i
-
-# target to preprocess a source file
-src/fluid_list.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_list.c.i
-.PHONY : src/fluid_list.c.i
-
-src/fluid_list.s: src/fluid_list.c.s
-
-.PHONY : src/fluid_list.s
-
-# target to generate assembly for a file
-src/fluid_list.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_list.c.s
-.PHONY : src/fluid_list.c.s
-
 src/fluid_mod.o: src/fluid_mod.c.o
 
 .PHONY : src/fluid_mod.o
@@ -767,33 +740,6 @@ src/fluid_rev.s: src/fluid_rev.c.s
 src/fluid_rev.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_rev.c.s
 .PHONY : src/fluid_rev.c.s
-
-src/fluid_ringbuffer.o: src/fluid_ringbuffer.c.o
-
-.PHONY : src/fluid_ringbuffer.o
-
-# target to build an object file
-src/fluid_ringbuffer.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.o
-.PHONY : src/fluid_ringbuffer.c.o
-
-src/fluid_ringbuffer.i: src/fluid_ringbuffer.c.i
-
-.PHONY : src/fluid_ringbuffer.i
-
-# target to preprocess a source file
-src/fluid_ringbuffer.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.i
-.PHONY : src/fluid_ringbuffer.c.i
-
-src/fluid_ringbuffer.s: src/fluid_ringbuffer.c.s
-
-.PHONY : src/fluid_ringbuffer.s
-
-# target to generate assembly for a file
-src/fluid_ringbuffer.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/fluid_ringbuffer.c.s
-.PHONY : src/fluid_ringbuffer.c.s
 
 src/fluid_synth.o: src/fluid_synth.c.o
 
@@ -971,18 +917,12 @@ help:
 	@echo "... src/fluid_init.o"
 	@echo "... src/fluid_init.i"
 	@echo "... src/fluid_init.s"
-	@echo "... src/fluid_list.o"
-	@echo "... src/fluid_list.i"
-	@echo "... src/fluid_list.s"
 	@echo "... src/fluid_mod.o"
 	@echo "... src/fluid_mod.i"
 	@echo "... src/fluid_mod.s"
 	@echo "... src/fluid_rev.o"
 	@echo "... src/fluid_rev.i"
 	@echo "... src/fluid_rev.s"
-	@echo "... src/fluid_ringbuffer.o"
-	@echo "... src/fluid_ringbuffer.i"
-	@echo "... src/fluid_ringbuffer.s"
 	@echo "... src/fluid_synth.o"
 	@echo "... src/fluid_synth.i"
 	@echo "... src/fluid_synth.s"

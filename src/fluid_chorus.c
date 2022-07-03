@@ -143,20 +143,15 @@ fluid_chorus_t *new_fluid_chorus (fluid_real_t sample_rate) {
 	fluid_chorus_t *chorus;
 
 	chorus = FLUID_NEW (fluid_chorus_t);
-	if (chorus == NULL) {
-		fluid_log (FLUID_PANIC, "chorus: Out of memory");
+	if (chorus == NULL) 
 		return NULL;
-	}
 
 	FLUID_MEMSET (chorus, 0, sizeof (fluid_chorus_t));
-
 	chorus->sample_rate = sample_rate;
 
 	/* Lookup table for the SI function (impulse response of an ideal low pass) */
-
 	/* i: Offset in terms of whole samples */
 	for (i = 0; i < INTERPOLATION_SAMPLES; i++) {
-
 		/* ii: Offset in terms of fractional samples ('subsamples') */
 		for (ii = 0; ii < INTERPOLATION_SUBSAMPLES; ii++) {
 			/* Move the origin into the center of the table */
@@ -166,7 +161,6 @@ fluid_chorus_t *new_fluid_chorus (fluid_real_t sample_rate) {
 				/* sinc(0) cannot be calculated straightforward (limit needed
 				   for 0/0) */
 				chorus->sinc_table[i][ii] = (fluid_real_t) 1.;
-
 			} else {
 				chorus->sinc_table[i][ii] =
 					(fluid_real_t) sin (i_shifted * M_PI) / (M_PI * i_shifted);
@@ -182,22 +176,17 @@ fluid_chorus_t *new_fluid_chorus (fluid_real_t sample_rate) {
 	/* allocate lookup tables */
 	chorus->lookup_tab =
 		FLUID_ARRAY (int, (int) (chorus->sample_rate / MIN_SPEED_HZ));
-	if (chorus->lookup_tab == NULL) {
-		fluid_log (FLUID_PANIC, "chorus: Out of memory");
+	if (chorus->lookup_tab == NULL) 
 		goto error_recovery;
-	}
 
 	/* allocate sample buffer */
 
 	chorus->chorusbuf = FLUID_ARRAY (fluid_real_t, MAX_SAMPLES);
-	if (chorus->chorusbuf == NULL) {
-		fluid_log (FLUID_PANIC, "chorus: Out of memory");
+	if (chorus->chorusbuf == NULL) 
 		goto error_recovery;
-	}
 
-	if (fluid_chorus_init (chorus) != FLUID_OK) {
+	if (fluid_chorus_init (chorus) != FLUID_OK) 
 		goto error_recovery;
-	};
 
 	return chorus;
 

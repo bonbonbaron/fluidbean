@@ -34,14 +34,12 @@ list(APPEND SOURCES
     src/fluid_defsfont.c
     src/fluid_dsp_float.c
     src/fluid_gen.c
-    src/fluid_list.c
     src/fluid_mod.c
     src/fluid_rev.c
     src/fluid_synth.c
     src/fluid_sys.c
     src/fluid_tuning.c
     src/fluid_voice.c
-    src/fluid_ringbuffer.c
     # AUdio driver files
     ${AUDIO_DRIVER_DIR}/fluid_adriver.c
     ${AUDIO_DRIVER_DIR}/fluid_alsa.c

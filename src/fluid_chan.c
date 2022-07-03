@@ -37,7 +37,7 @@ fluid_channel_t *new_fluid_channel (fluid_synth_t * synth, int num) {
 
 	chan->synth = synth;
 	chan->channum = num;
-	chan->preset = NULL;
+	chan->presetP = NULL;
 
 	fluid_channel_init (chan);
 	fluid_channel_init_ctrl (chan, 0);
@@ -50,9 +50,8 @@ void fluid_channel_init (fluid_channel_t * chan) {
 	chan->banknum = 0;
 	chan->sfontnum = 0;
 
-	if (chan->preset)
-		delete_fluid_preset (chan->preset);
-	chan->preset = fluid_synth_find_preset(chan->synth, chan->banknum, chan->prognum);
+  // MB TODO replace this. I'm busy killing fluid_list_t right now though
+	//chan->presetP = fluid_synth_find_preset(chan->synth, chan->banknum, chan->prognum);
 
 	chan->interp_method = FLUID_INTERP_DEFAULT;
 	chan->tuning = NULL;
@@ -97,8 +96,9 @@ void fluid_channel_init_ctrl (fluid_channel_t * chan, int is_all_ctrl_off) {
 	}
 
 	/* Reset polyphonic key pressure on all voices */
+  memset(chan->key_pressure, 0, sizeof(chan->key_pressure[0]) * 128);
 	for (i = 0; i < 128; i++) 
-    chan->pressure = 0;
+    chan->key_pressure[i] = 0;
 
 	/* Set RPN controllers to NULL state */
 	SETCC (chan, RPN_LSB, 127);
@@ -146,8 +146,6 @@ void fluid_channel_reset (fluid_channel_t * chan) {
  * delete_fluid_channel
  */
 int delete_fluid_channel (fluid_channel_t * chan) {
-	if (chan->preset)
-		delete_fluid_preset (chan->preset);
 	FLUID_FREE (chan);
 	return FLUID_OK;
 }
@@ -177,17 +175,8 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 				return FLUID_OK;				/* ignored */
 
 			chan->bank_msb = (unsigned char) (value & 0x7f);
-/*      printf("** bank select msb recieved: %d\n", value); */
 
-			/* I fixed the handling of a MIDI bank select controller 0,
-			   e.g., bank select MSB (or "coarse" bank select according to
-			   my spec).  Prior to this fix a channel's bank number was only
-			   changed upon reception of MIDI bank select controller 32,
-			   e.g, bank select LSB (or "fine" bank-select according to my
-			   spec). [KLE]
-
-			   FIXME: is this correct? [PH] */
-			fluid_channel_set_banknum (chan, (U32) (value & 0x7f));	/* KLE */
+			chan->banknum = (U32) (value & 0x7f);	/* KLE */
 		}
 		break;
 
@@ -198,10 +187,7 @@ int fluid_channel_cc (fluid_channel_t * chan, int num, int value) {
 			/* FIXME: according to the Downloadable Sounds II specification,
 			   bit 31 should be set when we receive the message on channel
 			   10 (drum channel) */
-			fluid_channel_set_banknum (chan, (((U32) value & 0x7f)
-																				+
-																				((U32) chan->bank_msb <<
-																				 7)));
+			chan->banknum = (((U32) value & 0x7f) + ((U32) chan->bank_msb << 7));
 		}
 		break;
 
