@@ -51,7 +51,7 @@ SDLAudioCallback(void *data, void *stream, int len)
     dev->write_ptr(dev->synth, len, stream, 0, 2, stream, 1, 2);
 }
 
-void fluid_sdl2_audio_driver_settings(fluid_settings_t *settings)
+void fluid_sdl2_audio_driver_settings(FluidSettings *settings)
 {
     int n, nDevs;
 
@@ -85,7 +85,7 @@ void fluid_sdl2_audio_driver_settings(fluid_settings_t *settings)
  * new_fluid_sdl2_audio_driver
  */
 fluid_audio_driver_t *
-new_fluid_sdl2_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     fluid_sdl2_audio_driver_t *dev = NULL;
     fluid_audio_callback_t write_ptr;

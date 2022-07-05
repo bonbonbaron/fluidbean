@@ -1464,7 +1464,7 @@ delete_fluid_player(fluid_player_t *player)
  * Registers settings related to the MIDI player
  */
 void
-fluid_player_settings(fluid_settings_t *settings)
+fluid_player_settings(FluidSettings *settings)
 {
     /* player.timing-source can be either "system" (use system timer)
      or "sample" (use timer based on number of written samples) */

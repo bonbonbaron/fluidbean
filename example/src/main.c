@@ -13,7 +13,7 @@
 
 extern Inflatable sf3Inf;
 int main(int argc, char *argv[]) {
-    fluid_settings_t* settings = new_fluid_settings();
+    FluidSettings* settings = new_fluid_settings();
     fluid_settings_setstr(settings, "audio.driver", "alsa");
     fluid_settings_setnum(settings, "synth.gain", 2);
     fluid_synth_t* synth = new_fluid_synth(settings);

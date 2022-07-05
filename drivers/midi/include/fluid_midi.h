@@ -289,7 +289,7 @@ struct _fluid_player_t
     fluid_track_t *track[MAX_NUMBER_OF_TRACKS];
     fluid_synth_t *synth;
     fluid_timer_t *system_timer;
-    fluid_sample_timer_t *sample_timer;
+    Sampleimer_t *sample_timer;
 
     int loop; /* -1 = loop infinitely, otherwise times left to loop the playlist */
     fluid_list_t *playlist; /* List of fluid_playlist_item* objects */
@@ -328,7 +328,7 @@ struct _fluid_player_t
     int channel_isplaying[MAX_NUMBER_OF_CHANNELS]; /* flags indicating channels on which notes have played */
 };
 
-void fluid_player_settings(fluid_settings_t *settings);
+void fluid_player_settings(FluidSettings *settings);
 
 
 /*

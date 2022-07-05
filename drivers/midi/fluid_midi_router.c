@@ -83,7 +83,7 @@ struct _fluid_midi_router_rule_t
  * a #fluid_synth_t passed as the \a event_handler_data parameter for this purpose.
  */
 fluid_midi_router_t *
-new_fluid_midi_router(fluid_settings_t *settings, handle_midi_event_func_t handler,
+new_fluid_midi_router(FluidSettings *settings, handle_midi_event_func_t handler,
                       void *event_handler_data)
 {
     fluid_midi_router_t *router = NULL;

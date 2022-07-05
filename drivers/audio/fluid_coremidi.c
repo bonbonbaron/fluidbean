@@ -69,7 +69,7 @@ static const MIDIPortRef invalid_port = (MIDIPortRef)-1;
 
 void fluid_coremidi_callback(const MIDIPacketList *list, void *p, void *src);
 
-void fluid_coremidi_driver_settings(fluid_settings_t *settings)
+void fluid_coremidi_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "midi.coremidi.id", "pid", 0);
 }
@@ -103,7 +103,7 @@ static void fluid_coremidi_autoconnect(fluid_coremidi_driver_t *dev, MIDIPortRef
  * new_fluid_coremidi_driver
  */
 fluid_midi_driver_t *
-new_fluid_coremidi_driver(fluid_settings_t *settings, handle_midi_event_func_t handler, void *data)
+new_fluid_coremidi_driver(FluidSettings *settings, handle_midi_event_func_t handler, void *data)
 {
     fluid_coremidi_driver_t *dev;
     MIDIClientRef client;

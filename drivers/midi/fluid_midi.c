@@ -147,7 +147,7 @@ fluid_player_t *new_fluid_player (fluid_synth_t * synth) {
 			goto err;
 		}
 	} else {
-		player->sample_timer = new_fluid_sample_timer (player->synth,
+		player->sample_timer = new_Sampleimer (player->synth,
 																									 fluid_player_callback,
 																									 player);
 
@@ -189,7 +189,7 @@ void delete_fluid_player (fluid_player_t * player) {
 	fluid_player_reset (player);
 
 	delete_fluid_timer (player->system_timer);
-	delete_fluid_sample_timer (player->synth, player->sample_timer);
+	delete_Sampleimer (player->synth, player->sample_timer);
 
 	while (player->playlist != NULL) {
 		q = player->playlist->next;
@@ -207,7 +207,7 @@ void delete_fluid_player (fluid_player_t * player) {
 /**
  * Registers settings related to the MIDI player
  */
-void fluid_player_settings (fluid_settings_t * settings) {
+void fluid_player_settings (FluidSettings * settings) {
 	/* player.timing-source can be either "system" (use system timer)
 	   or "sample" (use timer based on number of written samples) */
 	fluid_settings_register_str (settings, "player.timing-source", "sample", 0);
@@ -594,7 +594,7 @@ int fluid_player_play (fluid_player_t * player) {
 	}
 
 	if (!player->use_system_timer) {
-		fluid_sample_timer_reset (player->synth, player->sample_timer);
+		Sampleimer_reset (player->synth, player->sample_timer);
 	}
 
 	/* If we're at the end of the playlist and there are no loops left, loop once */

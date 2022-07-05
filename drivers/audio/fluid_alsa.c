@@ -126,16 +126,16 @@ static fluid_thread_return_t fluid_alsa_seq_run(void *d);
 
 /* Alsa audio driver */
 
-void fluid_alsa_audio_driver_settings(fluid_settings_t *settings) {
+void fluid_alsa_audio_driver_settings(FluidSettings *settings) {
   fluid_settings_register_str(settings, "audio.alsa.device", "default", 0);
 }
 
 
-fluid_audio_driver_t * new_fluid_alsa_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth) {
+fluid_audio_driver_t * new_fluid_alsa_audio_driver(FluidSettings *settings, fluid_synth_t *synth) {
   return new_fluid_alsa_audio_driver2(settings, NULL, synth);
 }
 
-fluid_audio_driver_t * new_fluid_alsa_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data) {
+fluid_audio_driver_t * new_fluid_alsa_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data) {
   fluid_alsa_audio_driver_t *dev;
   double sample_rate;
   int periods, period_size;
@@ -574,7 +574,7 @@ error_recovery:
  */
 
 
-void fluid_alsa_rawmidi_driver_settings(fluid_settings_t *settings) {
+void fluid_alsa_rawmidi_driver_settings(FluidSettings *settings) {
   fluid_settings_register_str(settings, "midi.alsa.device", "default", 0);
 }
 
@@ -582,7 +582,7 @@ void fluid_alsa_rawmidi_driver_settings(fluid_settings_t *settings) {
  * new_fluid_alsa_rawmidi_driver
  */
 fluid_midi_driver_t *
-new_fluid_alsa_rawmidi_driver(fluid_settings_t *settings,
+new_fluid_alsa_rawmidi_driver(FluidSettings *settings,
                 handle_midi_event_func_t handler,
                 void *data)
 {
@@ -779,7 +779,7 @@ fluid_alsa_midi_run(void *d)
  */
 
 
-void fluid_alsa_seq_driver_settings(fluid_settings_t *settings)
+void fluid_alsa_seq_driver_settings(FluidSettings *settings)
 {
   fluid_settings_register_str(settings, "midi.alsa_seq.device", "default", 0);
   fluid_settings_register_str(settings, "midi.alsa_seq.id", "pid", 0);
@@ -923,7 +923,7 @@ static void fluid_alsa_seq_autoconnect(fluid_alsa_seq_driver_t *dev, const snd_s
  * new_fluid_alsa_seq_driver
  */
 fluid_midi_driver_t *
-new_fluid_alsa_seq_driver(fluid_settings_t *settings,
+new_fluid_alsa_seq_driver(FluidSettings *settings,
               handle_midi_event_func_t handler, void *data)
 {
   int i, err;

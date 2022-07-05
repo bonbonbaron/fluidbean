@@ -107,7 +107,7 @@ typedef struct
 BOOL CALLBACK
 fluid_dsound_enum_callback(LPGUID guid, LPCTSTR description, LPCTSTR module, LPVOID context)
 {
-    fluid_settings_t *settings = (fluid_settings_t *) context;
+    FluidSettings *settings = (FluidSettings *) context;
     fluid_settings_add_option(settings, "audio.dsound.device", (const char *)description);
 
     return TRUE;
@@ -145,7 +145,7 @@ fluid_dsound_enum_callback2(LPGUID guid, LPCTSTR description, LPCTSTR module, LP
    - register setting "audio.dsound.device".
    - add list of dsound device name as option of "audio.dsound.device" setting.
 */
-void fluid_dsound_audio_driver_settings(fluid_settings_t *settings)
+void fluid_dsound_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "audio.dsound.device", "default", 0);
     fluid_settings_add_option(settings, "audio.dsound.device", "default");
@@ -177,13 +177,13 @@ void fluid_dsound_audio_driver_settings(fluid_settings_t *settings)
  * the driver fails and return NULL.
 */
 fluid_audio_driver_t *
-new_fluid_dsound_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_dsound_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     return new_fluid_dsound_audio_driver2(settings, NULL, synth);
 }
 
 fluid_audio_driver_t *
-new_fluid_dsound_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     HRESULT hr;
     DSBUFFERDESC desc;

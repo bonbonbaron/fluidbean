@@ -54,12 +54,13 @@ typedef Instrument Preset;  // Both have the same structure; so 4 bytes again!
 // instruments, and instruments are made of samples.
 typedef struct _Zone {
   U8           nGens;
+  U8 keylo, keyhi, vello, velhi;
   union {   // Finally found a good use case for unions: avoiding void* while restricting purpose.
     Sample     *sampleP;
     Instrument *instP;
   }             u;
   Generator    *genA;
-} Zone;  // 12 bytes
+} Zone;  // 16 bytes
 
 typedef struct {
   U8 nPresets;

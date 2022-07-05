@@ -58,7 +58,7 @@ static fluid_thread_return_t fluid_pulse_audio_run(void *d);
 static fluid_thread_return_t fluid_pulse_audio_run2(void *d);
 
 
-void fluid_pulse_audio_driver_settings(fluid_settings_t *settings)
+void fluid_pulse_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "audio.pulseaudio.server", "default", 0);
     fluid_settings_register_str(settings, "audio.pulseaudio.device", "default", 0);
@@ -69,14 +69,14 @@ void fluid_pulse_audio_driver_settings(fluid_settings_t *settings)
 
 
 fluid_audio_driver_t *
-new_fluid_pulse_audio_driver(fluid_settings_t *settings,
+new_fluid_pulse_audio_driver(FluidSettings *settings,
                              fluid_synth_t *synth)
 {
     return new_fluid_pulse_audio_driver2(settings, NULL, synth);
 }
 
 fluid_audio_driver_t *
-new_fluid_pulse_audio_driver2(fluid_settings_t *settings,
+new_fluid_pulse_audio_driver2(FluidSettings *settings,
                               fluid_audio_func_t func, void *data)
 {
     fluid_pulse_audio_driver_t *dev;

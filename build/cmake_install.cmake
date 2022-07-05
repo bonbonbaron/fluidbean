@@ -47,17 +47,23 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE FILE FILES "/home/bonbonbaron/hack/fluidbean/include/fluidbean.h")
-endif()
-
-if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/fluidbean" TYPE FILE FILES
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/types.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/synth.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/sfont.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/mod.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/gen.h"
-    "/home/bonbonbaron/hack/fluidbean/include/fluidsynth/voice.h"
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE FILE FILES
+    "/home/bonbonbaron/hack/fluidbean/src/include/chan.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/chorus.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/config.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/conv.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/conv_tables.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/fluidbean.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/gen.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/midi.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/mod.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/phase.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/rev.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/soundfont.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/synth.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/sys.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/tuning.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/voice.h"
     )
 endif()
 

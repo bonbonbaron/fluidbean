@@ -163,12 +163,12 @@ typedef struct
 
 } fluid_wasapi_audio_driver_t;
 
-fluid_audio_driver_t *new_fluid_wasapi_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+fluid_audio_driver_t *new_fluid_wasapi_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     return new_fluid_wasapi_audio_driver2(settings, (fluid_audio_func_t)fluid_synth_process, synth);
 }
 
-fluid_audio_driver_t *new_fluid_wasapi_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+fluid_audio_driver_t *new_fluid_wasapi_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     DWORD ret;
     HANDLE wait_handles[2];
@@ -327,7 +327,7 @@ void delete_fluid_wasapi_audio_driver(fluid_audio_driver_t *p)
     FLUID_FREE(dev);
 }
 
-void fluid_wasapi_audio_driver_settings(fluid_settings_t *settings)
+void fluid_wasapi_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_int(settings, "audio.wasapi.exclusive-mode", 0, 0, 1, FLUID_HINT_TOGGLED);
     fluid_settings_register_str(settings, "audio.wasapi.device", "default", 0);
@@ -762,7 +762,7 @@ cleanup:
 
 static void fluid_wasapi_register_callback(IMMDevice *dev, void *data)
 {
-    fluid_settings_t *settings = (fluid_settings_t *)data;
+    FluidSettings *settings = (FluidSettings *)data;
     IPropertyStore *prop = NULL;
     PROPVARIANT var;
     int ret;

@@ -64,14 +64,14 @@ static LONG APIENTRY fluid_dart_audio_run(ULONG ulStatus, PMCI_MIX_BUFFER pBuffe
  *
  */
 
-void fluid_dart_audio_driver_settings(fluid_settings_t *settings)
+void fluid_dart_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "audio.dart.device", "default", 0);
 }
 
 
 fluid_audio_driver_t *
-new_fluid_dart_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_dart_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     fluid_dart_audio_driver_t *dev;
     double sample_rate;

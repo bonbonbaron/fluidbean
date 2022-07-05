@@ -186,7 +186,7 @@ set_channel_map(AudioUnit outputUnit, int audio_channels, const char *map_string
 }
 
 void
-fluid_core_audio_driver_settings(fluid_settings_t *settings)
+fluid_core_audio_driver_settings(FluidSettings *settings)
 {
     int i;
     UInt32 size;
@@ -228,7 +228,7 @@ fluid_core_audio_driver_settings(fluid_settings_t *settings)
  * new_fluid_core_audio_driver
  */
 fluid_audio_driver_t *
-new_fluid_core_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_core_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     return new_fluid_core_audio_driver2(settings,
                                         NULL,
@@ -239,7 +239,7 @@ new_fluid_core_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
  * new_fluid_core_audio_driver2
  */
 fluid_audio_driver_t *
-new_fluid_core_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     char *devname = NULL, *channel_map = NULL;
     fluid_core_audio_driver_t *dev = NULL;

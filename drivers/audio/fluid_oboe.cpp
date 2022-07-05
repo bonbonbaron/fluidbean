@@ -115,7 +115,7 @@ constexpr char PERF_MODE[] = "audio.oboe.performance-mode";
 constexpr char SRCQ_SET[] = "audio.oboe.sample-rate-conversion-quality";
 constexpr char RECOVERY_MODE[] = "audio.oboe.error-recovery-mode";
 
-void fluid_oboe_audio_driver_settings(fluid_settings_t *settings)
+void fluid_oboe_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_int(settings, OBOE_ID, 0, 0, 0x7FFFFFFF, 0);
 
@@ -141,7 +141,7 @@ void fluid_oboe_audio_driver_settings(fluid_settings_t *settings)
     fluid_settings_add_option(settings, RECOVERY_MODE, "Stop");
 }
 
-static oboe::SampleRateConversionQuality get_srate_conversion_quality(fluid_settings_t *settings)
+static oboe::SampleRateConversionQuality get_srate_conversion_quality(FluidSettings *settings)
 {
     oboe::SampleRateConversionQuality q;
 
@@ -207,7 +207,7 @@ fluid_oboe_connect_or_reconnect(fluid_oboe_audio_driver_t *dev)
  * new_fluid_oboe_audio_driver
  */
 fluid_audio_driver_t *
-new_fluid_oboe_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_oboe_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     fluid_oboe_audio_driver_t *dev = nullptr;
 

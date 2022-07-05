@@ -27,7 +27,7 @@ struct _fluid_audriver_definition_t {
   fluid_audio_driver_t *(*new)(fluid_synth_t *synth);
   fluid_audio_driver_t *(*new2)(enum _AuDriverId, fluid_audio_func_t func, void *data);
   void (*free)(fluid_audio_driver_t *driver);
-  void (*settings)(fluid_settings_t *settings);
+  void (*settings)(FluidSettings *settings);
 };
 
 // Maybe case-switch returning a pointer to a structure that only exists if supported.

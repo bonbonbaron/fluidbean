@@ -198,7 +198,7 @@ static DWORD WINAPI fluid_waveout_synth_thread(void *data)
     return 0;
 }
 
-void fluid_waveout_audio_driver_settings(fluid_settings_t *settings)
+void fluid_waveout_audio_driver_settings(FluidSettings *settings)
 {
     UINT n, nDevs = waveOutGetNumDevs();
 #ifdef _UNICODE
@@ -255,13 +255,13 @@ void fluid_waveout_audio_driver_settings(fluid_settings_t *settings)
  * the driver fails and return NULL.
  */
 fluid_audio_driver_t *
-new_fluid_waveout_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_waveout_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     return new_fluid_waveout_audio_driver2(settings, NULL, synth);
 }
 
 fluid_audio_driver_t *
-new_fluid_waveout_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+new_fluid_waveout_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     fluid_waveout_audio_driver_t *dev = NULL;
     fluid_audio_channels_callback_t write_ptr;

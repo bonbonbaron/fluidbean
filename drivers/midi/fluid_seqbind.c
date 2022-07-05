@@ -42,7 +42,7 @@ struct _fluid_seqbind_t
 {
     fluid_synth_t *synth;
     fluid_sequencer_t *seq;
-    fluid_sample_timer_t *sample_timer;
+    Sampleimer_t *sample_timer;
     fluid_seq_id_t client_id;
     void* note_container;
 };
@@ -67,7 +67,7 @@ delete_fluid_seqbind(fluid_seqbind_t *seqbind)
 
     if((seqbind->sample_timer != NULL) && (seqbind->synth != NULL))
     {
-        delete_fluid_sample_timer(seqbind->synth, seqbind->sample_timer);
+        delete_Sampleimer(seqbind->synth, seqbind->sample_timer);
         seqbind->sample_timer = NULL;
     }
 
@@ -133,7 +133,7 @@ fluid_sequencer_register_fluidsynth(fluid_sequencer_t *seq, fluid_synth_t *synth
     if(!fluid_sequencer_get_use_system_timer(seq))
     {
         seqbind->sample_timer =
-            new_fluid_sample_timer(synth, fluid_seqbind_timer_callback, (void *) seqbind);
+            new_Sampleimer(synth, fluid_seqbind_timer_callback, (void *) seqbind);
 
         if(seqbind->sample_timer == NULL)
         {
@@ -146,7 +146,7 @@ fluid_sequencer_register_fluidsynth(fluid_sequencer_t *seq, fluid_synth_t *synth
     seqbind->note_container = new_fluid_note_container();
     if(seqbind->note_container == NULL)
     {
-        delete_fluid_sample_timer(seqbind->synth, seqbind->sample_timer);
+        delete_Sampleimer(seqbind->synth, seqbind->sample_timer);
         FLUID_FREE(seqbind);
         return FLUID_FAILED;
     }
@@ -158,7 +158,7 @@ fluid_sequencer_register_fluidsynth(fluid_sequencer_t *seq, fluid_synth_t *synth
     if(seqbind->client_id == FLUID_FAILED)
     {
         delete_fluid_note_container(seqbind->note_container);
-        delete_fluid_sample_timer(seqbind->synth, seqbind->sample_timer);
+        delete_Sampleimer(seqbind->synth, seqbind->sample_timer);
         FLUID_FREE(seqbind);
         return FLUID_FAILED;
     }

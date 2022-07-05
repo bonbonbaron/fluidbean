@@ -84,11 +84,11 @@ struct _fluid_jack_midi_driver_t
     fluid_atomic_int_t autoconnect_is_outdated;
 };
 
-static fluid_jack_client_t *new_fluid_jack_client(fluid_settings_t *settings,
+static fluid_jack_client_t *new_fluid_jack_client(FluidSettings *settings,
         int isaudio, void *driver);
 static int fluid_jack_client_register_ports(void *driver, int isaudio,
         jack_client_t *client,
-        fluid_settings_t *settings);
+        FluidSettings *settings);
 
 void fluid_jack_driver_shutdown(void *arg);
 int fluid_jack_driver_srate(jack_nframes_t nframes, void *arg);
@@ -101,7 +101,7 @@ static fluid_jack_client_t *last_client = NULL;       /* Last unpaired client. F
 
 
 void
-fluid_jack_audio_driver_settings(fluid_settings_t *settings)
+fluid_jack_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "audio.jack.id", "fluidsynth", 0);
     fluid_settings_register_int(settings, "audio.jack.multi", 0, 0, 1, FLUID_HINT_TOGGLED);
@@ -146,7 +146,7 @@ fluid_jack_midi_autoconnect(jack_client_t *client, fluid_jack_midi_driver_t *mid
  * @return New or paired Audio/MIDI Jack client
  */
 static fluid_jack_client_t *
-new_fluid_jack_client(fluid_settings_t *settings, int isaudio, void *driver)
+new_fluid_jack_client(FluidSettings *settings, int isaudio, void *driver)
 {
     fluid_jack_client_t *client_ref = NULL;
     char *server = NULL;
@@ -325,7 +325,7 @@ error_recovery:
 
 static int
 fluid_jack_client_register_ports(void *driver, int isaudio, jack_client_t *client,
-                                 fluid_settings_t *settings)
+                                 FluidSettings *settings)
 {
     fluid_jack_audio_driver_t *dev;
     char name[64];
@@ -568,13 +568,13 @@ fluid_jack_client_close(fluid_jack_client_t *client_ref, void *driver)
 
 
 fluid_audio_driver_t *
-new_fluid_jack_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_jack_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     return new_fluid_jack_audio_driver2(settings, NULL, synth);
 }
 
 fluid_audio_driver_t *
-new_fluid_jack_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+new_fluid_jack_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     fluid_jack_audio_driver_t *dev = NULL;
     jack_client_t *client;
@@ -835,7 +835,7 @@ fluid_jack_port_registration(jack_port_id_t port, int is_registering, void *arg)
     }
 }
 
-void fluid_jack_midi_driver_settings(fluid_settings_t *settings)
+void fluid_jack_midi_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "midi.jack.id", "fluidsynth-midi", 0);
     fluid_settings_register_str(settings, "midi.jack.server", "", 0);
@@ -845,7 +845,7 @@ void fluid_jack_midi_driver_settings(fluid_settings_t *settings)
  * new_fluid_jack_midi_driver
  */
 fluid_midi_driver_t *
-new_fluid_jack_midi_driver(fluid_settings_t *settings,
+new_fluid_jack_midi_driver(FluidSettings *settings,
                            handle_midi_event_func_t handler, void *data)
 {
     fluid_jack_midi_driver_t *dev;
@@ -908,7 +908,7 @@ delete_fluid_jack_midi_driver(fluid_midi_driver_t *p)
     FLUID_FREE(dev);
 }
 
-int fluid_jack_obtain_synth(fluid_settings_t *settings, fluid_synth_t **synth)
+int fluid_jack_obtain_synth(FluidSettings *settings, fluid_synth_t **synth)
 {
     void *data;
 

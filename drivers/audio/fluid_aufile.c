@@ -57,7 +57,7 @@ static int fluid_file_audio_run(void *d, unsigned int msec);
  */
 
 fluid_audio_driver_t *
-new_fluid_file_audio_driver(fluid_settings_t *settings,
+new_fluid_file_audio_driver(FluidSettings *settings,
                             fluid_synth_t *synth)
 {
     fluid_file_audio_driver_t *dev;

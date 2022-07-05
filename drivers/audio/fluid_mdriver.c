@@ -28,11 +28,11 @@
 struct _fluid_mdriver_definition_t
 {
     const char *name;
-    fluid_midi_driver_t *(*new)(fluid_settings_t *settings,
+    fluid_midi_driver_t *(*new)(FluidSettings *settings,
                                 handle_midi_event_func_t event_handler,
                                 void *event_handler_data);
     void (*free)(fluid_midi_driver_t *p);
-    void (*settings)(fluid_settings_t *settings);
+    void (*settings)(FluidSettings *settings);
 };
 
 
@@ -97,7 +97,7 @@ static const fluid_mdriver_definition_t fluid_midi_drivers[] =
 };
 
 
-void fluid_midi_driver_settings(fluid_settings_t *settings)
+void fluid_midi_driver_settings(FluidSettings *settings)
 {
     unsigned int i;
     const char *def_name = NULL;
@@ -144,7 +144,7 @@ void fluid_midi_driver_settings(fluid_settings_t *settings)
  *
  * Which MIDI driver is actually created depends on the \ref settings_midi_driver option.
  */
-fluid_midi_driver_t *new_fluid_midi_driver(fluid_settings_t *settings, handle_midi_event_func_t handler, void *event_handler_data)
+fluid_midi_driver_t *new_fluid_midi_driver(FluidSettings *settings, handle_midi_event_func_t handler, void *event_handler_data)
 {
     fluid_midi_driver_t *driver = NULL;
     char *allnames;

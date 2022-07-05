@@ -65,7 +65,7 @@ typedef struct
 static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext);
 static void process_fluid_buffer(fluid_opensles_audio_driver_t *dev);
 
-void fluid_opensles_audio_driver_settings(fluid_settings_t *settings)
+void fluid_opensles_audio_driver_settings(FluidSettings *settings)
 {
 }
 
@@ -74,7 +74,7 @@ void fluid_opensles_audio_driver_settings(fluid_settings_t *settings)
  * new_fluid_opensles_audio_driver
  */
 fluid_audio_driver_t *
-new_fluid_opensles_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_opensles_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     SLresult result;
     fluid_opensles_audio_driver_t *dev;

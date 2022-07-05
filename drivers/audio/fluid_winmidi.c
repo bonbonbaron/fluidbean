@@ -258,7 +258,7 @@ static char *fluid_winmidi_get_device_name(int dev_idx, char *dev_name)
  A multi devices name must be a list of real devices index separated by semicolon:
  Example: "5;3;0"
 */
-void fluid_winmidi_midi_driver_settings(fluid_settings_t *settings)
+void fluid_winmidi_midi_driver_settings(FluidSettings *settings)
 {
     MMRESULT res;
     MIDIINCAPS in_caps;
@@ -462,7 +462,7 @@ fluid_winmidi_parse_device_name(fluid_winmidi_driver_t *dev, char *dev_name)
  * new_fluid_winmidi_driver
  */
 fluid_midi_driver_t *
-new_fluid_winmidi_driver(fluid_settings_t *settings,
+new_fluid_winmidi_driver(FluidSettings *settings,
                          handle_midi_event_func_t handler, void *data)
 {
     fluid_winmidi_driver_t *dev;

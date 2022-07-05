@@ -537,44 +537,10 @@ GLIB_gthread-2.0_LIBDIR:INTERNAL=/usr/lib/arm-linux-gnueabihf
 GLIB_gthread-2.0_MODULE_NAME:INTERNAL=gthread-2.0
 GLIB_gthread-2.0_PREFIX:INTERNAL=/usr
 GLIB_gthread-2.0_VERSION:INTERNAL=2.66.8
-//Have include arpa/inet.h
-HAVE_ARPA_INET_H:INTERNAL=1
 //Have symbol DIR
 HAVE_DIRENT_H:INTERNAL=1
-//Have include errno.h
-HAVE_ERRNO_H:INTERNAL=1
-//Have include fcntl.h
-HAVE_FCNTL_H:INTERNAL=1
-//Have include getopt.h
-HAVE_GETOPT_H:INTERNAL=1
-//Have include limits.h
-HAVE_LIMITS_H:INTERNAL=1
-//Result of TRY_COMPILE
-HAVE_LONG_LONG:INTERNAL=TRUE
-//Have include math.h
-HAVE_MATH_H:INTERNAL=1
-//Have include netinet/in.h
-HAVE_NETINET_IN_H:INTERNAL=1
-//Have include netinet/tcp.h
-HAVE_NETINET_TCP_H:INTERNAL=1
-//Have include pthread.h
-HAVE_PTHREAD_H:INTERNAL=1
-//Have include signal.h
-HAVE_SIGNAL_H:INTERNAL=1
-//Have include stdarg.h
-HAVE_STDARG_H:INTERNAL=1
-//Have include stdio.h
-HAVE_STDIO_H:INTERNAL=1
-//Have include sys/mman.h
-HAVE_SYS_MMAN_H:INTERNAL=1
-//Have include sys/socket.h
-HAVE_SYS_SOCKET_H:INTERNAL=1
-//Have include sys/time.h
-HAVE_SYS_TIME_H:INTERNAL=1
 //Have include unistd.h
 HAVE_UNISTD_H:INTERNAL=1
-//CHECK_TYPE_SIZE: sizeof(long long)
-LONG_LONG:INTERNAL=8
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //System has ANSI C header files

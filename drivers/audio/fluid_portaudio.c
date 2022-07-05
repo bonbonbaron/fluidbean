@@ -127,7 +127,7 @@ static int fluid_portaudio_get_device_name(int device_num, char **name_ptr)
  * @param settings pointer to settings.
  */
 void
-fluid_portaudio_driver_settings(fluid_settings_t *settings)
+fluid_portaudio_driver_settings(FluidSettings *settings)
 {
     int numDevices;
     PaError err;
@@ -193,7 +193,7 @@ fluid_portaudio_driver_settings(fluid_settings_t *settings)
  * @return pointer to the driver on success, NULL otherwise.
  */
 fluid_audio_driver_t *
-new_fluid_portaudio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     fluid_portaudio_driver_t *dev = NULL;
     PaStreamParameters outputParams;

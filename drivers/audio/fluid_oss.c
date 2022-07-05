@@ -102,7 +102,7 @@ static fluid_thread_return_t fluid_oss_midi_run(void *d);
 
 
 void
-fluid_oss_audio_driver_settings(fluid_settings_t *settings)
+fluid_oss_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "audio.oss.device", "/dev/dsp", 0);
 }
@@ -111,7 +111,7 @@ fluid_oss_audio_driver_settings(fluid_settings_t *settings)
  * new_fluid_oss_audio_driver
  */
 fluid_audio_driver_t *
-new_fluid_oss_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+new_fluid_oss_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     fluid_oss_audio_driver_t *dev = NULL;
     int channels, sr, sample_size = 0, oss_format;
@@ -284,7 +284,7 @@ error_recovery:
 }
 
 fluid_audio_driver_t *
-new_fluid_oss_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     fluid_oss_audio_driver_t *dev = NULL;
     int channels, sr;
@@ -592,7 +592,7 @@ fluid_oss_audio_run2(void *d)
 }
 
 
-void fluid_oss_midi_driver_settings(fluid_settings_t *settings)
+void fluid_oss_midi_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "midi.oss.device", "/dev/midi", 0);
 }
@@ -601,7 +601,7 @@ void fluid_oss_midi_driver_settings(fluid_settings_t *settings)
  * new_fluid_oss_midi_driver
  */
 fluid_midi_driver_t *
-new_fluid_oss_midi_driver(fluid_settings_t *settings,
+new_fluid_oss_midi_driver(FluidSettings *settings,
                           handle_midi_event_func_t handler, void *data)
 {
     fluid_oss_midi_driver_t *dev;

@@ -134,13 +134,13 @@ static void fluid_pipewire_event_process2(void *data)
     pw_stream_queue_buffer(drv->pw_stream, pwb);
 }
 
-fluid_audio_driver_t *new_fluid_pipewire_audio_driver(fluid_settings_t *settings, fluid_synth_t *synth)
+fluid_audio_driver_t *new_fluid_pipewire_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 {
     return new_fluid_pipewire_audio_driver2(settings, NULL, synth);
 }
 
 fluid_audio_driver_t *
-new_fluid_pipewire_audio_driver2(fluid_settings_t *settings, fluid_audio_func_t func, void *data)
+new_fluid_pipewire_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
 {
     fluid_pipewire_audio_driver_t *drv;
     int period_size;
@@ -314,7 +314,7 @@ void delete_fluid_pipewire_audio_driver(fluid_audio_driver_t *p)
     FLUID_FREE(drv);
 }
 
-void fluid_pipewire_audio_driver_settings(fluid_settings_t *settings)
+void fluid_pipewire_audio_driver_settings(FluidSettings *settings)
 {
     fluid_settings_register_str(settings, "audio.pipewire.media-role", "Music", 0);
     fluid_settings_register_str(settings, "audio.pipewire.media-type", "Audio", 0);
