@@ -35,8 +35,8 @@ typedef union {
 typedef struct {
   U8 genType;	
   U8 nMods;
-  GenAmount amount;	
-  Modulator *modA;  // I get the mod array appeal, but data accessed together should stay together.
+  GenAmount amount;
+  Modulator *modA;
 } Generator;   // 8 bytes
 
 struct _Zone;
@@ -53,8 +53,12 @@ typedef Instrument Preset;  // Both have the same structure; so 4 bytes again!
 // Union has inst/sample because presets are made of 
 // instruments, and instruments are made of samples.
 typedef struct _Zone {
-  U8           nGens;
-  U8 keylo, keyhi, vello, velhi;
+  U8             nGens;
+  U8             keylo;
+  U8             keyhi;
+  U8             vello;
+  U8             velhi;
+  U8             loopType;  // there's an enum for this
   union {   // Finally found a good use case for unions: avoiding void* while restricting purpose.
     Sample     *sampleP;
     Instrument *instP;

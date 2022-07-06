@@ -20,7 +20,7 @@ typedef struct _Channel {
 	S16 pitch_bend;
 	S16 pitch_wheel_sensitivity;
 	/* controller values */
-	S16 cc[128];
+	S16 cc[128];  // MB TODO: change controller system for easy correspondence to new gen-mod scheme
 	/* cached values of last MSB values of MSB/LSB controllers */
 	U8 bank_msb;
 	S32 interp_method;

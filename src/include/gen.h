@@ -1,24 +1,3 @@
-/* FluidSynth - A Software Synthesizer
- *
- * Copyright (C) 2003  Peter Hanappe and others.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License
- * as published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307, USA
- */
-
-
 #ifndef _FLUID_GEN_H
 #define _FLUID_GEN_H
 
@@ -84,7 +63,6 @@ enum fluid_gen_type {
   GEN_SCALETUNE,		/**< Scale tuning */
   GEN_EXCLUSIVECLASS,		/**< Exclusive class number */
   GEN_OVERRIDEROOTKEY,		/**< Sample root note override */
-
   /* the initial pitch is not a "standard" generator. It is not
    * mentioned in the list of generator in the SF2 specifications. It
    * is used, however, as the destination for the default pitch wheel
@@ -92,7 +70,6 @@ enum fluid_gen_type {
   GEN_PITCH,			/**< Pitch (NOTE: Not a real SoundFont generator) */
   GEN_LAST			/**< Value defines the count of generators (#fluid_gen_type) */
 };
-
 
 typedef struct _fluid_gen_info_t {
 	S8 num;											/* Generator number */

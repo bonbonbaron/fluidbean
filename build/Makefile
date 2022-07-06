@@ -579,33 +579,6 @@ src/conv.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/conv.c.s
 .PHONY : src/conv.c.s
 
-src/defsfont.o: src/defsfont.c.o
-
-.PHONY : src/defsfont.o
-
-# target to build an object file
-src/defsfont.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/defsfont.c.o
-.PHONY : src/defsfont.c.o
-
-src/defsfont.i: src/defsfont.c.i
-
-.PHONY : src/defsfont.i
-
-# target to preprocess a source file
-src/defsfont.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/defsfont.c.i
-.PHONY : src/defsfont.c.i
-
-src/defsfont.s: src/defsfont.c.s
-
-.PHONY : src/defsfont.s
-
-# target to generate assembly for a file
-src/defsfont.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/defsfont.c.s
-.PHONY : src/defsfont.c.s
-
 src/dsp_float.o: src/dsp_float.c.o
 
 .PHONY : src/dsp_float.o
@@ -878,9 +851,6 @@ help:
 	@echo "... src/conv.o"
 	@echo "... src/conv.i"
 	@echo "... src/conv.s"
-	@echo "... src/defsfont.o"
-	@echo "... src/defsfont.i"
-	@echo "... src/defsfont.s"
 	@echo "... src/dsp_float.o"
 	@echo "... src/dsp_float.i"
 	@echo "... src/dsp_float.s"

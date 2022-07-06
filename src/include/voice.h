@@ -17,10 +17,7 @@ enum fluid_voice_status {
 	FLUID_VOICE_OFF
 };
 
-
-/*
- * envelope data
- */
+/* envelope data */
 typedef struct _fluid_env_data_t {
 	U32 count;
 	fluid_real_t coeff;
@@ -53,34 +50,10 @@ typedef struct _Voice {
 	U8 vel;						/* the velocity */
 	struct _Channel *channel;
 	Generator gen[GEN_LAST];
-	Modulator mod[FLUID_NUM_MOD];
-	S32 mod_count;
 	S32 has_looped;								/* Flag that is set as soon as the first loop is completed. */
-	Sample *sample;
+	Sample *sampleP;
 	S32 check_sample_sanity_flag;	/* Flag that initiates, that sample-related parameters
 																   have to be checked. */
-#if 0
-	/* Instead of keeping a pointer to a Sample structure,
-	 * I think it would be better to copy the sample data in the
-	 * voice structure. SoundFont loader then do not have to
-	 * allocate and maintain the Sample structure. [PH]
-	 *
-	 * The notify callback may be used also for streaming samples.
-	 */
-	S16 *sample_data;						/* pointer to the sample data */
-	S32 sample_data_offset;				/* the offset of data[0] in the whole sample */
-	S32 sample_data_length;				/* the length of the data array */
-	U32 sample_start;
-	U32 sample_end;
-	U32 sample_loopstart;
-	U32 sample_loopend;
-	U32 sample_rate;
-	S32 sample_origpitch;
-	S32 sample_pitchadj;
-	S32 sample_type;
-	S32 (*sample_notify) (Voice * voice, S32 reason);
-	void *sample_userdata;
-#endif
 
 	/* basic parameters */
 	fluid_real_t output_rate;			/* the sample rate of the synthesizer */
@@ -208,8 +181,7 @@ S32 fluid_voice_modulate (Voice * voice, S32 cc, S32 ctrl);
 S32 fluid_voice_modulate_all (Voice * voice);
 
 /** Set the NRPN value of a generator. */
-S32 fluid_voice_set_param (Voice * voice, S32 gen, fluid_real_t value,
-													 S32 abs);
+S32 fluid_voice_set_param (Voice * voice, S32 gen, fluid_real_t value, S32 abs);
 
 
 /** Set the gain. */
@@ -250,8 +222,7 @@ void fluid_voice_check_sample_sanity (Voice * voice);
 #define _SUSTAINED(voice)  ((voice)->status == FLUID_VOICE_SUSTAINED)
 #define _AVAILABLE(voice)  (((voice)->status == FLUID_VOICE_CLEAN) || ((voice)->status == FLUID_VOICE_OFF))
 #define _RELEASED(voice)  ((voice)->chan == NO_CHANNEL)
-#define _SAMPLEMODE(voice) ((S32)(voice)->gen[GEN_SAMPLEMODE].val)
-
+#define _SAMPLEMODE(voice) ((S32)(voice)->gen[GEN_SAMPLEMODE].amount.s16)
 
 fluid_real_t fluid_voice_gen_value (Voice * voice, S32 num);
 

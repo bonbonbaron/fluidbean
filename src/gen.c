@@ -1,25 +1,5 @@
-/* FluidSynth - A Software Synthesizer
- *
- * Copyright (C) 2003  Peter Hanappe and others.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License
- * as published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307, USA
- */
-
-
 #include "fluidbean.h"
+#include "gen.h"
 
 
 /* See SFSpec21 $8.1.3 */
@@ -87,23 +67,16 @@ fluid_gen_info_t fluid_gen_info[] = {
 	{GEN_PITCH, 1, 0, 0.0f, 127.0f, 0.0f}
 };
 
-
-/**
- * Set an array of generators to their default values.
- * @param gen Array of generators (should be #GEN_LAST in size).
- * @return Always returns 0
- */
-int fluid_gen_set_default_values (Generator * gen) {
+void fluid_gen_set_default_values (Generator * genA, U8 nGens) {
 	int i;
+  Generator *genEndP = genA + nGens;
 
-	for (i = 0; i < GEN_LAST; i++) {
-		gen[i].flags = GEN_UNUSED;
-		gen[i].mod = 0.0;
-		gen[i].nrpn = 0.0;
-		gen[i].val = fluid_gen_info[i].def;
+  for (Generator *genP = genA; genP < genEndP; ++genP) {
+		genP->flags = GEN_UNUSED;
+		genP->mod = 0.0;
+		genP->nrpn = 0.0;
+		genP->val = fluid_gen_info[genP->genType].def;
 	}
-
-	return FLUID_OK;
 }
 
 
@@ -111,28 +84,25 @@ int fluid_gen_set_default_values (Generator * gen) {
  *
  * Set an array of generators to their initial value
  */
-int fluid_gen_init (Generator * gen, Channel * channel) {
-	int i;
-
+int fluid_gen_init (Generator * genA, U8 nGens, Channel * channelP) {
 	fluid_gen_set_default_values (gen);
 
-	for (i = 0; i < GEN_LAST; i++) {
-		gen[i].nrpn = fluid_channel_get_gen (channel, i);
+  Generator *genEndP = genA + nGens;
 
+  for (Generator *genP = genA; genP < genEndP; ++genP) {
+		genP->nrpn = fluid_channel_get_gen (channel, i);
 		/* This is an extension to the SoundFont standard. More
 		 * documentation is available at the fluid_synth_set_gen2()
 		 * function. */
-		if (fluid_channel_get_gen_abs (channel, i)) {
+    if (channelP->gen_abs[genP->genType])
 			gen[i].flags = GEN_ABS_NRPN;
-		}
 	}
 
 	return FLUID_OK;
 }
 
 fluid_real_t fluid_gen_scale (int gen, float value) {
-	return (fluid_gen_info[gen].min
-					+ value * (fluid_gen_info[gen].max - fluid_gen_info[gen].min));
+	return (fluid_gen_info[gen].min + value * (fluid_gen_info[gen].max - fluid_gen_info[gen].min));
 }
 
 fluid_real_t fluid_gen_scale_nrpn (int gen, int data) {

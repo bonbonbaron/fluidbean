@@ -1,39 +1,13 @@
 #include "fluidbean.h"
-
-/* Purpose:
- *
- * Interpolates audio data (obtains values between the samples of the original
- * waveform data).
- *
- * Variables loaded from the voice structure (assigned in fluid_voice_write()):
- * - dsp_data: Pointer to the original waveform data
- * - dsp_phase: The position in the original waveform data.
- *              This has an integer and a fractional part (between samples).
- * - dsp_phase_incr: For each output sample, the position in the original
- *              waveform advances by dsp_phase_incr. This also has an integer
- *              part and a fractional part.
- *              If a sample is played at root pitch (no pitch change),
- *              dsp_phase_incr is integer=1 and fractional=0.
- * - dsp_amp: The current amplitude envelope value.
- * - dsp_amp_incr: The changing rate of the amplitude envelope.
- *
- * A couple of variables are used internally, their results are discarded:
- * - dsp_i: Index through the output buffer
- * - dsp_buf: Output buffer of floating point values (FLUID_BUFSIZE in length)
- */
-
-#include "include/fluid_synth.h"
-#include "include/fluid_voice.h"
-
+#include "synth.h"
+#include "voice.h"
+#include <math.h>
 
 /* Interpolation (find a value between two samples of the original waveform) */
-
 /* Linear interpolation table (2 coefficients centered on 1st) */
 static fluid_real_t interp_coeff_linear[FLUID_INTERP_MAX][2];
-
 /* 4th order (cubic) interpolation table (4 coefficients centered on 2nd) */
 static fluid_real_t interp_coeff[FLUID_INTERP_MAX][4];
-
 /* 7th order interpolation (7 coefficients centered on 3rd) */
 static fluid_real_t sinc_table7[FLUID_INTERP_MAX][7];
 
@@ -103,7 +77,7 @@ void fluid_dsp_float_config (void) {
 int fluid_dsp_float_interpolate_none (Voice * voice) {
 	fluid_phase_t dsp_phase = voice->phase;
 	fluid_phase_t dsp_phase_incr;
-	short int *dsp_data = voice->sample->data;
+	short int *dsp_data = voice->sampleP->pcmDataP;
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
@@ -163,7 +137,7 @@ int fluid_dsp_float_interpolate_none (Voice * voice) {
 int fluid_dsp_float_interpolate_linear (Voice * voice) {
 	fluid_phase_t dsp_phase = voice->phase;
 	fluid_phase_t dsp_phase_incr;
-	short int *dsp_data = voice->sample->data;
+	short int *dsp_data = voice->sampleP->pcmDataP;
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
@@ -254,7 +228,7 @@ int fluid_dsp_float_interpolate_linear (Voice * voice) {
 int fluid_dsp_float_interpolate_4th_order (Voice * voice) {
 	fluid_phase_t dsp_phase = voice->phase;
 	fluid_phase_t dsp_phase_incr;
-	short int *dsp_data = voice->sample->data;
+	short int *dsp_data = voice->sampleP->pcmDataP;
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;
@@ -396,7 +370,7 @@ int fluid_dsp_float_interpolate_4th_order (Voice * voice) {
 int fluid_dsp_float_interpolate_7th_order (Voice * voice) {
 	fluid_phase_t dsp_phase = voice->phase;
 	fluid_phase_t dsp_phase_incr;
-	short int *dsp_data = voice->sample->data;
+	short int *dsp_data = voice->sampleP->pcmDataP;
 	fluid_real_t *dsp_buf = voice->dsp_buf;
 	fluid_real_t dsp_amp = voice->amp;
 	fluid_real_t dsp_amp_incr = voice->amp_incr;

@@ -19,7 +19,6 @@ list(APPEND HEADERS
     ${CMAKE_SOURCE_DIR}/src/include/chorus.h
     ${CMAKE_SOURCE_DIR}/src/include/config.h
     ${CMAKE_SOURCE_DIR}/src/include/conv.h
-    ${CMAKE_SOURCE_DIR}/src/include/conv_tables.h
     ${CMAKE_SOURCE_DIR}/src/include/fluidbean.h
     ${CMAKE_SOURCE_DIR}/src/include/gen.h
     ${CMAKE_SOURCE_DIR}/src/include/midi.h
@@ -38,7 +37,6 @@ list(APPEND SOURCES
     ${CMAKE_SOURCE_DIR}/src/chan.c
     ${CMAKE_SOURCE_DIR}/src/chorus.c
     ${CMAKE_SOURCE_DIR}/src/conv.c
-    ${CMAKE_SOURCE_DIR}/src/defsfont.c
     ${CMAKE_SOURCE_DIR}/src/dsp_float.c
     ${CMAKE_SOURCE_DIR}/src/gen.c
     ${CMAKE_SOURCE_DIR}/src/mod.c
