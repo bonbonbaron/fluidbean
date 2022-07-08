@@ -19,16 +19,16 @@
  */
 
 
-/* fluid_oss.c
+/* oss.c
  *
  * Drivers for the Open (?) Sound System
  */
 
-#include "fluid_synth.h"
-#include "fluid_midi.h"
-#include "fluid_adriver.h"
-#include "fluid_mdriver.h"
-#include "fluid_settings.h"
+#include "synth.h"
+#include "midi.h"
+#include "adriver.h"
+#include "mdriver.h"
+#include "settings.h"
 
 #if OSS_SUPPORT
 
@@ -56,74 +56,74 @@
 #define SOUND_PCM_WRITE_CHANNELS        SNDCTL_DSP_CHANNELS
 #endif
 
-/** fluid_oss_audio_driver_t
+/** ossAudioDriverT
  *
  * This structure should not be accessed directly. Use audio port
  * functions instead.
  */
 typedef struct
 {
-    fluid_audio_driver_t driver;
-    fluid_synth_t *synth;
-    fluid_audio_callback_t read;
+    audioDriverT driver;
+    synthT *synth;
+    audioCallbackT read;
     void *buffer;
-    fluid_thread_t *thread;
+    threadT *thread;
     int cont;
     int dspfd;
-    int buffer_size;
-    int buffer_byte_size;
+    int bufferSize;
+    int bufferByteSize;
     int bigendian;
     int formats;
     int format;
     int caps;
-    fluid_audio_func_t callback;
+    audioFuncT callback;
     void *data;
     float *buffers[2];
-} fluid_oss_audio_driver_t;
+} ossAudioDriverT;
 
 
 /* local utilities */
-static int fluid_oss_set_queue_size(fluid_oss_audio_driver_t *dev, int ss, int ch, int qs, int bs);
-static fluid_thread_return_t fluid_oss_audio_run(void *d);
-static fluid_thread_return_t fluid_oss_audio_run2(void *d);
+static int ossSetQueueSize(ossAudioDriverT *dev, int ss, int ch, int qs, int bs);
+static threadReturnT ossAudioRun(void *d);
+static threadReturnT ossAudioRun2(void *d);
 
 
 typedef struct
 {
-    fluid_midi_driver_t driver;
+    midiDriverT driver;
     int fd;
-    fluid_thread_t *thread;
+    threadT *thread;
     int status;
     unsigned char buffer[BUFFER_LENGTH];
-    fluid_midi_parser_t *parser;
-} fluid_oss_midi_driver_t;
+    midiParserT *parser;
+} ossMidiDriverT;
 
-static fluid_thread_return_t fluid_oss_midi_run(void *d);
+static threadReturnT ossMidiRun(void *d);
 
 
 void
-fluid_oss_audio_driver_settings(FluidSettings *settings)
+ossAudioDriverSettings(FluidSettings *settings)
 {
-    fluid_settings_register_str(settings, "audio.oss.device", "/dev/dsp", 0);
+    settingsRegisterStr(settings, "audio.oss.device", "/dev/dsp", 0);
 }
 
 /*
- * new_fluid_oss_audio_driver
+ * newFluidOssAudioDriver
  */
-fluid_audio_driver_t *
-new_fluid_oss_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidOssAudioDriver(FluidSettings *settings, synthT *synth)
 {
-    fluid_oss_audio_driver_t *dev = NULL;
-    int channels, sr, sample_size = 0, oss_format;
+    ossAudioDriverT *dev = NULL;
+    int channels, sr, sampleSize = 0, ossFormat;
     struct stat devstat;
     int queuesize;
-    double sample_rate;
-    int periods, period_size;
-    int realtime_prio = 0;
+    double sampleRate;
+    int periods, periodSize;
+    int realtimePrio = 0;
     char *devname = NULL;
     int format;
 
-    dev = FLUID_NEW(fluid_oss_audio_driver_t);
+    dev = FLUID_NEW(ossAudioDriverT);
 
     if(dev == NULL)
     {
@@ -131,59 +131,59 @@ new_fluid_oss_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_oss_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(ossAudioDriverT));
 
-    fluid_settings_getint(settings, "audio.periods", &periods);
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_getint(settings, "audio.realtime-prio", &realtime_prio);
+    settingsGetint(settings, "audio.periods", &periods);
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsGetint(settings, "audio.realtime-prio", &realtimePrio);
 
     dev->dspfd = -1;
     dev->synth = synth;
     dev->callback = NULL;
     dev->data = NULL;
     dev->cont = 1;
-    dev->buffer_size = (int) period_size;
-    queuesize = (int)(periods * period_size);
+    dev->bufferSize = (int) periodSize;
+    queuesize = (int)(periods * periodSize);
 
-    if(fluid_settings_str_equal(settings, "audio.sample-format", "16bits"))
+    if(settingsStrEqual(settings, "audio.sample-format", "16bits"))
     {
-        sample_size = 16;
-        oss_format = AFMT_S16_LE;
-        dev->read = fluid_synth_write_s16;
-        dev->buffer_byte_size = dev->buffer_size * 4;
+        sampleSize = 16;
+        ossFormat = AFMT_S16_LE;
+        dev->read = synthWriteS16;
+        dev->bufferByteSize = dev->bufferSize * 4;
 
     }
-    else if(fluid_settings_str_equal(settings, "audio.sample-format", "float"))
+    else if(settingsStrEqual(settings, "audio.sample-format", "float"))
     {
-        sample_size = 32;
-        oss_format = -1;
-        dev->read = fluid_synth_write_float;
-        dev->buffer_byte_size = dev->buffer_size * 8;
+        sampleSize = 32;
+        ossFormat = -1;
+        dev->read = synthWriteFloat;
+        dev->bufferByteSize = dev->bufferSize * 8;
 
     }
     else
     {
         FLUID_LOG(FLUID_ERR, "Unknown sample format");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    dev->buffer = FLUID_MALLOC(dev->buffer_byte_size);
+    dev->buffer = FLUID_MALLOC(dev->bufferByteSize);
 
     if(dev->buffer == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if(fluid_settings_dupstr(settings, "audio.oss.device", &devname) != FLUID_OK || !devname)            /* ++ alloc device name */
+    if(settingsDupstr(settings, "audio.oss.device", &devname) != FLUID_OK || !devname)            /* ++ alloc device name */
     {
         devname = FLUID_STRDUP("/dev/dsp");
 
         if(devname == NULL)
         {
             FLUID_LOG(FLUID_ERR, "Out of memory");
-            goto error_recovery;
+            goto errorRecovery;
         }
     }
 
@@ -192,40 +192,40 @@ new_fluid_oss_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     if(dev->dspfd == -1)
     {
         FLUID_LOG(FLUID_ERR, "Device <%s> could not be opened for writing: %s",
-                  devname, g_strerror(errno));
-        goto error_recovery;
+                  devname, gStrerror(errno));
+        goto errorRecovery;
     }
 
     if(fstat(dev->dspfd, &devstat) == -1)
     {
-        FLUID_LOG(FLUID_ERR, "fstat failed on device <%s>: %s", devname, g_strerror(errno));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "fstat failed on device <%s>: %s", devname, gStrerror(errno));
+        goto errorRecovery;
     }
 
-    if((devstat.st_mode & S_IFCHR) != S_IFCHR)
+    if((devstat.stMode & S_IFCHR) != S_IFCHR)
     {
         FLUID_LOG(FLUID_ERR, "Device <%s> is not a device file", devname);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if(fluid_oss_set_queue_size(dev, sample_size, 2, queuesize, period_size) < 0)
+    if(ossSetQueueSize(dev, sampleSize, 2, queuesize, periodSize) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set device buffer size");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    format = oss_format;
+    format = ossFormat;
 
-    if(ioctl(dev->dspfd, SNDCTL_DSP_SETFMT, &oss_format) < 0)
+    if(ioctl(dev->dspfd, SNDCTL_DSP_SETFMT, &ossFormat) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample format");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if(oss_format != format)
+    if(ossFormat != format)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample format");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     channels = 2;
@@ -233,36 +233,36 @@ new_fluid_oss_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     if(ioctl(dev->dspfd, SOUND_PCM_WRITE_CHANNELS, &channels) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the number of channels");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(channels != 2)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the number of channels");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    sr = sample_rate;
+    sr = sampleRate;
 
     if(ioctl(dev->dspfd, SNDCTL_DSP_SPEED, &sr) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample rate");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if((sr < 0.95 * sample_rate) ||
-            (sr > 1.05 * sample_rate))
+    if((sr < 0.95 * sampleRate) ||
+            (sr > 1.05 * sampleRate))
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample rate");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     /* Create the audio thread */
-    dev->thread = new_fluid_thread("oss-audio", fluid_oss_audio_run, dev, realtime_prio, FALSE);
+    dev->thread = newFluidThread("oss-audio", ossAudioRun, dev, realtimePrio, FALSE);
 
     if(!dev->thread)
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(devname)
@@ -270,33 +270,33 @@ new_fluid_oss_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
         FLUID_FREE(devname);    /* -- free device name */
     }
 
-    return (fluid_audio_driver_t *) dev;
+    return (audioDriverT *) dev;
 
-error_recovery:
+errorRecovery:
 
     if(devname)
     {
         FLUID_FREE(devname);    /* -- free device name */
     }
 
-    delete_fluid_oss_audio_driver((fluid_audio_driver_t *) dev);
+    deleteFluidOssAudioDriver((audioDriverT *) dev);
     return NULL;
 }
 
-fluid_audio_driver_t *
-new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
+audioDriverT *
+newFluidOssAudioDriver2(FluidSettings *settings, audioFuncT func, void *data)
 {
-    fluid_oss_audio_driver_t *dev = NULL;
+    ossAudioDriverT *dev = NULL;
     int channels, sr;
     struct stat devstat;
     int queuesize;
-    double sample_rate;
-    int periods, period_size;
+    double sampleRate;
+    int periods, periodSize;
     char *devname = NULL;
-    int realtime_prio = 0;
+    int realtimePrio = 0;
     int format;
 
-    dev = FLUID_NEW(fluid_oss_audio_driver_t);
+    dev = FLUID_NEW(ossAudioDriverT);
 
     if(dev == NULL)
     {
@@ -304,12 +304,12 @@ new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, vo
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_oss_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(ossAudioDriverT));
 
-    fluid_settings_getint(settings, "audio.periods", &periods);
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_getint(settings, "audio.realtime-prio", &realtime_prio);
+    settingsGetint(settings, "audio.periods", &periods);
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsGetint(settings, "audio.realtime-prio", &realtimePrio);
 
     dev->dspfd = -1;
     dev->synth = NULL;
@@ -317,19 +317,19 @@ new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, vo
     dev->callback = func;
     dev->data = data;
     dev->cont = 1;
-    dev->buffer_size = (int) period_size;
-    queuesize = (int)(periods * period_size);
-    dev->buffer_byte_size = dev->buffer_size * 2 * 2; /* 2 channels * 16 bits audio */
+    dev->bufferSize = (int) periodSize;
+    queuesize = (int)(periods * periodSize);
+    dev->bufferByteSize = dev->bufferSize * 2 * 2; /* 2 channels * 16 bits audio */
 
 
-    if(fluid_settings_dupstr(settings, "audio.oss.device", &devname) != FLUID_OK || !devname)
+    if(settingsDupstr(settings, "audio.oss.device", &devname) != FLUID_OK || !devname)
     {
         devname = FLUID_STRDUP("/dev/dsp");
 
         if(!devname)
         {
             FLUID_LOG(FLUID_ERR, "Out of memory");
-            goto error_recovery;
+            goto errorRecovery;
         }
     }
 
@@ -338,26 +338,26 @@ new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, vo
     if(dev->dspfd == -1)
     {
         FLUID_LOG(FLUID_ERR, "Device <%s> could not be opened for writing: %s",
-                  devname, g_strerror(errno));
-        goto error_recovery;
+                  devname, gStrerror(errno));
+        goto errorRecovery;
     }
 
     if(fstat(dev->dspfd, &devstat) == -1)
     {
-        FLUID_LOG(FLUID_ERR, "fstat failed on device <%s>: %s", devname, g_strerror(errno));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "fstat failed on device <%s>: %s", devname, gStrerror(errno));
+        goto errorRecovery;
     }
 
-    if((devstat.st_mode & S_IFCHR) != S_IFCHR)
+    if((devstat.stMode & S_IFCHR) != S_IFCHR)
     {
         FLUID_LOG(FLUID_ERR, "Device <%s> is not a device file", devname);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if(fluid_oss_set_queue_size(dev, 16, 2, queuesize, period_size) < 0)
+    if(ossSetQueueSize(dev, 16, 2, queuesize, periodSize) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set device buffer size");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     format = AFMT_S16_LE;
@@ -365,13 +365,13 @@ new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, vo
     if(ioctl(dev->dspfd, SNDCTL_DSP_SETFMT, &format) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample format");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(format != AFMT_S16_LE)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample format");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     channels = 2;
@@ -379,47 +379,47 @@ new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, vo
     if(ioctl(dev->dspfd, SOUND_PCM_WRITE_CHANNELS, &channels) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the number of channels");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(channels != 2)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the number of channels");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    sr = sample_rate;
+    sr = sampleRate;
 
     if(ioctl(dev->dspfd, SNDCTL_DSP_SPEED, &sr) < 0)
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample rate");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if((sr < 0.95 * sample_rate) ||
-            (sr > 1.05 * sample_rate))
+    if((sr < 0.95 * sampleRate) ||
+            (sr > 1.05 * sampleRate))
     {
         FLUID_LOG(FLUID_ERR, "Can't set the sample rate");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     /* allocate the buffers. */
-    dev->buffer = FLUID_MALLOC(dev->buffer_byte_size);
-    dev->buffers[0] = FLUID_ARRAY(float, dev->buffer_size);
-    dev->buffers[1] = FLUID_ARRAY(float, dev->buffer_size);
+    dev->buffer = FLUID_MALLOC(dev->bufferByteSize);
+    dev->buffers[0] = FLUID_ARRAY(float, dev->bufferSize);
+    dev->buffers[1] = FLUID_ARRAY(float, dev->bufferSize);
 
     if((dev->buffer == NULL) || (dev->buffers[0] == NULL) || (dev->buffers[1] == NULL))
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     /* Create the audio thread */
-    dev->thread = new_fluid_thread("oss-audio", fluid_oss_audio_run2, dev, realtime_prio, FALSE);
+    dev->thread = newFluidThread("oss-audio", ossAudioRun2, dev, realtimePrio, FALSE);
 
     if(!dev->thread)
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(devname)
@@ -427,34 +427,34 @@ new_fluid_oss_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, vo
         FLUID_FREE(devname);    /* -- free device name */
     }
 
-    return (fluid_audio_driver_t *) dev;
+    return (audioDriverT *) dev;
 
-error_recovery:
+errorRecovery:
 
     if(devname)
     {
         FLUID_FREE(devname);    /* -- free device name */
     }
 
-    delete_fluid_oss_audio_driver((fluid_audio_driver_t *) dev);
+    deleteFluidOssAudioDriver((audioDriverT *) dev);
     return NULL;
 }
 
 /*
- * delete_fluid_oss_audio_driver
+ * deleteFluidOssAudioDriver
  */
 void
-delete_fluid_oss_audio_driver(fluid_audio_driver_t *p)
+deleteFluidOssAudioDriver(audioDriverT *p)
 {
-    fluid_oss_audio_driver_t *dev = (fluid_oss_audio_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    ossAudioDriverT *dev = (ossAudioDriverT *) p;
+    returnIfFail(dev != NULL);
 
     dev->cont = 0;
 
     if(dev->thread)
     {
-        fluid_thread_join(dev->thread);
-        delete_fluid_thread(dev->thread);
+        threadJoin(dev->thread);
+        deleteFluidThread(dev->thread);
     }
 
     if(dev->dspfd >= 0)
@@ -469,7 +469,7 @@ delete_fluid_oss_audio_driver(fluid_audio_driver_t *p)
 }
 
 /**
- *  fluid_oss_set_queue_size
+ *  ossSetQueueSize
  *
  *  Set the internal buffersize of the output device.
  *
@@ -479,7 +479,7 @@ delete_fluid_oss_audio_driver(fluid_audio_driver_t *p)
  *  @param bs The synthesis buffer size in frames
  */
 int
-fluid_oss_set_queue_size(fluid_oss_audio_driver_t *dev, int ss, int ch, int qs, int bs)
+ossSetQueueSize(ossAudioDriverT *dev, int ss, int ch, int qs, int bs)
 {
     unsigned int fragmentSize;
     unsigned int fragSizePower;
@@ -523,25 +523,25 @@ fluid_oss_set_queue_size(fluid_oss_audio_driver_t *dev, int ss, int ch, int qs, 
 }
 
 /*
- * fluid_oss_audio_run
+ * ossAudioRun
  */
-fluid_thread_return_t
-fluid_oss_audio_run(void *d)
+threadReturnT
+ossAudioRun(void *d)
 {
-    fluid_oss_audio_driver_t *dev = (fluid_oss_audio_driver_t *) d;
-    fluid_synth_t *synth = dev->synth;
+    ossAudioDriverT *dev = (ossAudioDriverT *) d;
+    synthT *synth = dev->synth;
     void *buffer = dev->buffer;
-    int len = dev->buffer_size;
+    int len = dev->bufferSize;
 
     /* it's as simple as that: */
     while(dev->cont)
     {
         dev->read(synth, len, buffer, 0, 2, buffer, 1, 2);
 
-        if(write(dev->dspfd, buffer, dev->buffer_byte_size) < 0)
+        if(write(dev->dspfd, buffer, dev->bufferByteSize) < 0)
         {
             FLUID_LOG(FLUID_ERR, "Error writing to OSS sound device: %s",
-                      g_strerror(errno));
+                      gStrerror(errno));
             break;
         }
     }
@@ -553,35 +553,35 @@ fluid_oss_audio_run(void *d)
 
 
 /*
- * fluid_oss_audio_run
+ * ossAudioRun
  */
-fluid_thread_return_t
-fluid_oss_audio_run2(void *d)
+threadReturnT
+ossAudioRun2(void *d)
 {
-    fluid_oss_audio_driver_t *dev = (fluid_oss_audio_driver_t *) d;
+    ossAudioDriverT *dev = (ossAudioDriverT *) d;
     short *buffer = (short *) dev->buffer;
     float *left = dev->buffers[0];
     float *right = dev->buffers[1];
-    int buffer_size = dev->buffer_size;
-    int dither_index = 0;
+    int bufferSize = dev->bufferSize;
+    int ditherIndex = 0;
 
     FLUID_LOG(FLUID_DBG, "Audio thread running");
 
     /* it's as simple as that: */
     while(dev->cont)
     {
-        FLUID_MEMSET(left, 0, buffer_size * sizeof(float));
-        FLUID_MEMSET(right, 0, buffer_size * sizeof(float));
+        FLUID_MEMSET(left, 0, bufferSize * sizeof(float));
+        FLUID_MEMSET(right, 0, bufferSize * sizeof(float));
 
-        (*dev->callback)(dev->data, buffer_size, 0, NULL, 2, dev->buffers);
+        (*dev->callback)(dev->data, bufferSize, 0, NULL, 2, dev->buffers);
 
-        fluid_synth_dither_s16(&dither_index, buffer_size, left, right,
+        synthDitherS16(&ditherIndex, bufferSize, left, right,
                                buffer, 0, 2, buffer, 1, 2);
 
-        if(write(dev->dspfd, buffer, dev->buffer_byte_size) < 0)
+        if(write(dev->dspfd, buffer, dev->bufferByteSize) < 0)
         {
             FLUID_LOG(FLUID_ERR, "Error writing to OSS sound device: %s",
-                      g_strerror(errno));
+                      gStrerror(errno));
             break;
         }
     }
@@ -592,20 +592,20 @@ fluid_oss_audio_run2(void *d)
 }
 
 
-void fluid_oss_midi_driver_settings(FluidSettings *settings)
+void ossMidiDriverSettings(FluidSettings *settings)
 {
-    fluid_settings_register_str(settings, "midi.oss.device", "/dev/midi", 0);
+    settingsRegisterStr(settings, "midi.oss.device", "/dev/midi", 0);
 }
 
 /*
- * new_fluid_oss_midi_driver
+ * newFluidOssMidiDriver
  */
-fluid_midi_driver_t *
-new_fluid_oss_midi_driver(FluidSettings *settings,
-                          handle_midi_event_func_t handler, void *data)
+midiDriverT *
+newFluidOssMidiDriver(FluidSettings *settings,
+                          handleMidiEventFuncT handler, void *data)
 {
-    fluid_oss_midi_driver_t *dev;
-    int realtime_prio = 0;
+    ossMidiDriverT *dev;
+    int realtimePrio = 0;
     char *device = NULL;
 
     /* not much use doing anything */
@@ -616,7 +616,7 @@ new_fluid_oss_midi_driver(FluidSettings *settings,
     }
 
     /* allocate the device */
-    dev = FLUID_NEW(fluid_oss_midi_driver_t);
+    dev = FLUID_NEW(ossMidiDriverT);
 
     if(dev == NULL)
     {
@@ -624,23 +624,23 @@ new_fluid_oss_midi_driver(FluidSettings *settings,
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_oss_midi_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(ossMidiDriverT));
     dev->fd = -1;
 
     dev->driver.handler = handler;
     dev->driver.data = data;
 
     /* allocate one event to store the input data */
-    dev->parser = new_fluid_midi_parser();
+    dev->parser = newFluidMidiParser();
 
     if(dev->parser == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     /* get the device name. if none is specified, use the default device. */
-    fluid_settings_dupstr(settings, "midi.oss.device", &device);  /* ++ alloc device name */
+    settingsDupstr(settings, "midi.oss.device", &device);  /* ++ alloc device name */
 
     if(device == NULL)
     {
@@ -649,11 +649,11 @@ new_fluid_oss_midi_driver(FluidSettings *settings,
         if(!device)
         {
             FLUID_LOG(FLUID_ERR, "Out of memory");
-            goto error_recovery;
+            goto errorRecovery;
         }
     }
 
-    fluid_settings_getint(settings, "midi.realtime-prio", &realtime_prio);
+    settingsGetint(settings, "midi.realtime-prio", &realtimePrio);
 
     /* open the default hardware device. only use midi in. */
     dev->fd = open(device, O_RDONLY, 0);
@@ -661,24 +661,24 @@ new_fluid_oss_midi_driver(FluidSettings *settings,
     if(dev->fd < 0)
     {
         perror(device);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(fcntl(dev->fd, F_SETFL, O_NONBLOCK) == -1)
     {
         FLUID_LOG(FLUID_ERR, "Failed to set OSS MIDI device to non-blocking: %s",
-                  g_strerror(errno));
-        goto error_recovery;
+                  gStrerror(errno));
+        goto errorRecovery;
     }
 
     dev->status = FLUID_MIDI_READY;
 
     /* create MIDI thread */
-    dev->thread = new_fluid_thread("oss-midi", fluid_oss_midi_run, dev, realtime_prio, FALSE);
+    dev->thread = newFluidThread("oss-midi", ossMidiRun, dev, realtimePrio, FALSE);
 
     if(!dev->thread)
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(device)
@@ -686,35 +686,35 @@ new_fluid_oss_midi_driver(FluidSettings *settings,
         FLUID_FREE(device);    /* ++ free device */
     }
 
-    return (fluid_midi_driver_t *) dev;
+    return (midiDriverT *) dev;
 
-error_recovery:
+errorRecovery:
 
     if(device)
     {
         FLUID_FREE(device);    /* ++ free device */
     }
 
-    delete_fluid_oss_midi_driver((fluid_midi_driver_t *) dev);
+    deleteFluidOssMidiDriver((midiDriverT *) dev);
     return NULL;
 }
 
 /*
- * delete_fluid_oss_midi_driver
+ * deleteFluidOssMidiDriver
  */
 void
-delete_fluid_oss_midi_driver(fluid_midi_driver_t *p)
+deleteFluidOssMidiDriver(midiDriverT *p)
 {
-    fluid_oss_midi_driver_t *dev = (fluid_oss_midi_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    ossMidiDriverT *dev = (ossMidiDriverT *) p;
+    returnIfFail(dev != NULL);
 
     /* cancel the thread and wait for it before cleaning up */
     dev->status = FLUID_MIDI_DONE;
 
     if(dev->thread)
     {
-        fluid_thread_join(dev->thread);
-        delete_fluid_thread(dev->thread);
+        threadJoin(dev->thread);
+        deleteFluidThread(dev->thread);
     }
 
     if(dev->fd >= 0)
@@ -722,18 +722,18 @@ delete_fluid_oss_midi_driver(fluid_midi_driver_t *p)
         close(dev->fd);
     }
 
-    delete_fluid_midi_parser(dev->parser);
+    deleteFluidMidiParser(dev->parser);
     FLUID_FREE(dev);
 }
 
 /*
- * fluid_oss_midi_run
+ * ossMidiRun
  */
-fluid_thread_return_t
-fluid_oss_midi_run(void *d)
+threadReturnT
+ossMidiRun(void *d)
 {
-    fluid_oss_midi_driver_t *dev = (fluid_oss_midi_driver_t *) d;
-    fluid_midi_event_t *evt;
+    ossMidiDriverT *dev = (ossMidiDriverT *) d;
+    midiEventT *evt;
     struct pollfd fds;
     int n, i;
 
@@ -756,7 +756,7 @@ fluid_oss_midi_run(void *d)
 
         if(n < 0)
         {
-            FLUID_LOG(FLUID_ERR, "Error waiting for MIDI input: %s", g_strerror(errno));
+            FLUID_LOG(FLUID_ERR, "Error waiting for MIDI input: %s", gStrerror(errno));
             break;
         }
 
@@ -778,7 +778,7 @@ fluid_oss_midi_run(void *d)
         /* let the parser convert the data into events */
         for(i = 0; i < n; i++)
         {
-            evt = fluid_midi_parser_parse(dev->parser, dev->buffer[i]);
+            evt = midiParserParse(dev->parser, dev->buffer[i]);
 
             if(evt != NULL)
             {

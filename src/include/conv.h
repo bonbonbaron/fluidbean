@@ -1,4 +1,4 @@
-/* FluidSynth - A Software Synthesizer
+/* Synth - A Software Synthesizer
  *
  * Copyright (C) 2003  Peter Hanappe and others.
  *
@@ -18,8 +18,8 @@
  * 02111-1307, USA
  */
 
-#ifndef _FLUID_CONV_H
-#define _FLUID_CONV_H
+#ifndef _CONV_H
+#define _CONV_H
 
 #include "fluidbean.h"
 #include <math.h>
@@ -49,46 +49,46 @@
 
  In both cases (2) or (3), the real dynamic range is only 96 dB.
 
- Other consideration for FLUID_NOISE_FLOOR related to case (1),(2,3):
- - for case (1), FLUID_NOISE_FLOOR should be the noise floor for 24 bits (i.e -138 dB).
- - for case (2) or (3), FLUID_NOISE_FLOOR should be the noise floor for 16 bits (i.e -90 dB).
+ Other consideration for NOISE_FLOOR related to case (1),(2,3):
+ - for case (1), NOISE_FLOOR should be the noise floor for 24 bits (i.e -138 dB).
+ - for case (2) or (3), NOISE_FLOOR should be the noise floor for 16 bits (i.e -90 dB).
  */
-#define FLUID_PEAK_ATTENUATION  960.0f
-#define FLUID_CENTS_HZ_SIZE     1200
-#define FLUID_VEL_CB_SIZE       128
-#define FLUID_CB_AMP_SIZE       961
-#define FLUID_ATTEN_AMP_SIZE    1441
-#define FLUID_PAN_SIZE          1002
+#define PEAK_ATTENUATION  960.0f
+#define CENTS_HZ_SIZE     1200
+#define VEL_CB_SIZE       128
+#define CB_AMP_SIZE       961
+#define ATTEN_AMP_SIZE    1441
+#define PAN_SIZE          1002
 
 /* EMU 8k/10k don't follow spec in regards to volume attenuation.
- * This factor is used in the equation pow (10.0, cb / FLUID_ATTEN_POWER_FACTOR).
+ * This factor is used in the equation pow (10.0, cb / ATTEN_POWER_FACTOR).
  * By the standard this should be -200.0. */
 /* 07/11/2008 modified by S. Christian Collins for increased velocity sensitivity.  Now it equals the response of EMU10K1 programming.*/
-#define FLUID_ATTEN_POWER_FACTOR  (-200.0)	/* was (-531.509) */
+#define ATTEN_POWER_FACTOR  (-200.0)	/* was (-531.509) */
 
-void fluid_conversion_config (void);
+void conversionConfig (void);
 
-fluid_real_t fluid_ct2hz_real (fluid_real_t cents);
-fluid_real_t fluid_ct2hz (fluid_real_t cents);
-fluid_real_t fluid_cb2amp (fluid_real_t cb);
-fluid_real_t fluid_atten2amp (fluid_real_t atten);
-fluid_real_t fluid_tc2sec (fluid_real_t tc);
-fluid_real_t fluid_tc2sec_delay (fluid_real_t tc);
-fluid_real_t fluid_tc2sec_attack (fluid_real_t tc);
-fluid_real_t fluid_tc2sec_release (fluid_real_t tc);
-fluid_real_t fluid_act2hz (fluid_real_t c);
-fluid_real_t fluid_hz2ct (fluid_real_t c);
-fluid_real_t fluid_pan (fluid_real_t c, S32 left);
-fluid_real_t fluid_concave (fluid_real_t val);
-fluid_real_t fluid_convex (fluid_real_t val);
+realT ct2hzReal (realT cents);
+realT ct2hz (realT cents);
+realT cb2amp (realT cb);
+realT atten2amp (realT atten);
+realT tc2sec (realT tc);
+realT tc2secDelay (realT tc);
+realT tc2secAttack (realT tc);
+realT tc2secRelease (realT tc);
+realT act2hz (realT c);
+realT hz2ct (realT c);
+realT pan (realT c, S32 left);
+realT concave (realT val);
+realT convex (realT val);
 
-extern fluid_real_t fluid_ct2hz_tab[FLUID_CENTS_HZ_SIZE];
-extern fluid_real_t fluid_vel2cb_tab[FLUID_VEL_CB_SIZE];
-extern fluid_real_t fluid_cb2amp_tab[FLUID_CB_AMP_SIZE];
-extern fluid_real_t fluid_posbp_tab[128];
-extern fluid_real_t fluid_concave_tab[128];
-extern fluid_real_t fluid_convex_tab[128];
-extern fluid_real_t fluid_pan_tab[FLUID_PAN_SIZE];
+extern realT ct2hzTab[CENTS_HZ_SIZE];
+extern realT vel2cbTab[VEL_CB_SIZE];
+extern realT cb2ampTab[CB_AMP_SIZE];
+extern realT posbpTab[128];
+extern realT concaveTab[128];
+extern realT convexTab[128];
+extern realT panTab[PAN_SIZE];
 
 
-#endif /* _FLUID_CONV_H */
+#endif /* _CONV_H */

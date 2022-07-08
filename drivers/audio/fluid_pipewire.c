@@ -19,15 +19,15 @@
  * 02110-1301, USA
  */
 
-/* fluid_pipewire.c
+/* pipewire.c
  *
  * Audio driver for PipeWire.
  *
  */
 
-#include "fluid_synth.h"
-#include "fluid_adriver.h"
-#include "fluid_settings.h"
+#include "synth.h"
+#include "adriver.h"
+#include "settings.h"
 
 #if PIPEWIRE_SUPPORT
 
@@ -40,32 +40,32 @@ static const int stride = sizeof(float) * NUM_CHANNELS;
 
 typedef struct
 {
-    fluid_audio_driver_t driver;
-    fluid_audio_func_t user_callback;
+    audioDriverT driver;
+    audioFuncT userCallback;
     void *data;
 
     /* Used only with the user-provided callback */
     float *lbuf, *rbuf;
 
-    int buffer_period;
-    struct spa_pod_builder *builder;
+    int bufferPeriod;
+    struct spaPodBuilder *builder;
 
-    struct pw_thread_loop *pw_loop;
-    struct pw_stream *pw_stream;
-    struct pw_stream_events *events;
+    struct pwThreadLoop *pwLoop;
+    struct pwStream *pwStream;
+    struct pwStreamEvents *events;
 
-} fluid_pipewire_audio_driver_t;
+} pipewireAudioDriverT;
 
 
 /* Fast-path rendering routine with no user processing callbacks */
-static void fluid_pipewire_event_process(void *data)
+static void pipewireEventProcess(void *data)
 {
-    fluid_pipewire_audio_driver_t *drv = data;
-    struct pw_buffer *pwb;
-    struct spa_buffer *buf;
+    pipewireAudioDriverT *drv = data;
+    struct pwBuffer *pwb;
+    struct spaBuffer *buf;
     float *dest;
 
-    pwb = pw_stream_dequeue_buffer(drv->pw_stream);
+    pwb = pwStreamDequeueBuffer(drv->pwStream);
 
     if(!pwb)
     {
@@ -81,25 +81,25 @@ static void fluid_pipewire_event_process(void *data)
         return;
     }
 
-    fluid_synth_write_float(drv->data, drv->buffer_period, dest, 0, 2, dest, 1, 2);
+    synthWriteFloat(drv->data, drv->bufferPeriod, dest, 0, 2, dest, 1, 2);
     buf->datas[0].chunk->offset = 0;
     buf->datas[0].chunk->stride = stride;
-    buf->datas[0].chunk->size = drv->buffer_period * stride;
+    buf->datas[0].chunk->size = drv->bufferPeriod * stride;
 
-    pw_stream_queue_buffer(drv->pw_stream, pwb);
+    pwStreamQueueBuffer(drv->pwStream, pwb);
 }
 
 /* Rendering routine with support for user-defined audio manipulation */
-static void fluid_pipewire_event_process2(void *data)
+static void pipewireEventProcess2(void *data)
 {
-    fluid_pipewire_audio_driver_t *drv = data;
-    struct pw_buffer *pwb;
-    struct spa_buffer *buf;
+    pipewireAudioDriverT *drv = data;
+    struct pwBuffer *pwb;
+    struct spaBuffer *buf;
     float *dest;
     float *channels[NUM_CHANNELS] = { drv->lbuf, drv->rbuf };
     int i;
 
-    pwb = pw_stream_dequeue_buffer(drv->pw_stream);
+    pwb = pwStreamDequeueBuffer(drv->pwStream);
 
     if(!pwb)
     {
@@ -115,13 +115,13 @@ static void fluid_pipewire_event_process2(void *data)
         return;
     }
 
-    FLUID_MEMSET(drv->lbuf, 0, drv->buffer_period * sizeof(float));
-    FLUID_MEMSET(drv->rbuf, 0, drv->buffer_period * sizeof(float));
+    FLUID_MEMSET(drv->lbuf, 0, drv->bufferPeriod * sizeof(float));
+    FLUID_MEMSET(drv->rbuf, 0, drv->bufferPeriod * sizeof(float));
 
-    (*drv->user_callback)(drv->data, drv->buffer_period, 0, NULL, NUM_CHANNELS, channels);
+    (*drv->userCallback)(drv->data, drv->bufferPeriod, 0, NULL, NUM_CHANNELS, channels);
 
     /* Interleave the floating point data */
-    for(i = 0; i < drv->buffer_period; i++)
+    for(i = 0; i < drv->bufferPeriod; i++)
     {
         dest[i * 2] = drv->lbuf[i];
         dest[i * 2 + 1] = drv->rbuf[i];
@@ -129,33 +129,33 @@ static void fluid_pipewire_event_process2(void *data)
 
     buf->datas[0].chunk->offset = 0;
     buf->datas[0].chunk->stride = stride;
-    buf->datas[0].chunk->size = drv->buffer_period * stride;
+    buf->datas[0].chunk->size = drv->bufferPeriod * stride;
 
-    pw_stream_queue_buffer(drv->pw_stream, pwb);
+    pwStreamQueueBuffer(drv->pwStream, pwb);
 }
 
-fluid_audio_driver_t *new_fluid_pipewire_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *newFluidPipewireAudioDriver(FluidSettings *settings, synthT *synth)
 {
-    return new_fluid_pipewire_audio_driver2(settings, NULL, synth);
+    return newFluidPipewireAudioDriver2(settings, NULL, synth);
 }
 
-fluid_audio_driver_t *
-new_fluid_pipewire_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
+audioDriverT *
+newFluidPipewireAudioDriver2(FluidSettings *settings, audioFuncT func, void *data)
 {
-    fluid_pipewire_audio_driver_t *drv;
-    int period_size;
-    int buffer_length;
+    pipewireAudioDriverT *drv;
+    int periodSize;
+    int bufferLength;
     int res;
-    int pw_flags;
-    int realtime_prio = 0;
-    double sample_rate;
-    char *media_role = NULL;
-    char *media_type = NULL;
-    char *media_category = NULL;
+    int pwFlags;
+    int realtimePrio = 0;
+    double sampleRate;
+    char *mediaRole = NULL;
+    char *mediaType = NULL;
+    char *mediaCategory = NULL;
     float *buffer = NULL;
-    const struct spa_pod *params[1];
+    const struct spaPod *params[1];
 
-    drv = FLUID_NEW(fluid_pipewire_audio_driver_t);
+    drv = FLUID_NEW(pipewireAudioDriverT);
 
     if(!drv)
     {
@@ -165,138 +165,138 @@ new_fluid_pipewire_audio_driver2(FluidSettings *settings, fluid_audio_func_t fun
 
     FLUID_MEMSET(drv, 0, sizeof(*drv));
 
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getint(settings, "audio.realtime-prio", &realtime_prio);
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_dupstr(settings, "audio.pipewire.media-role", &media_role);
-    fluid_settings_dupstr(settings, "audio.pipewire.media-type", &media_type);
-    fluid_settings_dupstr(settings, "audio.pipewire.media-category", &media_category);
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetint(settings, "audio.realtime-prio", &realtimePrio);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsDupstr(settings, "audio.pipewire.media-role", &mediaRole);
+    settingsDupstr(settings, "audio.pipewire.media-type", &mediaType);
+    settingsDupstr(settings, "audio.pipewire.media-category", &mediaCategory);
 
     drv->data = data;
-    drv->user_callback = func;
-    drv->buffer_period = period_size;
+    drv->userCallback = func;
+    drv->bufferPeriod = periodSize;
 
-    drv->events = FLUID_NEW(struct pw_stream_events);
+    drv->events = FLUID_NEW(struct pwStreamEvents);
 
     if(!drv->events)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto driver_cleanup;
+        goto driverCleanup;
     }
 
     FLUID_MEMSET(drv->events, 0, sizeof(*drv->events));
     drv->events->version = PW_VERSION_STREAM_EVENTS;
-    drv->events->process = func ? fluid_pipewire_event_process2 : fluid_pipewire_event_process;
+    drv->events->process = func ? pipewireEventProcess2 : pipewireEventProcess;
 
-    drv->pw_loop = pw_thread_loop_new("fluid_pipewire", NULL);
+    drv->pwLoop = pwThreadLoopNew("pipewire", NULL);
 
-    if(!drv->pw_loop)
+    if(!drv->pwLoop)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to allocate PipeWire loop. Have you called pw_init() ?");
-        goto driver_cleanup;
+        FLUID_LOG(FLUID_ERR, "Failed to allocate PipeWire loop. Have you called pwInit() ?");
+        goto driverCleanup;
     }
 
-    drv->pw_stream = pw_stream_new_simple(
-                         pw_thread_loop_get_loop(drv->pw_loop),
+    drv->pwStream = pwStreamNewSimple(
+                         pwThreadLoopGetLoop(drv->pwLoop),
                          "FluidSynth",
-                         pw_properties_new(PW_KEY_MEDIA_TYPE, media_type, PW_KEY_MEDIA_CATEGORY, media_category, PW_KEY_MEDIA_ROLE, media_role, NULL),
+                         pwPropertiesNew(PW_KEY_MEDIA_TYPE, mediaType, PW_KEY_MEDIA_CATEGORY, mediaCategory, PW_KEY_MEDIA_ROLE, mediaRole, NULL),
                          drv->events,
                          drv);
 
-    if(!drv->pw_stream)
+    if(!drv->pwStream)
     {
         FLUID_LOG(FLUID_ERR, "Failed to allocate PipeWire stream");
-        goto driver_cleanup;
+        goto driverCleanup;
     }
 
-    buffer = FLUID_ARRAY(float, NUM_CHANNELS * period_size);
+    buffer = FLUID_ARRAY(float, NUM_CHANNELS * periodSize);
 
     if(!buffer)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto driver_cleanup;
+        goto driverCleanup;
     }
 
-    buffer_length = period_size * sizeof(float) * NUM_CHANNELS;
+    bufferLength = periodSize * sizeof(float) * NUM_CHANNELS;
 
-    drv->builder = FLUID_NEW(struct spa_pod_builder);
+    drv->builder = FLUID_NEW(struct spaPodBuilder);
 
     if(!drv->builder)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto driver_cleanup;
+        goto driverCleanup;
     }
 
     FLUID_MEMSET(drv->builder, 0, sizeof(*drv->builder));
     drv->builder->data = buffer;
-    drv->builder->size = buffer_length;
+    drv->builder->size = bufferLength;
 
     if(func)
     {
-        drv->lbuf = FLUID_ARRAY(float, period_size);
-        drv->rbuf = FLUID_ARRAY(float, period_size);
+        drv->lbuf = FLUID_ARRAY(float, periodSize);
+        drv->rbuf = FLUID_ARRAY(float, periodSize);
 
         if(!drv->lbuf || !drv->rbuf)
         {
             FLUID_LOG(FLUID_ERR, "Out of memory");
-            goto driver_cleanup;
+            goto driverCleanup;
         }
     }
 
-    params[0] = spa_format_audio_raw_build(drv->builder,
+    params[0] = spaFormatAudioRawBuild(drv->builder,
                                            SPA_PARAM_EnumFormat,
                                            &SPA_AUDIO_INFO_RAW_INIT(.format = SPA_AUDIO_FORMAT_F32,
                                                    .channels = 2,
-                                                   .rate = sample_rate));
+                                                   .rate = sampleRate));
 
-    pw_flags = PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_MAP_BUFFERS;
-    pw_flags |= realtime_prio ? PW_STREAM_FLAG_RT_PROCESS : 0;
-    res = pw_stream_connect(drv->pw_stream, PW_DIRECTION_OUTPUT, PW_ID_ANY, pw_flags, params, 1);
+    pwFlags = PW_STREAM_FLAG_AUTOCONNECT | PW_STREAM_FLAG_MAP_BUFFERS;
+    pwFlags |= realtimePrio ? PW_STREAM_FLAG_RT_PROCESS : 0;
+    res = pwStreamConnect(drv->pwStream, PW_DIRECTION_OUTPUT, PW_ID_ANY, pwFlags, params, 1);
 
     if(res < 0)
     {
         FLUID_LOG(FLUID_ERR, "PipeWire stream connection failed");
-        goto driver_cleanup;
+        goto driverCleanup;
     }
 
-    res = pw_thread_loop_start(drv->pw_loop);
+    res = pwThreadLoopStart(drv->pwLoop);
 
     if(res != 0)
     {
         FLUID_LOG(FLUID_ERR, "Failed starting PipeWire loop");
-        goto driver_cleanup;
+        goto driverCleanup;
     }
 
     FLUID_LOG(FLUID_INFO, "Using PipeWire audio driver");
 
-    FLUID_FREE(media_role);
-    FLUID_FREE(media_type);
-    FLUID_FREE(media_category);
+    FLUID_FREE(mediaRole);
+    FLUID_FREE(mediaType);
+    FLUID_FREE(mediaCategory);
 
-    return (fluid_audio_driver_t *)drv;
+    return (audioDriverT *)drv;
 
-driver_cleanup:
-    FLUID_FREE(media_role);
-    FLUID_FREE(media_type);
-    FLUID_FREE(media_category);
+driverCleanup:
+    FLUID_FREE(mediaRole);
+    FLUID_FREE(mediaType);
+    FLUID_FREE(mediaCategory);
 
-    delete_fluid_pipewire_audio_driver((fluid_audio_driver_t *)drv);
+    deleteFluidPipewireAudioDriver((audioDriverT *)drv);
     return NULL;
 }
 
-void delete_fluid_pipewire_audio_driver(fluid_audio_driver_t *p)
+void deleteFluidPipewireAudioDriver(audioDriverT *p)
 {
-    fluid_pipewire_audio_driver_t *drv = (fluid_pipewire_audio_driver_t *)p;
-    fluid_return_if_fail(drv);
+    pipewireAudioDriverT *drv = (pipewireAudioDriverT *)p;
+    returnIfFail(drv);
 
-    if(drv->pw_stream)
+    if(drv->pwStream)
     {
-        pw_stream_destroy(drv->pw_stream);
+        pwStreamDestroy(drv->pwStream);
     }
 
-    if(drv->pw_loop)
+    if(drv->pwLoop)
     {
-        pw_thread_loop_destroy(drv->pw_loop);
+        pwThreadLoopDestroy(drv->pwLoop);
     }
 
     FLUID_FREE(drv->lbuf);
@@ -314,11 +314,11 @@ void delete_fluid_pipewire_audio_driver(fluid_audio_driver_t *p)
     FLUID_FREE(drv);
 }
 
-void fluid_pipewire_audio_driver_settings(FluidSettings *settings)
+void pipewireAudioDriverSettings(FluidSettings *settings)
 {
-    fluid_settings_register_str(settings, "audio.pipewire.media-role", "Music", 0);
-    fluid_settings_register_str(settings, "audio.pipewire.media-type", "Audio", 0);
-    fluid_settings_register_str(settings, "audio.pipewire.media-category", "Playback", 0);
+    settingsRegisterStr(settings, "audio.pipewire.media-role", "Music", 0);
+    settingsRegisterStr(settings, "audio.pipewire.media-type", "Audio", 0);
+    settingsRegisterStr(settings, "audio.pipewire.media-category", "Playback", 0);
 }
 
 #endif

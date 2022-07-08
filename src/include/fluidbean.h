@@ -1,4 +1,4 @@
-/* FluidSynth - A Software Synthesizer
+/* Synth - A Software Synthesizer
  *
  * Copyright (C) 2003  Peter Hanappe and others.
  *
@@ -27,16 +27,16 @@
  */
 
 #if defined(WITH_FLOAT)
-typedef float fluid_real_t;
+typedef float realT;
 #else
-typedef double fluid_real_t;
+typedef double realT;
 #endif
 
 
 typedef enum {
-	FLUID_OK = 0,
-	FLUID_FAILED = -1
-} fluid_status;
+	OK = 0,
+	FAILED = -1
+} status;
 
 
 //socket disabled
@@ -134,38 +134,38 @@ typedef unsigned long long uint64;
 #else
 /* Linux & Darwin */
 typedef int8_t sint8;
-typedef u_int8_t uint8;
+typedef uInt8_t uint8;
 typedef int16_t sint16;
-typedef u_int16_t uint16;
+typedef uInt16_t uint16;
 typedef int32_t sint32;
-typedef u_int32_t uint32;
+typedef uInt32_t uint32;
 typedef int64_t sint64;
-typedef u_int64_t uint64;
+typedef uInt64_t uint64;
 
 #endif
 #endif /* */
 
-#define fluid_return_if_fail(cond) \
+#define returnIfFail(cond) \
 if(cond) \
     ; \
 else \
     return
 
-#define fluid_return_val_if_fail(cond, val) \
- fluid_return_if_fail(cond) (val)
+#define returnValIfFail(cond, val) \
+ returnIfFail(cond) (val)
 
 /** Atomic types  */
-typedef int fluid_atomic_int_t;
-typedef unsigned int fluid_atomic_uint_t;
-typedef float fluid_atomic_float_t;
+typedef int atomicIntT;
+typedef unsigned int atomicUintT;
+typedef float atomicFloatT;
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
-typedef __int64 fluid_long_long_t; // even on 32bit windows
+typedef __int64 longLongT; // even on 32bit windows
 #else
 /**
  * A typedef for C99's type long long, which is at least 64-bit wide, as guaranteed by the C99.
  * @p __int64 will be used as replacement for VisualStudio 2010 and older.
  */
-typedef long long fluid_long_long_t;
+typedef long long longLongT;
 #endif
 
 /***************************************************************
@@ -178,7 +178,7 @@ typedef long long fluid_long_long_t;
  *                      CONSTANTS
  */
 
-#define FLUID_BUFSIZE                64
+#define BUFSIZE                64
 
 #ifndef PI
 #define PI                          3.141592654
@@ -188,51 +188,51 @@ typedef long long fluid_long_long_t;
  *
  *                      SYSTEM INTERFACE
  */
-//typedef FILE*  fluid_file;
+//typedef FILE*  file;
 
-#define FLUID_MALLOC(_n)             malloc(_n)
-#define FLUID_REALLOC(_p,_n)         realloc(_p,_n)
-#define FLUID_NEW(_t)                (_t*)malloc(sizeof(_t))
-#define FLUID_ARRAY(_t,_n)           (_t*)malloc((_n)*sizeof(_t))
-#define FLUID_FREE(_p)               free(_p)
-#define FLUID_FOPEN(_f,_m)           fopen(_f,_m)
-#define FLUID_FCLOSE(_f)             fclose(_f)
-#define FLUID_FREAD(_p,_s,_n,_f)     fread(_p,_s,_n,_f)
-#define FLUID_FSEEK(_f,_n,_set)      fseek(_f,_n,_set)
-#define FLUID_FTELL(_f)              ftell(_f)
-#define FLUID_MEMCPY(_dst,_src,_n)   memcpy(_dst,_src,_n)
-#define FLUID_MEMSET(_s,_c,_n)       memset(_s,_c,_n)
-#define FLUID_STRLEN(_s)             strlen(_s)
-#define FLUID_STRCMP(_s,_t)          strcmp(_s,_t)
-#define FLUID_STRNCMP(_s,_t,_n)      strncmp(_s,_t,_n)
-#define FLUID_STRCPY(_dst,_src)      strcpy(_dst,_src)
-#define FLUID_STRCHR(_s,_c)          strchr(_s,_c)
-#define FLUID_STRDUP(s)              FLUID_STRCPY((S8*)FLUID_MALLOC(FLUID_STRLEN(s) + 1), s)
-#define FLUID_SPRINTF                sprintf
-#define FLUID_FPRINTF                fprintf
+#define MALLOC(_n)             malloc(_n)
+#define REALLOC(_p,_n)         realloc(_p,_n)
+#define NEW(_t)                (_t*)malloc(sizeof(_t))
+#define ARRAY(_t,_n)           (_t*)malloc((_n)*sizeof(_t))
+#define FREE(_p)               free(_p)
+#define FOPEN(_f,_m)           fopen(_f,_m)
+#define FCLOSE(_f)             fclose(_f)
+#define FREAD(_p,_s,_n,_f)     fread(_p,_s,_n,_f)
+#define FSEEK(_f,_n,_set)      fseek(_f,_n,_set)
+#define FTELL(_f)              ftell(_f)
+#define MEMCPY(_dst,_src,_n)   memcpy(_dst,_src,_n)
+#define MEMSET(_s,_c,_n)       memset(_s,_c,_n)
+#define STRLEN(_s)             strlen(_s)
+#define STRCMP(_s,_t)          strcmp(_s,_t)
+#define STRNCMP(_s,_t,_n)      strncmp(_s,_t,_n)
+#define STRCPY(_dst,_src)      strcpy(_dst,_src)
+#define STRCHR(_s,_c)          strchr(_s,_c)
+#define STRDUP(s)              STRCPY((S8*)MALLOC(STRLEN(s) + 1), s)
+#define SPRINTF                sprintf
+#define FPRINTF                fprintf
 
-#define fluid_clip(_val, _min, _max) \
+#define clip(_val, _min, _max) \
 { (_val) = ((_val) < (_min))? (_min) : (((_val) > (_max))? (_max) : (_val)); }
 
 #if WITH_FTS
-#define FLUID_PRINTF                 post
-#define FLUID_FLUSH()
+#define PRINTF                 post
+#define FLUSH()
 #else
-#define FLUID_PRINTF                 printf
-#define FLUID_FLUSH()                fflush(stdout)
+#define PRINTF                 printf
+#define FLUSH()                fflush(stdout)
 #endif
 
-#define FLUID_LOG                    fluid_log
+#define LOG                    log
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
 #endif
 
 
-#define FLUID_ASSERT(a,b)
-#define FLUID_ASSERT_P(a,b)
+#define ASSERT(a,b)
+#define ASSERT_P(a,b)
 
-S8 *fluid_error (void);
+S8 *error (void);
 
 
 /* Internationalization */

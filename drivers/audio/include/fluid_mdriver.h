@@ -21,81 +21,81 @@
 #ifndef _FLUID_MDRIVER_H
 #define _FLUID_MDRIVER_H
 
-#include "fluid_sys.h"
+#include "fluidSys.h"
 #include "midi.h"
 
 /*
- * fluid_midi_driver_t
+ * fluidMidiDriverT
  */
 
-typedef struct _fluid_mdriver_definition_t fluid_mdriver_definition_t;
+typedef struct _fluidMdriverDefinitionT fluidMdriverDefinitionT;
 
-struct _fluid_midi_driver_t
+struct _fluidMidiDriverT
 {
-    const fluid_mdriver_definition_t *define;
-    handle_midi_event_func_t handler;
+    const fluidMdriverDefinitionT *define;
+    handleMidiEventFuncT handler;
     void *data;
 };
 
-void fluid_midi_driver_settings(FluidSettings *settings);
+void fluidMidiDriverSettings(FluidSettings *settings);
 
 /* ALSA */
 #if ALSA_SUPPORT
-fluid_midi_driver_t *new_fluid_alsa_rawmidi_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
-        void *event_handler_data);
-void delete_fluid_alsa_rawmidi_driver(fluid_midi_driver_t *p);
-void fluid_alsa_rawmidi_driver_settings(FluidSettings *settings);
+fluidMidiDriverT *newFluidAlsaRawmidiDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
+        void *eventHandlerData);
+void deleteFluidAlsaRawmidiDriver(fluidMidiDriverT *p);
+void fluidAlsaRawmidiDriverSettings(FluidSettings *settings);
 
-fluid_midi_driver_t *new_fluid_alsa_seq_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
-        void *event_handler_data);
-void delete_fluid_alsa_seq_driver(fluid_midi_driver_t *p);
-void fluid_alsa_seq_driver_settings(FluidSettings *settings);
+fluidMidiDriverT *newFluidAlsaSeqDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
+        void *eventHandlerData);
+void deleteFluidAlsaSeqDriver(fluidMidiDriverT *p);
+void fluidAlsaSeqDriverSettings(FluidSettings *settings);
 #endif
 
 /* JACK */
 #if JACK_SUPPORT
-void fluid_jack_midi_driver_settings(FluidSettings *settings);
-fluid_midi_driver_t *new_fluid_jack_midi_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
+void fluidJackMidiDriverSettings(FluidSettings *settings);
+fluidMidiDriverT *newFluidJackMidiDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
         void *data);
-void delete_fluid_jack_midi_driver(fluid_midi_driver_t *p);
+void deleteFluidJackMidiDriver(fluidMidiDriverT *p);
 #endif
 
 /* OSS */
 #if OSS_SUPPORT
-fluid_midi_driver_t *new_fluid_oss_midi_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
-        void *event_handler_data);
-void delete_fluid_oss_midi_driver(fluid_midi_driver_t *p);
-void fluid_oss_midi_driver_settings(FluidSettings *settings);
+fluidMidiDriverT *newFluidOssMidiDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
+        void *eventHandlerData);
+void deleteFluidOssMidiDriver(fluidMidiDriverT *p);
+void fluidOssMidiDriverSettings(FluidSettings *settings);
 #endif
 
 /* Windows MIDI service */
 #if WINMIDI_SUPPORT
-fluid_midi_driver_t *new_fluid_winmidi_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
-        void *event_handler_data);
-void delete_fluid_winmidi_driver(fluid_midi_driver_t *p);
-void fluid_winmidi_midi_driver_settings(FluidSettings *settings);
+fluidMidiDriverT *newFluidWinmidiDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
+        void *eventHandlerData);
+void deleteFluidWinmidiDriver(fluidMidiDriverT *p);
+void fluidWinmidiMidiDriverSettings(FluidSettings *settings);
 #endif
 
 /* definitions for the MidiShare driver */
 #if MIDISHARE_SUPPORT
-fluid_midi_driver_t *new_fluid_midishare_midi_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
-        void *event_handler_data);
-void delete_fluid_midishare_midi_driver(fluid_midi_driver_t *p);
+fluidMidiDriverT *newFluidMidishareMidiDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
+        void *eventHandlerData);
+void deleteFluidMidishareMidiDriver(fluidMidiDriverT *p);
 #endif
 
 /* definitions for the CoreMidi driver */
 #if COREMIDI_SUPPORT
-fluid_midi_driver_t *new_fluid_coremidi_driver(FluidSettings *settings,
-        handle_midi_event_func_t handler,
-        void *event_handler_data);
-void delete_fluid_coremidi_driver(fluid_midi_driver_t *p);
-void fluid_coremidi_driver_settings(FluidSettings *settings);
+fluidMidiDriverT *newFluidCoremidiDriver(FluidSettings *settings,
+        handleMidiEventFuncT handler,
+        void *eventHandlerData);
+void deleteFluidCoremidiDriver(fluidMidiDriverT *p);
+void fluidCoremidiDriverSettings(FluidSettings *settings);
 #endif
 
 #endif  /* _FLUID_AUDRIVER_H */

@@ -1,4 +1,4 @@
-/* FluidSynth - A Software Synthesizer
+/* Synth - A Software Synthesizer
  *
  * Copyright (C) 2003  Peter Hanappe and others.
  *
@@ -19,56 +19,56 @@
  */
 
 
-#ifndef _FLUID_REV_H
-#define _FLUID_REV_H
+#ifndef _REV_H
+#define _REV_H
 
 #include "fluidbean.h"
 
-#define FLUID_REVERB_DEFAULT_ROOMSIZE 0.2f			/**< Default reverb room size */
-#define FLUID_REVERB_DEFAULT_DAMP 0.0f					/**< Default reverb damping */
-#define FLUID_REVERB_DEFAULT_WIDTH 0.5f					/**< Default reverb width */
-#define FLUID_REVERB_DEFAULT_LEVEL 0.9f					/**< Default reverb level */
+#define REVERB_DEFAULT_ROOMSIZE 0.2f			/**< Default reverb room size */
+#define REVERB_DEFAULT_DAMP 0.0f					/**< Default reverb damping */
+#define REVERB_DEFAULT_WIDTH 0.5f					/**< Default reverb width */
+#define REVERB_DEFAULT_LEVEL 0.9f					/**< Default reverb level */
 
-typedef struct _fluid_revmodel_t fluid_revmodel_t;
+typedef struct _fluidRevmodelT revmodelT;
 
 
 /*
  * reverb
  */
-fluid_revmodel_t *new_fluid_revmodel (void);
-void delete_fluid_revmodel (fluid_revmodel_t * rev);
+revmodelT *newRevmodel (void);
+void deleteRevmodel (revmodelT * rev);
 
-void fluid_revmodel_processmix (fluid_revmodel_t * rev, fluid_real_t * in,
-																fluid_real_t * left_out,
-																fluid_real_t * right_out);
+void revmodelProcessmix (revmodelT * rev, S16 * in,
+																S16 * leftOut,
+																S16 * rightOut);
 
-void fluid_revmodel_processreplace (fluid_revmodel_t * rev, fluid_real_t * in,
-																		fluid_real_t * left_out,
-																		fluid_real_t * right_out);
+void revmodelProcessreplace (revmodelT * rev, S16 * in,
+																		S16 * leftOut,
+																		S16 * rightOut);
 
-void fluid_revmodel_reset (fluid_revmodel_t * rev);
+void revmodelReset (revmodelT * rev);
 
-void fluid_revmodel_setroomsize (fluid_revmodel_t * rev, fluid_real_t value);
-void fluid_revmodel_setdamp (fluid_revmodel_t * rev, fluid_real_t value);
-void fluid_revmodel_setlevel (fluid_revmodel_t * rev, fluid_real_t value);
-void fluid_revmodel_setwidth (fluid_revmodel_t * rev, fluid_real_t value);
-void fluid_revmodel_setmode (fluid_revmodel_t * rev, fluid_real_t value);
+void revmodelSetroomsize (revmodelT * rev, S16 value);
+void revmodelSetdamp (revmodelT * rev, S16 value);
+void revmodelSetlevel (revmodelT * rev, S16 value);
+void revmodelSetwidth (revmodelT * rev, S16 value);
+void revmodelSetmode (revmodelT * rev, S16 value);
 
-fluid_real_t fluid_revmodel_getroomsize (fluid_revmodel_t * rev);
-fluid_real_t fluid_revmodel_getdamp (fluid_revmodel_t * rev);
-fluid_real_t fluid_revmodel_getlevel (fluid_revmodel_t * rev);
-fluid_real_t fluid_revmodel_getwidth (fluid_revmodel_t * rev);
+S16 revmodelGetroomsize (revmodelT * rev);
+S16 revmodelGetdamp (revmodelT * rev);
+S16 revmodelGetlevel (revmodelT * rev);
+S16 revmodelGetwidth (revmodelT * rev);
 
 /*
  * reverb preset
  */
-typedef struct _fluid_revmodel_presets_t {
+typedef struct _fluidRevmodelPresetsT {
 	S8 *name;
-	fluid_real_t roomsize;
-	fluid_real_t damp;
-	fluid_real_t width;
-	fluid_real_t level;
-} fluid_revmodel_presets_t;
+	S16 roomsize;
+	S16 damp;
+	S16 width;
+	S16 level;
+} revmodelPresetsT;
 
 
-#endif /* _FLUID_REV_H */
+#endif /* _REV_H */

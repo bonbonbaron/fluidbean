@@ -13,16 +13,16 @@
 
 extern Inflatable sf3Inf;
 int main(int argc, char *argv[]) {
-    FluidSettings* settings = new_fluid_settings();
-    fluid_settings_setstr(settings, "audio.driver", "alsa");
-    fluid_settings_setnum(settings, "synth.gain", 2);
-    fluid_synth_t* synth = new_fluid_synth(settings);
-    //fluid_synth_sfload(synth, 
+    FluidSettings* settings = newFluidSettings();
+    settingsSetstr(settings, "audio.driver", "alsa");
+    settingsSetnum(settings, "synth.gain", 2);
+    synthT* synth = newFluidSynth(settings);
+    //synthSfload(synth, 
     Inflatable *sf3InfP = &sf3Inf;
     Error e = inflate(&sf3Inf);
     int sfId = -1;
     if (!e) {
-      sfId = fluid_synth_sfload(synth, sf3Inf.inflatedDataP, sf3Inf.inflatedLen, 0);
+      sfId = synthSfload(synth, sf3Inf.inflatedDataP, sf3Inf.inflatedLen, 0);
       printf("returned sf id is %d.\n", sfId);
     }
 
@@ -32,20 +32,20 @@ int main(int argc, char *argv[]) {
 
     if (sfId >= 0) {
       printf("playing\n");
-      fluid_synth_noteon(synth, 0, 60, 127);
-      //fluid_synth_write_float(synth, NUM_FRAMES, buffer, 0, NUM_CHANNELS, buffer, 1, NUM_CHANNELS);
+      synthNoteon(synth, 0, 60, 127);
+      //synthWriteFloat(synth, NUM_FRAMES, buffer, 0, NUM_CHANNELS, buffer, 1, NUM_CHANNELS);
       //fwrite(buffer, SAMPLE_SIZE, NUM_SAMPLES, file);
       sleep(1);
-      fluid_synth_noteoff(synth, 0, 60);
+      synthNoteoff(synth, 0, 60);
       printf("done\n");
     }
-    //fluid_synth_write_float(synth, NUM_FRAMES, buffer, 0, NUM_CHANNELS, buffer, 1, NUM_CHANNELS);
+    //synthWriteFloat(synth, NUM_FRAMES, buffer, 0, NUM_CHANNELS, buffer, 1, NUM_CHANNELS);
     //fwrite(buffer, SAMPLE_SIZE, NUM_SAMPLES, file);
 
     //fclose(file);
 
     //free(buffer);
 
-    delete_fluid_synth(synth);
-    delete_fluid_settings(settings);
+    deleteFluidSynth(synth);
+    deleteFluidSettings(settings);
 }

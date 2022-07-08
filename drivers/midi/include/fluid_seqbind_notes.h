@@ -22,18 +22,18 @@
 #define _FLUID_SEQBIND_NOTE_H
 
 #include "fluidsynth.h"
-#include "fluid_event.h"
+#include "fluidEvent.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-fluid_note_id_t fluid_note_compute_id(int chan, short key);
-void* new_fluid_note_container(void);
-void delete_fluid_note_container(void *cont);
-int fluid_note_container_insert(void* cont, fluid_note_id_t id);
-void fluid_note_container_remove(void* cont, fluid_note_id_t id);
-void fluid_note_container_clear(void* cont);
+fluidNoteIdT fluidNoteComputeId(int chan, short key);
+void* newFluidNoteContainer(void);
+void deleteFluidNoteContainer(void *cont);
+int fluidNoteContainerInsert(void* cont, fluidNoteIdT id);
+void fluidNoteContainerRemove(void* cont, fluidNoteIdT id);
+void fluidNoteContainerClear(void* cont);
 
 #ifdef __cplusplus
 }

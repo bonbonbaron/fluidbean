@@ -127,10 +127,10 @@
 
 #elif defined(__ibmxl__) && defined(__clang__)
 # define COMPILER_ID "XLClang"
-# define COMPILER_VERSION_MAJOR DEC(__ibmxl_version__)
-# define COMPILER_VERSION_MINOR DEC(__ibmxl_release__)
-# define COMPILER_VERSION_PATCH DEC(__ibmxl_modification__)
-# define COMPILER_VERSION_TWEAK DEC(__ibmxl_ptf_fix_level__)
+# define COMPILER_VERSION_MAJOR DEC(__ibmxlVersion__)
+# define COMPILER_VERSION_MINOR DEC(__ibmxlRelease__)
+# define COMPILER_VERSION_PATCH DEC(__ibmxlModification__)
+# define COMPILER_VERSION_TWEAK DEC(__ibmxlPtfFixLevel__)
 
 
 #elif defined(__IBMC__) && !defined(__COMPILER_VER__) && __IBMC__ >= 800
@@ -167,7 +167,7 @@
 # define COMPILER_VERSION_MINOR DEC(__TI_COMPILER_VERSION__/1000   % 1000)
 # define COMPILER_VERSION_PATCH DEC(__TI_COMPILER_VERSION__        % 1000)
 
-#elif defined(__FUJITSU) || defined(__FCC_VERSION) || defined(__fcc_version)
+#elif defined(__FUJITSU) || defined(__FCC_VERSION) || defined(__fccVersion)
 # define COMPILER_ID "Fujitsu"
 
 #elif defined(__ghs__)
@@ -203,20 +203,20 @@
 #endif
 
 
-#elif defined(__clang__) && defined(__apple_build_version__)
+#elif defined(__clang__) && defined(__appleBuildVersion__)
 # define COMPILER_ID "AppleClang"
 # if defined(_MSC_VER)
 #  define SIMULATE_ID "MSVC"
 # endif
-# define COMPILER_VERSION_MAJOR DEC(__clang_major__)
-# define COMPILER_VERSION_MINOR DEC(__clang_minor__)
-# define COMPILER_VERSION_PATCH DEC(__clang_patchlevel__)
+# define COMPILER_VERSION_MAJOR DEC(__clangMajor__)
+# define COMPILER_VERSION_MINOR DEC(__clangMinor__)
+# define COMPILER_VERSION_PATCH DEC(__clangPatchlevel__)
 # if defined(_MSC_VER)
    /* _MSC_VER = VVRR */
 #  define SIMULATE_VERSION_MAJOR DEC(_MSC_VER / 100)
 #  define SIMULATE_VERSION_MINOR DEC(_MSC_VER % 100)
 # endif
-# define COMPILER_VERSION_TWEAK DEC(__apple_build_version__)
+# define COMPILER_VERSION_TWEAK DEC(__appleBuildVersion__)
 
 #elif defined(__clang__) && defined(__ARMCOMPILER_VERSION)
 # define COMPILER_ID "ARMClang"
@@ -230,9 +230,9 @@
 # if defined(_MSC_VER)
 #  define SIMULATE_ID "MSVC"
 # endif
-# define COMPILER_VERSION_MAJOR DEC(__clang_major__)
-# define COMPILER_VERSION_MINOR DEC(__clang_minor__)
-# define COMPILER_VERSION_PATCH DEC(__clang_patchlevel__)
+# define COMPILER_VERSION_MAJOR DEC(__clangMajor__)
+# define COMPILER_VERSION_MINOR DEC(__clangMinor__)
+# define COMPILER_VERSION_PATCH DEC(__clangPatchlevel__)
 # if defined(_MSC_VER)
    /* _MSC_VER = VVRR */
 #  define SIMULATE_VERSION_MAJOR DEC(_MSC_VER / 100)
@@ -318,9 +318,9 @@
    getting matched.  Store it in a pointer rather than an array
    because some compilers will just produce instructions to fill the
    array rather than assigning a pointer to a static array.  */
-char const* info_compiler = "INFO" ":" "compiler[" COMPILER_ID "]";
+char const* infoCompiler = "INFO" ":" "compiler[" COMPILER_ID "]";
 #ifdef SIMULATE_ID
-char const* info_simulate = "INFO" ":" "simulate[" SIMULATE_ID "]";
+char const* infoSimulate = "INFO" ":" "simulate[" SIMULATE_ID "]";
 #endif
 
 #ifdef __QNXNTO__
@@ -328,7 +328,7 @@ char const* qnxnto = "INFO" ":" "qnxnto[]";
 #endif
 
 #if defined(__CRAYXE) || defined(__CRAYXC)
-char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
+char const *infoCray = "INFO" ":" "compilerWrapper[CrayPrgEnv]";
 #endif
 
 #define STRINGIFY_HELPER(X) #X
@@ -398,7 +398,7 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 #elif defined(__osf) || defined(__osf__)
 # define PLATFORM_ID "OSF1"
 
-#elif defined(_SCO_SV) || defined(SCO_SV) || defined(sco_sv)
+#elif defined(_SCO_SV) || defined(SCO_SV) || defined(scoSv)
 # define PLATFORM_ID "SCO_SV"
 
 #elif defined(__ultrix) || defined(__ultrix__) || defined(_ULTRIX)
@@ -567,7 +567,7 @@ char const *info_cray = "INFO" ":" "compiler_wrapper[CrayPrgEnv]";
 
 /* Construct a string literal encoding the version number components. */
 #ifdef COMPILER_VERSION_MAJOR
-char const info_version[] = {
+char const infoVersion[] = {
   'I', 'N', 'F', 'O', ':',
   'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','[',
   COMPILER_VERSION_MAJOR,
@@ -585,7 +585,7 @@ char const info_version[] = {
 
 /* Construct a string literal encoding the internal version number. */
 #ifdef COMPILER_VERSION_INTERNAL
-char const info_version_internal[] = {
+char const infoVersionInternal[] = {
   'I', 'N', 'F', 'O', ':',
   'c','o','m','p','i','l','e','r','_','v','e','r','s','i','o','n','_',
   'i','n','t','e','r','n','a','l','[',
@@ -594,7 +594,7 @@ char const info_version_internal[] = {
 
 /* Construct a string literal encoding the version number components. */
 #ifdef SIMULATE_VERSION_MAJOR
-char const info_simulate_version[] = {
+char const infoSimulateVersion[] = {
   'I', 'N', 'F', 'O', ':',
   's','i','m','u','l','a','t','e','_','v','e','r','s','i','o','n','[',
   SIMULATE_VERSION_MAJOR,
@@ -614,8 +614,8 @@ char const info_simulate_version[] = {
    getting matched.  Store it in a pointer rather than an array
    because some compilers will just produce instructions to fill the
    array rather than assigning a pointer to a static array.  */
-char const* info_platform = "INFO" ":" "platform[" PLATFORM_ID "]";
-char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
+char const* infoPlatform = "INFO" ":" "platform[" PLATFORM_ID "]";
+char const* infoArch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 
 
 
@@ -634,8 +634,8 @@ char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 #else
 # define C_DIALECT "90"
 #endif
-const char* info_language_dialect_default =
-  "INFO" ":" "dialect_default[" C_DIALECT "]";
+const char* infoLanguageDialectDefault =
+  "INFO" ":" "dialectDefault[" C_DIALECT "]";
 
 /*--------------------------------------------------------------------------*/
 
@@ -649,25 +649,25 @@ int main(int argc, char* argv[])
 # endif
 {
   int require = 0;
-  require += info_compiler[argc];
-  require += info_platform[argc];
-  require += info_arch[argc];
+  require += infoCompiler[argc];
+  require += infoPlatform[argc];
+  require += infoArch[argc];
 #ifdef COMPILER_VERSION_MAJOR
-  require += info_version[argc];
+  require += infoVersion[argc];
 #endif
 #ifdef COMPILER_VERSION_INTERNAL
-  require += info_version_internal[argc];
+  require += infoVersionInternal[argc];
 #endif
 #ifdef SIMULATE_ID
-  require += info_simulate[argc];
+  require += infoSimulate[argc];
 #endif
 #ifdef SIMULATE_VERSION_MAJOR
-  require += info_simulate_version[argc];
+  require += infoSimulateVersion[argc];
 #endif
 #if defined(__CRAYXE) || defined(__CRAYXC)
-  require += info_cray[argc];
+  require += infoCray[argc];
 #endif
-  require += info_language_dialect_default[argc];
+  require += infoLanguageDialectDefault[argc];
   (void)argv;
   return require;
 }

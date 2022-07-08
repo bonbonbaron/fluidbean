@@ -714,33 +714,6 @@ src/synth.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/synth.c.s
 .PHONY : src/synth.c.s
 
-src/sys.o: src/sys.c.o
-
-.PHONY : src/sys.o
-
-# target to build an object file
-src/sys.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/sys.c.o
-.PHONY : src/sys.c.o
-
-src/sys.i: src/sys.c.i
-
-.PHONY : src/sys.i
-
-# target to preprocess a source file
-src/sys.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/sys.c.i
-.PHONY : src/sys.c.i
-
-src/sys.s: src/sys.c.s
-
-.PHONY : src/sys.s
-
-# target to generate assembly for a file
-src/sys.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/src/sys.c.s
-.PHONY : src/sys.c.s
-
 src/tuning.o: src/tuning.c.o
 
 .PHONY : src/tuning.o
@@ -866,9 +839,6 @@ help:
 	@echo "... src/synth.o"
 	@echo "... src/synth.i"
 	@echo "... src/synth.s"
-	@echo "... src/sys.o"
-	@echo "... src/sys.i"
-	@echo "... src/sys.s"
 	@echo "... src/tuning.o"
 	@echo "... src/tuning.i"
 	@echo "... src/tuning.s"

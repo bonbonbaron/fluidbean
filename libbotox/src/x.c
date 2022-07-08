@@ -2,7 +2,7 @@
 #include "data.h"
 
 // Copied these from data.c since I don't know how to inline across files.
-inline static U32 _fast_arrayGetElemSz(const void *arryP) {
+inline static U32 _fastArrayGetElemSz(const void *arryP) {
 	return *(((U32*)arryP) - 2);
 }
 
@@ -11,7 +11,7 @@ inline static Key* _getCompIdxPByEntity(System *sP, Entity entity) {
 }
 
 inline static void* _getCompPByEntity(System *sP, Entity entity) {
-	return (void*) ((U8*) sP->cF + (*_getCompIdxPByEntity(sP, entity) * _fast_arrayGetElemSz(sP->cF)));
+	return (void*) ((U8*) sP->cF + (*_getCompIdxPByEntity(sP, entity) * _fastArrayGetElemSz(sP->cF)));
 }
 
 inline static Entity _getEntityByCompIdx(System *sP, Key compIdx) {

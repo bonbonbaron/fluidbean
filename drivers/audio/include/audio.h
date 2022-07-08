@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /**
- * @defgroup audio_output Audio Output
+ * @defgroup audioOutput Audio Output
  *
  * Functions for managing audio drivers and file renderers.
  *
@@ -37,16 +37,16 @@ extern "C" {
  */
 
 /**
- * @defgroup audio_driver Audio Driver
- * @ingroup audio_output
+ * @defgroup audioDriver Audio Driver
+ * @ingroup audioOutput
  *
  * Functions for managing audio drivers.
  *
  * Defines functions for creating audio driver output.  Use
- * new_fluid_audio_driver() to create a new audio driver for a given synth
+ * newFluidAudioDriver() to create a new audio driver for a given synth
  * and configuration settings.
  *
- * The function new_fluid_audio_driver2() can be
+ * The function newFluidAudioDriver2() can be
  * used if custom audio processing is desired before the audio is sent to the
  * audio driver (although it is not as efficient).
  *
@@ -56,10 +56,10 @@ extern "C" {
  */
 
 /**
- * Callback function type used with new_fluid_audio_driver2() to allow for
+ * Callback function type used with newFluidAudioDriver2() to allow for
  * custom user audio processing before the audio is sent to the driver.
  *
- * @param data The user data parameter as passed to new_fluid_audio_driver2().
+ * @param data The user data parameter as passed to newFluidAudioDriver2().
  * @param len Count of audio frames to synthesize.
  * @param nfx Count of arrays in \c fx.
  * @param fx Array of buffers to store effects audio to. Buffers may alias with buffers of \c out.
@@ -71,19 +71,19 @@ extern "C" {
  * The buffers passed to this function are allocated and owned by the respective
  * audio driver and are only valid during that specific call (do not cache them).
  * The buffers have already been zeroed-out.
- * For further details please refer to fluid_synth_process().
+ * For further details please refer to fluidSynthProcess().
  *
  * @parblock
- * @note Whereas fluid_synth_process() allows aliasing buffers, there is the guarantee that @p out
+ * @note Whereas fluidSynthProcess() allows aliasing buffers, there is the guarantee that @p out
  * and @p fx buffers provided by fluidsynth's audio drivers never alias. This prevents downstream
  * applications from e.g. applying a custom effect accidentally to the same buffer multiple times.
  * @endparblock
  *
  * @parblock
  * @note Also note that the Jack driver is currently the only driver that has dedicated @p fx buffers
- * (but only if \setting{audio_jack_multi} is true). All other drivers do not provide @p fx buffers.
+ * (but only if \setting{audioJackMulti} is true). All other drivers do not provide @p fx buffers.
  * In this case, users are encouraged to mix the effects into the provided dry buffers when calling
- * fluid_synth_process().
+ * fluidSynthProcess().
  * @code{.cpp}
 int myCallback(void *, int len, int nfx, float *fx[], int nout, float *out[])
 {
@@ -91,41 +91,41 @@ int myCallback(void *, int len, int nfx, float *fx[], int nout, float *out[])
     if(nfx == 0)
     {
         float *fxb[4] = {out[0], out[1], out[0], out[1]};
-        ret = fluid_synth_process(synth, len, sizeof(fxb) / sizeof(fxb[0]), fxb, nout, out);
+        ret = fluidSynthProcess(synth, len, sizeof(fxb) / sizeof(fxb[0]), fxb, nout, out);
     }
     else
     {
-        ret = fluid_synth_process(synth, len, nfx, fx, nout, out);
+        ret = fluidSynthProcess(synth, len, nfx, fx, nout, out);
     }
     // ... client-code ...
     return ret;
 }
  * @endcode
- * For other possible use-cases refer to \ref fluidsynth_process.c .
+ * For other possible use-cases refer to \ref fluidsynthProcess.c .
  * @endparblock
  */
-typedef int (*fluid_audio_func_t)(void *data, int len,
+typedef int (*fluidAudioFuncT)(void *data, int len,
                                   int nfx, float *fx[],
                                   int nout, float *out[]);
 
 /** @startlifecycle{Audio Driver} */
-FLUIDSYNTH_API fluid_audio_driver_t *new_fluid_audio_driver(AuDriverId auDriverId,
-        fluid_synth_t *synth);
+FLUIDSYNTH_API fluidAudioDriverT *newFluidAudioDriver(AuDriverId auDriverId,
+        fluidSynthT *synth);
 
-FLUIDSYNTH_API fluid_audio_driver_t *new_fluid_audio_driver2(AuDriverId auDriverId,
-        fluid_audio_func_t func,
+FLUIDSYNTH_API fluidAudioDriverT *newFluidAudioDriver2(AuDriverId auDriverId,
+        fluidAudioFuncT func,
         void *data);
 
-FLUIDSYNTH_API void delete_fluid_audio_driver(fluid_audio_driver_t *driver);
+FLUIDSYNTH_API void deleteFluidAudioDriver(fluidAudioDriverT *driver);
 /** @endlifecycle */
 
-FLUIDSYNTH_API int fluid_audio_driver_register(const char **adrivers);
+FLUIDSYNTH_API int fluidAudioDriverRegister(const char **adrivers);
 /* @} */
 
 #if 0
 /**
- * @defgroup file_renderer File Renderer
- * @ingroup audio_output
+ * @defgroup fileRenderer File Renderer
+ * @ingroup audioOutput
  *
  * Functions for managing file renderers and triggering the rendering.
  *
@@ -134,19 +134,19 @@ FLUIDSYNTH_API int fluid_audio_driver_register(const char **adrivers);
  *
  * If you are looking for a way to write audio generated
  * from real-time events (for example from an external sequencer or a MIDI controller) to a file,
- * please have a look at the \c file \ref audio_driver instead.
+ * please have a look at the \c file \ref audioDriver instead.
  *
  *
  * @{
  */
 
 /** @startlifecycle{File Renderer} */
-FLUIDSYNTH_API fluid_file_renderer_t *new_fluid_file_renderer(fluid_synth_t *synth);
-FLUIDSYNTH_API void delete_fluid_file_renderer(fluid_file_renderer_t *dev);
+FLUIDSYNTH_API fluidFileRendererT *newFluidFileRenderer(fluidSynthT *synth);
+FLUIDSYNTH_API void deleteFluidFileRenderer(fluidFileRendererT *dev);
 /** @endlifecycle */
 
-FLUIDSYNTH_API int fluid_file_renderer_process_block(fluid_file_renderer_t *dev);
-FLUIDSYNTH_API int fluid_file_set_encoding_quality(fluid_file_renderer_t *dev, double q);
+FLUIDSYNTH_API int fluidFileRendererProcessBlock(fluidFileRendererT *dev);
+FLUIDSYNTH_API int fluidFileSetEncodingQuality(fluidFileRendererT *dev, double q);
 /* @} */
 
 #ifdef __cplusplus

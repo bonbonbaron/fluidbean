@@ -18,78 +18,78 @@
  * 02110-1301, USA
  */
 
-#include "fluid_mdriver.h"
-#include "fluid_settings.h"
+#include "mdriver.h"
+#include "settings.h"
 
 
 /*
- * fluid_mdriver_definition
+ * mdriverDefinition
  */
-struct _fluid_mdriver_definition_t
+struct _fluidMdriverDefinitionT
 {
     const char *name;
-    fluid_midi_driver_t *(*new)(FluidSettings *settings,
-                                handle_midi_event_func_t event_handler,
-                                void *event_handler_data);
-    void (*free)(fluid_midi_driver_t *p);
+    midiDriverT *(*new)(FluidSettings *settings,
+                                handleMidiEventFuncT eventHandler,
+                                void *eventHandlerData);
+    void (*free)(midiDriverT *p);
     void (*settings)(FluidSettings *settings);
 };
 
 
-static const fluid_mdriver_definition_t fluid_midi_drivers[] =
+static const mdriverDefinitionT midiDrivers[] =
 {
 #if ALSA_SUPPORT
     {
-        "alsa_seq",
-        new_fluid_alsa_seq_driver,
-        delete_fluid_alsa_seq_driver,
-        fluid_alsa_seq_driver_settings
+        "alsaSeq",
+        newFluidAlsaSeqDriver,
+        deleteFluidAlsaSeqDriver,
+        alsaSeqDriverSettings
     },
     {
-        "alsa_raw",
-        new_fluid_alsa_rawmidi_driver,
-        delete_fluid_alsa_rawmidi_driver,
-        fluid_alsa_rawmidi_driver_settings
+        "alsaRaw",
+        newFluidAlsaRawmidiDriver,
+        deleteFluidAlsaRawmidiDriver,
+        alsaRawmidiDriverSettings
     },
 #endif
 #if JACK_SUPPORT
     {
         "jack",
-        new_fluid_jack_midi_driver,
-        delete_fluid_jack_midi_driver,
-        fluid_jack_midi_driver_settings
+        newFluidJackMidiDriver,
+        deleteFluidJackMidiDriver,
+        jackMidiDriverSettings
     },
 #endif
 #if OSS_SUPPORT
     {
         "oss",
-        new_fluid_oss_midi_driver,
-        delete_fluid_oss_midi_driver,
-        fluid_oss_midi_driver_settings
+        newFluidOssMidiDriver,
+        deleteFluidOssMidiDriver,
+        ossMidiDriverSettings
     },
 #endif
 #if WINMIDI_SUPPORT
     {
         "winmidi",
-        new_fluid_winmidi_driver,
-        delete_fluid_winmidi_driver,
-        fluid_winmidi_midi_driver_settings
+        newFluidWinmidiDriver,
+        deleteFluidWinmidiDriver,
+        winmidiMidiDriverSettings
     },
 #endif
 #if MIDISHARE_SUPPORT
     {
         "midishare",
-        new_fluid_midishare_midi_driver,
-        delete_fluid_midishare_midi_driver,
+        newFluidMidishareMidiDriver,
+        deleteFluidMidishareMidiDriver,
         NULL
     },
 #endif
 #if COREMIDI_SUPPORT
     {
         "coremidi",
-        new_fluid_coremidi_driver,
-        delete_fluid_coremidi_driver,
-        fluid_coremidi_driver_settings
+        newFluidCoremidiDriver,
+        deleteFluidCoremidiDriver,
+        coremidiDriverSettings
     },
 #endif
     /* NULL terminator to avoid zero size array if no driver available */
@@ -97,65 +97,65 @@ static const fluid_mdriver_definition_t fluid_midi_drivers[] =
 };
 
 
-void fluid_midi_driver_settings(FluidSettings *settings)
+void midiDriverSettings(FluidSettings *settings)
 {
     unsigned int i;
-    const char *def_name = NULL;
+    const char *defName = NULL;
 
-    fluid_settings_register_int(settings, "midi.autoconnect", 0, 0, 1, FLUID_HINT_TOGGLED);
+    settingsRegisterInt(settings, "midi.autoconnect", 0, 0, 1, FLUID_HINT_TOGGLED);
 
-    fluid_settings_register_int(settings, "midi.realtime-prio",
+    settingsRegisterInt(settings, "midi.realtime-prio",
                                 FLUID_DEFAULT_MIDI_RT_PRIO, 0, 99, 0);
     
-    fluid_settings_register_str(settings, "midi.driver", "", 0);
+    settingsRegisterStr(settings, "midi.driver", "", 0);
 
-    for(i = 0; i < FLUID_N_ELEMENTS(fluid_midi_drivers) - 1; i++)
+    for(i = 0; i < FLUID_N_ELEMENTS(midiDrivers) - 1; i++)
     {
         /* Select the default driver */
-        if (def_name == NULL)
+        if (defName == NULL)
         {
-            def_name = fluid_midi_drivers[i].name;
+            defName = midiDrivers[i].name;
         }
     
         /* Add the driver to the list of options */
-        fluid_settings_add_option(settings, "midi.driver", fluid_midi_drivers[i].name);
+        settingsAddOption(settings, "midi.driver", midiDrivers[i].name);
 
-        if(fluid_midi_drivers[i].settings != NULL)
+        if(midiDrivers[i].settings != NULL)
         {
-            fluid_midi_drivers[i].settings(settings);
+            midiDrivers[i].settings(settings);
         }
     }
 
     /* Set the default driver, if any */
-    if(def_name != NULL)
+    if(defName != NULL)
     {
-        fluid_settings_setstr(settings, "midi.driver", def_name);
+        settingsSetstr(settings, "midi.driver", defName);
     }
 }
 
 /**
  * Create a new MIDI driver instance.
  *
- * @param settings Settings used to configure new MIDI driver. See \ref settings_midi for available options.
- * @param handler MIDI handler callback (for example: fluid_midi_router_handle_midi_event()
+ * @param settings Settings used to configure new MIDI driver. See \ref settingsMidi for available options.
+ * @param handler MIDI handler callback (for example: midiRouterHandleMidiEvent()
  *   for MIDI router)
- * @param event_handler_data Caller defined data to pass to 'handler'
+ * @param eventHandlerData Caller defined data to pass to 'handler'
  * @return New MIDI driver instance or NULL on error
  *
- * Which MIDI driver is actually created depends on the \ref settings_midi_driver option.
+ * Which MIDI driver is actually created depends on the \ref settingsMidiDriver option.
  */
-fluid_midi_driver_t *new_fluid_midi_driver(FluidSettings *settings, handle_midi_event_func_t handler, void *event_handler_data)
+midiDriverT *newFluidMidiDriver(FluidSettings *settings, handleMidiEventFuncT handler, void *eventHandlerData)
 {
-    fluid_midi_driver_t *driver = NULL;
+    midiDriverT *driver = NULL;
     char *allnames;
-    const fluid_mdriver_definition_t *def;
+    const mdriverDefinitionT *def;
 
-    for(def = fluid_midi_drivers; def->name != NULL; def++)
+    for(def = midiDrivers; def->name != NULL; def++)
     {
-        if(fluid_settings_str_equal(settings, "midi.driver", def->name))
+        if(settingsStrEqual(settings, "midi.driver", def->name))
         {
             FLUID_LOG(FLUID_DBG, "Using '%s' midi driver", def->name);
-            driver = def->new(settings, handler, event_handler_data);
+            driver = def->new(settings, handler, eventHandlerData);
 
             if(driver)
             {
@@ -167,7 +167,7 @@ fluid_midi_driver_t *new_fluid_midi_driver(FluidSettings *settings, handle_midi_
     }
 
     FLUID_LOG(FLUID_ERR, "Couldn't find the requested midi driver.");
-    allnames = fluid_settings_option_concat(settings, "midi.driver", NULL);
+    allnames = settingsOptionConcat(settings, "midi.driver", NULL);
     if(allnames != NULL)
     {
         if(allnames[0] != '\0')
@@ -189,8 +189,8 @@ fluid_midi_driver_t *new_fluid_midi_driver(FluidSettings *settings, handle_midi_
  * Delete a MIDI driver instance.
  * @param driver MIDI driver to delete
  */
-void delete_fluid_midi_driver(fluid_midi_driver_t *driver)
+void deleteFluidMidiDriver(midiDriverT *driver)
 {
-    fluid_return_if_fail(driver != NULL);
+    returnIfFail(driver != NULL);
     driver->define->free(driver);
 }

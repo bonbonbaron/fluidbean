@@ -19,54 +19,54 @@
  */
 
 
-/* fluid_sndmgr.c
+/* sndmgr.c
  *
  * Driver for MacOS Classic
  */
 
 #if SNDMAN_SUPPORT
 
-#include "fluid_synth.h"
-#include "fluid_adriver.h"
-#include "fluid_settings.h"
+#include "synth.h"
+#include "adriver.h"
+#include "settings.h"
 
 #include <Sound.h>
 
 typedef struct
 {
-    fluid_audio_driver_t driver;
+    audioDriverT driver;
     SndDoubleBufferHeader2 *doubleHeader;
     SndDoubleBackUPP doubleCallbackProc;
     SndChannelPtr channel;
-    int callback_is_audio_func;
+    int callbackIsAudioFunc;
     void *data;
-    fluid_audio_func_t callback;
+    audioFuncT callback;
     float *convbuffers[2];
     int bufferByteSize;
     int bufferFrameSize;
-} fluid_sndmgr_audio_driver_t;
+} sndmgrAudioDriverT;
 
-void  pascal fluid_sndmgr_callback(SndChannelPtr chan, SndDoubleBufferPtr doubleBuffer);
-Fixed fluid_sndmgr_double_to_fix(long double theLD);
+void  pascal sndmgrCallback(SndChannelPtr chan, SndDoubleBufferPtr doubleBuffer);
+Fixed sndmgrDoubleToFix(long double theLD);
 
 /*
  * generic new : returns error
  */
 int
-start_fluid_sndmgr_audio_driver(FluidSettings *settings,
-                                fluid_sndmgr_audio_driver_t *dev,
-                                int buffer_size)
+startFluidSndmgrAudioDriver(FluidSettings *settings,
+                                sndmgrAudioDriverT *dev,
+                                int bufferSize)
 {
     int i;
     SndDoubleBufferHeader2 *doubleHeader = NULL;
     SndDoubleBufferPtr doubleBuffer = NULL;
     OSErr err;
     SndChannelPtr channel = NULL;
-    double sample_rate;
+    double sampleRate;
 
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
 
-    dev->doubleCallbackProc = NewSndDoubleBackProc(fluid_sndmgr_callback);
+    dev->doubleCallbackProc = NewSndDoubleBackProc(sndmgrCallback);
 
     /* the channel */
     FLUID_LOG(FLUID_DBG, "FLUID-SndManager@2");
@@ -94,7 +94,7 @@ start_fluid_sndmgr_audio_driver(FluidSettings *settings,
     doubleHeader->dbhSampleSize = 16;
     doubleHeader->dbhCompressionID = 0;
     doubleHeader->dbhPacketSize = 0;
-    doubleHeader->dbhSampleRate = fluid_sndmgr_double_to_fix((long double) sample_rate);
+    doubleHeader->dbhSampleRate = sndmgrDoubleToFix((long double) sampleRate);
     doubleHeader->dbhDoubleBack = dev->doubleCallbackProc;
     doubleHeader->dbhFormat = 0;
 
@@ -102,8 +102,8 @@ start_fluid_sndmgr_audio_driver(FluidSettings *settings,
     FLUID_LOG(FLUID_DBG, "FLUID-SndManager@4");
     dev->doubleHeader = doubleHeader;
     dev->channel = channel;
-    dev->bufferFrameSize = buffer_size;
-    dev->bufferByteSize = buffer_size * 2 * 2;
+    dev->bufferFrameSize = bufferSize;
+    dev->bufferByteSize = bufferSize * 2 * 2;
 
     /* the 2 doublebuffers */
     FLUID_LOG(FLUID_DBG, "FLUID-SndManager@5");
@@ -142,29 +142,29 @@ start_fluid_sndmgr_audio_driver(FluidSettings *settings,
 }
 
 /*
- * new_fluid_sndmgr_audio_driver
+ * newFluidSndmgrAudioDriver
  * This implementation used the 16bit format.
  */
-fluid_audio_driver_t *
-new_fluid_sndmgr_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidSndmgrAudioDriver(FluidSettings *settings, synthT *synth)
 {
-    fluid_sndmgr_audio_driver_t *dev = NULL;
-    int period_size, periods, buffer_size;
+    sndmgrAudioDriverT *dev = NULL;
+    int periodSize, periods, bufferSize;
 
     /* check the format */
-    if(!fluid_settings_str_equal(settings, "audio.sample-format", "16bits"))
+    if(!settingsStrEqual(settings, "audio.sample-format", "16bits"))
     {
         FLUID_LOG(FLUID_ERR, "Unhandled sample format");
         return NULL;
     }
 
     /* compute buffer size */
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getint(settings, "audio.periods", &periods);
-    buffer_size = period_size * periods;
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetint(settings, "audio.periods", &periods);
+    bufferSize = periodSize * periods;
 
     /* allocated dev */
-    dev = FLUID_NEW(fluid_sndmgr_audio_driver_t);
+    dev = FLUID_NEW(sndmgrAudioDriverT);
 
     if(dev == NULL)
     {
@@ -172,40 +172,40 @@ new_fluid_sndmgr_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_sndmgr_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(sndmgrAudioDriverT));
 
-    dev->callback_is_audio_func = false;
+    dev->callbackIsAudioFunc = false;
     dev->data = (void *)synth;
     dev->callback = NULL;
 
-    if(start_fluid_sndmgr_audio_driver(settings, dev, buffer_size) != 0)
+    if(startFluidSndmgrAudioDriver(settings, dev, bufferSize) != 0)
     {
-        delete_fluid_sndmgr_audio_driver((fluid_audio_driver_t *)dev);
+        deleteFluidSndmgrAudioDriver((audioDriverT *)dev);
         return NULL;
     }
 
-    return (fluid_audio_driver_t *)dev;
+    return (audioDriverT *)dev;
 }
 
 /*
- * new_fluid_sndmgr_audio_driver2
+ * newFluidSndmgrAudioDriver2
  *
- * This implementation used the audio_func float format, with
+ * This implementation used the audioFunc float format, with
  * conversion from float to 16bits in the driver.
  */
-fluid_audio_driver_t *
-new_fluid_sndmgr_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
+audioDriverT *
+newFluidSndmgrAudioDriver2(FluidSettings *settings, audioFuncT func, void *data)
 {
-    fluid_sndmgr_audio_driver_t *dev = NULL;
-    int period_size, periods, buffer_size;
+    sndmgrAudioDriverT *dev = NULL;
+    int periodSize, periods, bufferSize;
 
     /* compute buffer size */
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getint(settings, "audio.periods", &periods);
-    buffer_size = period_size * periods;
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetint(settings, "audio.periods", &periods);
+    bufferSize = periodSize * periods;
 
     /* allocated dev */
-    dev = FLUID_NEW(fluid_sndmgr_audio_driver_t);
+    dev = FLUID_NEW(sndmgrAudioDriverT);
 
     if(dev == NULL)
     {
@@ -213,41 +213,41 @@ new_fluid_sndmgr_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_sndmgr_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(sndmgrAudioDriverT));
 
     /* allocate the conversion buffers */
-    dev->convbuffers[0] = FLUID_ARRAY(float, buffer_size);
-    dev->convbuffers[1] = FLUID_ARRAY(float, buffer_size);
+    dev->convbuffers[0] = FLUID_ARRAY(float, bufferSize);
+    dev->convbuffers[1] = FLUID_ARRAY(float, bufferSize);
 
     if((dev->convbuffers[0] == NULL) || (dev->convbuffers[1] == NULL))
     {
         FLUID_LOG(FLUID_PANIC, "Out of memory");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    dev->callback_is_audio_func = true;
+    dev->callbackIsAudioFunc = true;
     dev->data = data;
     dev->callback = func;
 
-    if(start_fluid_sndmgr_audio_driver(settings, dev, buffer_size) != 0)
+    if(startFluidSndmgrAudioDriver(settings, dev, bufferSize) != 0)
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    return (fluid_audio_driver_t *)dev;
+    return (audioDriverT *)dev;
 
-error_recovery:
-    delete_fluid_sndmgr_audio_driver((fluid_audio_driver_t *)dev);
+errorRecovery:
+    deleteFluidSndmgrAudioDriver((audioDriverT *)dev);
     return NULL;
 }
 
 /*
- * delete_fluid_sndmgr_audio_driver
+ * deleteFluidSndmgrAudioDriver
  */
-void delete_fluid_sndmgr_audio_driver(fluid_audio_driver_t *p)
+void deleteFluidSndmgrAudioDriver(audioDriverT *p)
 {
-    fluid_sndmgr_audio_driver_t *dev = (fluid_sndmgr_audio_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    sndmgrAudioDriverT *dev = (sndmgrAudioDriverT *) p;
+    returnIfFail(dev != NULL);
 
     if(dev->channel != NULL)
     {
@@ -272,41 +272,41 @@ void delete_fluid_sndmgr_audio_driver(fluid_audio_driver_t *p)
 }
 
 /*
- * fluid_sndmgr_callback
+ * sndmgrCallback
  *
  */
-void  pascal fluid_sndmgr_callback(SndChannelPtr chan, SndDoubleBufferPtr doubleBuffer)
+void  pascal sndmgrCallback(SndChannelPtr chan, SndDoubleBufferPtr doubleBuffer)
 {
-    fluid_sndmgr_audio_driver_t *dev;
+    sndmgrAudioDriverT *dev;
     signed short *buf;
     float *left;
     float *right;
     float v;
-    int i, k, buffer_size;
+    int i, k, bufferSize;
 
-    dev = (fluid_sndmgr_audio_driver_t *) doubleBuffer->dbUserInfo[0];
+    dev = (sndmgrAudioDriverT *) doubleBuffer->dbUserInfo[0];
     buf = (signed short *)doubleBuffer->dbSoundData;
-    buffer_size = dev->bufferFrameSize;
+    bufferSize = dev->bufferFrameSize;
 
-    if(dev->callback_is_audio_func)
+    if(dev->callbackIsAudioFunc)
     {
         /* float API : conversion to signed short */
         left = dev->convbuffers[0];
         right = dev->convbuffers[1];
 
-        FLUID_MEMSET(left, 0, buffer_size * sizeof(float));
-        FLUID_MEMSET(right, 0, buffer_size * sizeof(float));
+        FLUID_MEMSET(left, 0, bufferSize * sizeof(float));
+        FLUID_MEMSET(right, 0, bufferSize * sizeof(float));
 
-        (*dev->callback)(dev->data, buffer_size, 0, NULL, 2, dev->convbuffers);
+        (*dev->callback)(dev->data, bufferSize, 0, NULL, 2, dev->convbuffers);
 
-        for(i = 0, k = 0; i < buffer_size; i++)
+        for(i = 0, k = 0; i < bufferSize; i++)
         {
             v = 32767.0f * left[i];
-            fluid_clip(v, -32768.0f, 32767.0f);
+            clip(v, -32768.0f, 32767.0f);
             buf[k++] = (signed short) v;
 
             v = 32767.0f * right[i];
-            fluid_clip(v, -32768.0f, 32767.0f);
+            clip(v, -32768.0f, 32767.0f);
             buf[k++] = (signed short) v;
         }
 
@@ -314,15 +314,15 @@ void  pascal fluid_sndmgr_callback(SndChannelPtr chan, SndDoubleBufferPtr double
     else
     {
         /* let the synth do the conversion */
-        fluid_synth_write_s16((fluid_synth_t *)dev->data, buffer_size, buf, 0, 2, buf, 1, 2);
+        synthWriteS16((synthT *)dev->data, bufferSize, buf, 0, 2, buf, 1, 2);
     }
 
     doubleBuffer->dbFlags = doubleBuffer->dbFlags | dbBufferReady;
-    doubleBuffer->dbNumFrames = buffer_size;
+    doubleBuffer->dbNumFrames = bufferSize;
 }
 
 /*
- * fluid_sndmgr_double_to_fix
+ * sndmgrDoubleToFix
  *
  * A Fixed number is of the type 12345.67890.  It is 32 bits in size with the
  * high order bits representing the significant value (that before the point)
@@ -341,7 +341,7 @@ void  pascal fluid_sndmgr_callback(SndChannelPtr chan, SndDoubleBufferPtr double
  */
 #define _MAX_VALUE     65535
 #define _BITS_PER_BYTE 8
-Fixed fluid_sndmgr_double_to_fix(long double theLD)
+Fixed sndmgrDoubleToFix(long double theLD)
 {
     unsigned long	theResult = 0;
     unsigned short theSignificant = 0, theFraction = 0;

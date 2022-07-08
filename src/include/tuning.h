@@ -1,4 +1,4 @@
-/* FluidSynth - A Software Synthesizer
+/* Synth - A Software Synthesizer
  *
  * Copyright (C) 2003  Peter Hanappe and others.
  *
@@ -25,42 +25,42 @@
 
   http://www.midi.org/about-midi/tuning.htm
   http://www.midi.org/about-midi/tuning-scale.htm
-  http://www.midi.org/about-midi/tuning_extens.htm
+  http://www.midi.org/about-midi/tuningExtens.htm
 
 */
 
-#ifndef _FLUID_TUNING_H
-#define _FLUID_TUNING_H
+#ifndef _TUNING_H
+#define _TUNING_H
 
 #include "fluidbean.h"
 
-typedef struct _fluid_tuning_t {
+typedef struct _fluidTuningT {
 	S8 *name;
 	S32 bank;
 	S32 prog;
 	double pitch[128];						/* the pitch of every key, in cents */
-} fluid_tuning_t;
+} tuningT;
 
-fluid_tuning_t *new_fluid_tuning (const S8 *name, S32 bank, S32 prog);
-fluid_tuning_t *fluid_tuning_duplicate (fluid_tuning_t * tuning);
-void delete_fluid_tuning (fluid_tuning_t * tuning);
+tuningT *newTuning (const S8 *name, S32 bank, S32 prog);
+tuningT *tuningDuplicate (tuningT * tuning);
+void deleteTuning (tuningT * tuning);
 
-void fluid_tuning_set_name (fluid_tuning_t * tuning, const S8 *name);
-S8 *fluid_tuning_get_name (fluid_tuning_t * tuning);
+void tuningSetName (tuningT * tuning, const S8 *name);
+S8 *tuningGetName (tuningT * tuning);
 
-#define fluid_tuning_get_bank(_t) ((_t)->bank)
-#define fluid_tuning_get_prog(_t) ((_t)->prog)
+#define tuningGetBank(_t) ((_t)->bank)
+#define tuningGetProg(_t) ((_t)->prog)
 
-void fluid_tuning_set_pitch (fluid_tuning_t * tuning, S32 key, double pitch);
-#define fluid_tuning_get_pitch(_t, _key) ((_t)->pitch[_key])
+void tuningSetPitch (tuningT * tuning, S32 key, double pitch);
+#define tuningGetPitch(_t, _key) ((_t)->pitch[_key])
 
-void fluid_tuning_set_octave (fluid_tuning_t * tuning,
-															const double *pitch_deriv);
+void tuningSetOctave (tuningT * tuning,
+															const double *pitchDeriv);
 
-void fluid_tuning_set_all (fluid_tuning_t * tuning, double *pitch);
-#define fluid_tuning_get_all(_t) (&(_t)->pitch[0])
-
-
+void tuningSetAll (tuningT * tuning, double *pitch);
+#define tuningGetAll(_t) (&(_t)->pitch[0])
 
 
-#endif /* _FLUID_TUNING_H */
+
+
+#endif /* _TUNING_H */

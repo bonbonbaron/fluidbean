@@ -20,9 +20,9 @@
 
 
 
-#include "fluid_synth.h"
-#include "fluid_adriver.h"
-#include "fluid_settings.h"
+#include "synth.h"
+#include "adriver.h"
+#include "settings.h"
 
 
 #if DSOUND_SUPPORT
@@ -36,13 +36,13 @@
 #include <ks.h>
 #include <ksmedia.h>
 
-static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter);
-static int fluid_dsound_write_processed_channels(fluid_synth_t *data, int len,
-                               int channels_count,
-                               void *channels_out[], int channels_off[],
-                               int channels_incr[]);
+static DWORD WINAPI dsoundAudioRun(LPVOID lpParameter);
+static int dsoundWriteProcessedChannels(synthT *data, int len,
+                               int channelsCount,
+                               void *channelsOut[], int channelsOff[],
+                               int channelsIncr[]);
 
-static char *fluid_win32_error(HRESULT hr);
+static char *win32_error(HRESULT hr);
 
 /**
 * The driver handle multiple channels.
@@ -53,7 +53,7 @@ static char *fluid_win32_error(HRESULT hr);
 /* Maximum number of stereo outputs */
 #define DSOUND_MAX_STEREO_CHANNELS 4
 /* Speakers mapping */
-static const DWORD channel_mask_speakers[DSOUND_MAX_STEREO_CHANNELS] =
+static const DWORD channelMaskSpeakers[DSOUND_MAX_STEREO_CHANNELS] =
 {
     /* 1 stereo output */
     SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT,
@@ -76,52 +76,52 @@ static const DWORD channel_mask_speakers[DSOUND_MAX_STEREO_CHANNELS] =
 
 typedef struct
 {
-    fluid_audio_driver_t driver;
-    LPDIRECTSOUND direct_sound;      /* dsound instance */
-    LPDIRECTSOUNDBUFFER prim_buffer; /* dsound buffer*/
-    LPDIRECTSOUNDBUFFER sec_buffer;  /* dsound buffer */
+    audioDriverT driver;
+    LPDIRECTSOUND directSound;      /* dsound instance */
+    LPDIRECTSOUNDBUFFER primBuffer; /* dsound buffer*/
+    LPDIRECTSOUNDBUFFER secBuffer;  /* dsound buffer */
 
     HANDLE thread;        /* driver task */
     DWORD threadID;
     void *synth; /* fluidsynth instance, or user pointer if custom processing function is defined */
-    fluid_audio_func_t func;
+    audioFuncT func;
     /* callback called by the task for audio rendering in dsound buffers */
-    fluid_audio_channels_callback_t write;
-    HANDLE quit_ev;       /* Event object to request the audio task to stop */
+    audioChannelsCallbackT write;
+    HANDLE quitEv;       /* Event object to request the audio task to stop */
     float **drybuf;
 
-    int   bytes_per_second; /* number of bytes per second */
-    DWORD buffer_byte_size; /* size of one buffer in bytes */
-    DWORD queue_byte_size;  /* total size of all buffers in bytes */
-    DWORD frame_size;       /* frame size in bytes */
-    int channels_count; /* number of channels in audio stream */
-} fluid_dsound_audio_driver_t;
+    int   bytesPerSecond; /* number of bytes per second */
+    DWORD bufferByteSize; /* size of one buffer in bytes */
+    DWORD queueByteSize;  /* total size of all buffers in bytes */
+    DWORD frameSize;       /* frame size in bytes */
+    int channelsCount; /* number of channels in audio stream */
+} dsoundAudioDriverT;
 
 typedef struct
 {
     LPGUID devGUID;
     char *devname;
-} fluid_dsound_devsel_t;
+} dsoundDevselT;
 
 /* enumeration callback to add "device name" option on setting "audio.dsound.device" */
 BOOL CALLBACK
-fluid_dsound_enum_callback(LPGUID guid, LPCTSTR description, LPCTSTR module, LPVOID context)
+dsoundEnumCallback(LPGUID guid, LPCTSTR description, LPCTSTR module, LPVOID context)
 {
     FluidSettings *settings = (FluidSettings *) context;
-    fluid_settings_add_option(settings, "audio.dsound.device", (const char *)description);
+    settingsAddOption(settings, "audio.dsound.device", (const char *)description);
 
     return TRUE;
 }
 
 /* enumeration callback to look if a certain device exists and return its GUID.
-   @context, (fluid_dsound_devsel_t *) context->devname provide the device name to look for.
-             (fluid_dsound_devsel_t *) context->devGUID pointer to return device GUID.
+   @context, (dsoundDevselT *) context->devname provide the device name to look for.
+             (dsoundDevselT *) context->devGUID pointer to return device GUID.
    @return TRUE to continue enumeration, FALSE otherwise.
 */
 BOOL CALLBACK
-fluid_dsound_enum_callback2(LPGUID guid, LPCTSTR description, LPCTSTR module, LPVOID context)
+dsoundEnumCallback2(LPGUID guid, LPCTSTR description, LPCTSTR module, LPVOID context)
 {
-    fluid_dsound_devsel_t *devsel = (fluid_dsound_devsel_t *) context;
+    dsoundDevselT *devsel = (dsoundDevselT *) context;
     FLUID_LOG(FLUID_DBG, "Testing audio device: %s", description);
 
     if(FLUID_STRCASECMP(devsel->devname, description) == 0)
@@ -145,16 +145,16 @@ fluid_dsound_enum_callback2(LPGUID guid, LPCTSTR description, LPCTSTR module, LP
    - register setting "audio.dsound.device".
    - add list of dsound device name as option of "audio.dsound.device" setting.
 */
-void fluid_dsound_audio_driver_settings(FluidSettings *settings)
+void dsoundAudioDriverSettings(FluidSettings *settings)
 {
-    fluid_settings_register_str(settings, "audio.dsound.device", "default", 0);
-    fluid_settings_add_option(settings, "audio.dsound.device", "default");
-    DirectSoundEnumerate((LPDSENUMCALLBACK) fluid_dsound_enum_callback, settings);
+    settingsRegisterStr(settings, "audio.dsound.device", "default", 0);
+    settingsAddOption(settings, "audio.dsound.device", "default");
+    DirectSoundEnumerate((LPDSENUMCALLBACK) dsoundEnumCallback, settings);
 }
 
 
 /*
- * new_fluid_dsound_audio_driver
+ * newFluidDsoundAudioDriver
  * The driver handle the case of multiple stereo buffers provided by fluidsynth
  * mixer.
  * Each stereo buffers (left, right) are written to respective channels pair
@@ -172,34 +172,34 @@ void fluid_dsound_audio_driver_settings(FluidSettings *settings)
 
  * @param synth, fluidsynth synth instance to associate to the driver.
  *
- * Note: The number of internal mixer buffer is indicated by synth->audio_channels.
+ * Note: The number of internal mixer buffer is indicated by synth->audioChannels.
  * If the audio device cannot handle the format or do not have enough channels,
  * the driver fails and return NULL.
 */
-fluid_audio_driver_t *
-new_fluid_dsound_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidDsoundAudioDriver(FluidSettings *settings, synthT *synth)
 {
-    return new_fluid_dsound_audio_driver2(settings, NULL, synth);
+    return newFluidDsoundAudioDriver2(settings, NULL, synth);
 }
 
-fluid_audio_driver_t *
-new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
+audioDriverT *
+newFluidDsoundAudioDriver2(FluidSettings *settings, audioFuncT func, void *data)
 {
     HRESULT hr;
     DSBUFFERDESC desc;
-    fluid_dsound_audio_driver_t *dev = NULL;
+    dsoundAudioDriverT *dev = NULL;
     DSCAPS caps;
     char *buf1;
     DWORD bytes1;
-    double sample_rate;
-    int periods, period_size;
-    int audio_channels;
+    double sampleRate;
+    int periods, periodSize;
+    int audioChannels;
     int i;
-    fluid_dsound_devsel_t devsel;
+    dsoundDevselT devsel;
     WAVEFORMATEXTENSIBLE format;
 
     /* create and clear the driver data */
-    dev = FLUID_NEW(fluid_dsound_audio_driver_t);
+    dev = FLUID_NEW(dsoundAudioDriverT);
 
     if(dev == NULL)
     {
@@ -207,37 +207,37 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_dsound_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(dsoundAudioDriverT));
     dev->synth = data;
     dev->func = func;
 
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_getint(settings, "audio.periods", &periods);
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getint(settings, "synth.audio-channels", &audio_channels);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsGetint(settings, "audio.periods", &periods);
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetint(settings, "synth.audio-channels", &audioChannels);
 
     /* Clear format structure*/
     ZeroMemory(&format, sizeof(WAVEFORMATEXTENSIBLE));
 
     /* Set this early so that if buffer allocation failed we can free the memory */
-    dev->channels_count = audio_channels * 2;
+    dev->channelsCount = audioChannels * 2;
 
     /* check the format */
     if(!func)
     {
-        if(fluid_settings_str_equal(settings, "audio.sample-format", "float"))
+        if(settingsStrEqual(settings, "audio.sample-format", "float"))
         {
             FLUID_LOG(FLUID_DBG, "Selected 32 bit sample format");
-            dev->write = fluid_synth_write_float_channels;
+            dev->write = synthWriteFloatChannels;
             /* sample container size in bits: 32 bits */
             format.Format.wBitsPerSample = 8 * sizeof(float);
             format.SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
             format.Format.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
         }
-        else if(fluid_settings_str_equal(settings, "audio.sample-format", "16bits"))
+        else if(settingsStrEqual(settings, "audio.sample-format", "16bits"))
         {
             FLUID_LOG(FLUID_DBG, "Selected 16 bit sample format");
-            dev->write = fluid_synth_write_s16_channels;
+            dev->write = synthWriteS16_channels;
             /* sample container size in bits: 16bits */
             format.Format.wBitsPerSample = 8 * sizeof(short);
             format.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
@@ -246,49 +246,49 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
         else
         {
             FLUID_LOG(FLUID_ERR, "Unhandled sample format");
-            goto error_recovery;
+            goto errorRecovery;
         }
     }
     else
     {
         FLUID_LOG(FLUID_DBG, "Selected 32 bit sample format");
-        dev->write = fluid_dsound_write_processed_channels;
+        dev->write = dsoundWriteProcessedChannels;
         /* sample container size in bits: 32 bits */
         format.Format.wBitsPerSample = 8 * sizeof(float);
         format.SubFormat = KSDATAFORMAT_SUBTYPE_IEEE_FLOAT;
         format.Format.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
-        dev->drybuf = FLUID_ARRAY(float*, audio_channels * 2);
+        dev->drybuf = FLUID_ARRAY(float*, audioChannels * 2);
         if(dev->drybuf == NULL)
         {
             FLUID_LOG(FLUID_ERR, "Out of memory");
-            goto error_recovery;
+            goto errorRecovery;
         }
-        FLUID_MEMSET(dev->drybuf, 0, sizeof(float*) * audio_channels * 2);
-        for(i = 0; i < audio_channels * 2; ++i)
+        FLUID_MEMSET(dev->drybuf, 0, sizeof(float*) * audioChannels * 2);
+        for(i = 0; i < audioChannels * 2; ++i)
         {
-            dev->drybuf[i] = FLUID_ARRAY(float, periods * period_size);
+            dev->drybuf[i] = FLUID_ARRAY(float, periods * periodSize);
             if(dev->drybuf[i] == NULL)
             {
                 FLUID_LOG(FLUID_ERR, "Out of memory");
-                goto error_recovery;
+                goto errorRecovery;
             }
         }
     }
 
     /* Finish to initialize the format structure */
     /* number of channels in a frame */
-    format.Format.nChannels = audio_channels * 2;
+    format.Format.nChannels = audioChannels * 2;
 
-    if(audio_channels > DSOUND_MAX_STEREO_CHANNELS)
+    if(audioChannels > DSOUND_MAX_STEREO_CHANNELS)
     {
         FLUID_LOG(FLUID_ERR, "Channels number %d exceed internal limit %d",
                   format.Format.nChannels, DSOUND_MAX_STEREO_CHANNELS * 2);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     /* size of frame in bytes */
     format.Format.nBlockAlign = format.Format.nChannels * format.Format.wBitsPerSample / 8;
-    format.Format.nSamplesPerSec = (DWORD) sample_rate;
+    format.Format.nSamplesPerSec = (DWORD) sampleRate;
     format.Format.nAvgBytesPerSec = format.Format.nBlockAlign * format.Format.nSamplesPerSec;
 
     /* extension */
@@ -301,23 +301,23 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
         /* CreateSoundBuffer accepts only format.dwChannelMask compatible with
            format.Format.nChannels
         */
-        format.dwChannelMask = channel_mask_speakers[audio_channels - 1];
+        format.dwChannelMask = channelMaskSpeakers[audioChannels - 1];
     }
 
     /* Finish to initialize dev structure */
-    dev->frame_size = format.Format.nBlockAlign;
-    dev->buffer_byte_size = period_size * dev->frame_size;
-    dev->queue_byte_size = periods * dev->buffer_byte_size;
-    dev->bytes_per_second = format.Format.nAvgBytesPerSec;
+    dev->frameSize = format.Format.nBlockAlign;
+    dev->bufferByteSize = periodSize * dev->frameSize;
+    dev->queueByteSize = periods * dev->bufferByteSize;
+    dev->bytesPerSecond = format.Format.nAvgBytesPerSec;
 
     devsel.devGUID = NULL;
 
     /* get the selected device name. if none is specified, use NULL for the default device. */
-    if(fluid_settings_dupstr(settings, "audio.dsound.device", &devsel.devname) == FLUID_OK /* ++ alloc device name */
+    if(settingsDupstr(settings, "audio.dsound.device", &devsel.devname) == FLUID_OK /* ++ alloc device name */
             && devsel.devname && strlen(devsel.devname) > 0)
     {
         /* look for the GUID of the selected device */
-        DirectSoundEnumerate((LPDSENUMCALLBACK) fluid_dsound_enum_callback2, (void *)&devsel);
+        DirectSoundEnumerate((LPDSENUMCALLBACK) dsoundEnumCallback2, (void *)&devsel);
     }
 
     if(devsel.devname)
@@ -326,7 +326,7 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
     }
 
     /* open DirectSound */
-    hr = DirectSoundCreate(devsel.devGUID, &dev->direct_sound, NULL);
+    hr = DirectSoundCreate(devsel.devGUID, &dev->directSound, NULL);
 
     if(devsel.devGUID)
     {
@@ -335,25 +335,25 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
 
     if(hr != DS_OK)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to create the DirectSound object: '%s'", fluid_win32_error(hr));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to create the DirectSound object: '%s'", win32_error(hr));
+        goto errorRecovery;
     }
 
-    hr = IDirectSound_SetCooperativeLevel(dev->direct_sound, GetDesktopWindow(), DSSCL_PRIORITY);
+    hr = IDirectSound_SetCooperativeLevel(dev->directSound, GetDesktopWindow(), DSSCL_PRIORITY);
 
     if(hr != DS_OK)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to set the cooperative level: '%s'", fluid_win32_error(hr));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to set the cooperative level: '%s'", win32_error(hr));
+        goto errorRecovery;
     }
 
     caps.dwSize = sizeof(caps);
-    hr = IDirectSound_GetCaps(dev->direct_sound, &caps);
+    hr = IDirectSound_GetCaps(dev->directSound, &caps);
 
     if(hr != DS_OK)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to query the device capacities: '%s'", fluid_win32_error(hr));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to query the device capacities: '%s'", win32_error(hr));
+        goto errorRecovery;
     }
 
     /* create primary buffer */
@@ -367,21 +367,21 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
         desc.dwFlags |= DSBCAPS_LOCHARDWARE;
     }
 
-    hr = IDirectSound_CreateSoundBuffer(dev->direct_sound, &desc, &dev->prim_buffer, NULL);
+    hr = IDirectSound_CreateSoundBuffer(dev->directSound, &desc, &dev->primBuffer, NULL);
 
     if(hr != DS_OK)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to allocate the primary buffer: '%s'", fluid_win32_error(hr));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to allocate the primary buffer: '%s'", win32_error(hr));
+        goto errorRecovery;
     }
 
     /* set the primary sound buffer to this format. if it fails, just
        print a warning. */
-    hr = IDirectSoundBuffer_SetFormat(dev->prim_buffer, (WAVEFORMATEX *)&format);
+    hr = IDirectSoundBuffer_SetFormat(dev->primBuffer, (WAVEFORMATEX *)&format);
 
     if(hr != DS_OK)
     {
-        FLUID_LOG(FLUID_WARN, "Can't set format of primary sound buffer: '%s'", fluid_win32_error(hr));
+        FLUID_LOG(FLUID_WARN, "Can't set format of primary sound buffer: '%s'", win32_error(hr));
     }
 
     /* initialize the buffer description */
@@ -394,7 +394,7 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
        format.Format.nChannels
     */
     desc.lpwfxFormat = (WAVEFORMATEX *)&format;
-    desc.dwBufferBytes = dev->queue_byte_size;
+    desc.dwBufferBytes = dev->queueByteSize;
 
     if(caps.dwFreeHwMixingStreamingBuffers > 0)
     {
@@ -403,62 +403,62 @@ new_fluid_dsound_audio_driver2(FluidSettings *settings, fluid_audio_func_t func,
 
     /* create the secondary sound buffer */
 
-    hr = IDirectSound_CreateSoundBuffer(dev->direct_sound, &desc, &dev->sec_buffer, NULL);
+    hr = IDirectSound_CreateSoundBuffer(dev->directSound, &desc, &dev->secBuffer, NULL);
 
     if(hr != DS_OK)
     {
-        FLUID_LOG(FLUID_ERR, "dsound: Can't create sound buffer: '%s'", fluid_win32_error(hr));
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "dsound: Can't create sound buffer: '%s'", win32_error(hr));
+        goto errorRecovery;
     }
 
 
     /* Lock and get dsound buffer */
-    hr = IDirectSoundBuffer_Lock(dev->sec_buffer, 0, 0, (void *) &buf1, &bytes1, 0, 0, DSBLOCK_ENTIREBUFFER);
+    hr = IDirectSoundBuffer_Lock(dev->secBuffer, 0, 0, (void *) &buf1, &bytes1, 0, 0, DSBLOCK_ENTIREBUFFER);
 
     if((hr != DS_OK) || (buf1 == NULL))
     {
-        FLUID_LOG(FLUID_PANIC, "Failed to lock the audio buffer: '%s'", fluid_win32_error(hr));
-        goto error_recovery;
+        FLUID_LOG(FLUID_PANIC, "Failed to lock the audio buffer: '%s'", win32_error(hr));
+        goto errorRecovery;
     }
 
     /* fill the buffer with silence */
     memset(buf1, 0, bytes1);
 
     /* Unlock dsound buffer */
-    IDirectSoundBuffer_Unlock(dev->sec_buffer, buf1, bytes1, 0, 0);
+    IDirectSoundBuffer_Unlock(dev->secBuffer, buf1, bytes1, 0, 0);
 
     /* Create object to signal thread exit */
-    dev->quit_ev = CreateEvent(NULL, FALSE, FALSE, NULL);
+    dev->quitEv = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-    if(dev->quit_ev == NULL)
+    if(dev->quitEv == NULL)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to create quit Event: '%s'", fluid_get_windows_error());
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to create quit Event: '%s'", getWindowsError());
+        goto errorRecovery;
     }
 
     /* start the audio thread */
-    dev->thread = CreateThread(NULL, 0, fluid_dsound_audio_run, (LPVOID) dev, 0, &dev->threadID);
+    dev->thread = CreateThread(NULL, 0, dsoundAudioRun, (LPVOID) dev, 0, &dev->threadID);
 
     if(dev->thread == NULL)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to create DSound audio thread: '%s'", fluid_get_windows_error());
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to create DSound audio thread: '%s'", getWindowsError());
+        goto errorRecovery;
     }
 
-    return (fluid_audio_driver_t *) dev;
+    return (audioDriverT *) dev;
 
-error_recovery:
-    delete_fluid_dsound_audio_driver((fluid_audio_driver_t *) dev);
+errorRecovery:
+    deleteFluidDsoundAudioDriver((audioDriverT *) dev);
     return NULL;
 }
 
 
-void delete_fluid_dsound_audio_driver(fluid_audio_driver_t *d)
+void deleteFluidDsoundAudioDriver(audioDriverT *d)
 {
     int i;
 
-    fluid_dsound_audio_driver_t *dev = (fluid_dsound_audio_driver_t *) d;
-    fluid_return_if_fail(dev != NULL);
+    dsoundAudioDriverT *dev = (dsoundAudioDriverT *) d;
+    returnIfFail(dev != NULL);
 
     /* First tell dsound to stop playing its buffer now.
        Doing this before stopping audio thread avoid dsound playing transient
@@ -466,16 +466,16 @@ void delete_fluid_dsound_audio_driver(fluid_audio_driver_t *d)
        These glitches are particularly audible when a reverb is connected
        on output.
     */
-    if(dev->sec_buffer != NULL)
+    if(dev->secBuffer != NULL)
     {
-        IDirectSoundBuffer_Stop(dev->sec_buffer);
+        IDirectSoundBuffer_Stop(dev->secBuffer);
     }
 
     /* request the audio task to stop and wait till the audio thread exits */
     if(dev->thread != NULL)
     {
         /* tell the audio thread to stop its loop */
-        SetEvent(dev->quit_ev);
+        SetEvent(dev->quitEv);
 
         if(WaitForSingleObject(dev->thread, 2000) != WAIT_OBJECT_0)
         {
@@ -489,31 +489,31 @@ void delete_fluid_dsound_audio_driver(fluid_audio_driver_t *d)
     }
 
     /* Release the event object */
-    if(dev->quit_ev != NULL)
+    if(dev->quitEv != NULL)
     {
-        CloseHandle(dev->quit_ev);
+        CloseHandle(dev->quitEv);
     }
 
     /* Finish to release all the dsound allocated resources */
 
-    if(dev->sec_buffer != NULL)
+    if(dev->secBuffer != NULL)
     {
-        IDirectSoundBuffer_Release(dev->sec_buffer);
+        IDirectSoundBuffer_Release(dev->secBuffer);
     }
 
-    if(dev->prim_buffer != NULL)
+    if(dev->primBuffer != NULL)
     {
-        IDirectSoundBuffer_Release(dev->prim_buffer);
+        IDirectSoundBuffer_Release(dev->primBuffer);
     }
 
-    if(dev->direct_sound != NULL)
+    if(dev->directSound != NULL)
     {
-        IDirectSound_Release(dev->direct_sound);
+        IDirectSound_Release(dev->directSound);
     }
 
     if(dev->drybuf != NULL)
     {
-        for(i = 0; i < dev->channels_count; ++i)
+        for(i = 0; i < dev->channelsCount; ++i)
         {
             FLUID_FREE(dev->drybuf[i]);
         }
@@ -524,19 +524,19 @@ void delete_fluid_dsound_audio_driver(fluid_audio_driver_t *d)
     FLUID_FREE(dev);
 }
 
-static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter)
+static DWORD WINAPI dsoundAudioRun(LPVOID lpParameter)
 {
-    fluid_dsound_audio_driver_t *dev = (fluid_dsound_audio_driver_t *) lpParameter;
+    dsoundAudioDriverT *dev = (dsoundAudioDriverT *) lpParameter;
     short *buf1, *buf2;
     DWORD bytes1, bytes2;
-    DWORD cur_position, frames, play_position, write_position, bytes;
+    DWORD curPosition, frames, playPosition, writePosition, bytes;
     HRESULT res;
     int     ms;
 
     /* pointers table on output first sample channels */
-    void *channels_out[DSOUND_MAX_STEREO_CHANNELS * 2];
-    int channels_off[DSOUND_MAX_STEREO_CHANNELS * 2];
-    int channels_incr[DSOUND_MAX_STEREO_CHANNELS * 2];
+    void *channelsOut[DSOUND_MAX_STEREO_CHANNELS * 2];
+    int channelsOff[DSOUND_MAX_STEREO_CHANNELS * 2];
+    int channelsIncr[DSOUND_MAX_STEREO_CHANNELS * 2];
     int i;
 
     /* initialize write callback constant parameters:
@@ -545,54 +545,54 @@ static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter)
        { s1:c1, s1:c2, s1:c3, s1:c4,  s2:c1, s2:c2, s2:c3, s2:c4,...
          sn:c1, sn:c2, sn:c3, sn:c4 }.
 
-       So, channels_off[], channnel_incr[] tables should initialized like this:
-         channels_off[0] = 0    channels_incr[0] = 4
-         channels_off[1] = 1    channels_incr[1] = 4
-         channels_off[2] = 2    channels_incr[2] = 4
-         channels_off[3] = 3    channels_incr[3] = 4
+       So, channelsOff[], channnelIncr[] tables should initialized like this:
+         channelsOff[0] = 0    channelsIncr[0] = 4
+         channelsOff[1] = 1    channelsIncr[1] = 4
+         channelsOff[2] = 2    channelsIncr[2] = 4
+         channelsOff[3] = 3    channelsIncr[3] = 4
 
-       channels_out[], table will be initialized later, just before calling
+       channelsOut[], table will be initialized later, just before calling
        the write callback function.
-         channels_out[0] = address of dsound buffer
-         channels_out[1] = address of dsound buffer
-         channels_out[2] = address of dsound buffer
-         channels_out[3] = address of dsound buffer
+         channelsOut[0] = address of dsound buffer
+         channelsOut[1] = address of dsound buffer
+         channelsOut[2] = address of dsound buffer
+         channelsOut[3] = address of dsound buffer
     */
-    for(i = 0; i < dev->channels_count; i++)
+    for(i = 0; i < dev->channelsCount; i++)
     {
-        channels_off[i] = i;
-        channels_incr[i] = dev->channels_count;
+        channelsOff[i] = i;
+        channelsIncr[i] = dev->channelsCount;
     }
 
-    cur_position = 0;
+    curPosition = 0;
 
     /* boost the priority of the audio thread */
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
 
-    IDirectSoundBuffer_Play(dev->sec_buffer, 0, 0, DSBPLAY_LOOPING);
+    IDirectSoundBuffer_Play(dev->secBuffer, 0, 0, DSBPLAY_LOOPING);
 
     for(;;)
     {
-        IDirectSoundBuffer_GetCurrentPosition(dev->sec_buffer, &play_position, &write_position);
+        IDirectSoundBuffer_GetCurrentPosition(dev->secBuffer, &playPosition, &writePosition);
 
-        if(cur_position <= play_position)
+        if(curPosition <= playPosition)
         {
-            bytes = play_position - cur_position;
+            bytes = playPosition - curPosition;
         }
-        else if((play_position < cur_position) && (write_position <= cur_position))
+        else if((playPosition < curPosition) && (writePosition <= curPosition))
         {
-            bytes = dev->queue_byte_size + play_position - cur_position;
+            bytes = dev->queueByteSize + playPosition - curPosition;
         }
         else
         {
             bytes = 0;
         }
 
-        if(bytes >= dev->buffer_byte_size)
+        if(bytes >= dev->bufferByteSize)
         {
 
             /* Lock */
-            res = IDirectSoundBuffer_Lock(dev->sec_buffer, cur_position, bytes, (void *) &buf1, &bytes1, (void *) &buf2, &bytes2, 0);
+            res = IDirectSoundBuffer_Lock(dev->secBuffer, curPosition, bytes, (void *) &buf1, &bytes1, (void *) &buf2, &bytes2, 0);
 
             if((res != DS_OK) || (buf1 == NULL))
             {
@@ -603,73 +603,73 @@ static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter)
             /* fill the first part of the buffer */
             if(bytes1 > 0)
             {
-                frames = bytes1 / dev->frame_size;
+                frames = bytes1 / dev->frameSize;
                 /* Before calling write function, finish to initialize
-                   channels_out[] table parameter:
+                   channelsOut[] table parameter:
                    dsound expects interleaved channels in a unique buffer.
-                   So, channels_out[] table must be initialized with the address
+                   So, channelsOut[] table must be initialized with the address
                    of the same buffer (buf1).
                 */
-                i = dev->channels_count;
+                i = dev->channelsCount;
 
                 do
                 {
-                    channels_out[--i] = buf1;
+                    channelsOut[--i] = buf1;
                 }
                 while(i);
 
                 /* calling write function */
                 if(dev->func == NULL)
                 {
-                    dev->write(dev->synth, frames, dev->channels_count,
-                            channels_out, channels_off, channels_incr);
+                    dev->write(dev->synth, frames, dev->channelsCount,
+                            channelsOut, channelsOff, channelsIncr);
                 }
                 else
                 {
-                    dev->write((fluid_synth_t*)dev, frames, dev->channels_count,
-                            channels_out, channels_off, channels_incr);
+                    dev->write((synthT*)dev, frames, dev->channelsCount,
+                            channelsOut, channelsOff, channelsIncr);
                 }
-                cur_position += frames * dev->frame_size;
+                curPosition += frames * dev->frameSize;
             }
 
             /* fill the second part of the buffer */
             if((buf2 != NULL) && (bytes2 > 0))
             {
-                frames = bytes2 / dev->frame_size;
+                frames = bytes2 / dev->frameSize;
                 /* Before calling write function, finish to initialize
-                   channels_out[] table parameter:
+                   channelsOut[] table parameter:
                    dsound expects interleaved channels in a unique buffer.
-                   So, channels_out[] table must be initialized with the address
+                   So, channelsOut[] table must be initialized with the address
                    of the same buffer (buf2).
                 */
-                i = dev->channels_count;
+                i = dev->channelsCount;
 
                 do
                 {
-                    channels_out[--i] = buf2;
+                    channelsOut[--i] = buf2;
                 }
                 while(i);
 
                 /* calling write function */
                 if(dev->func == NULL)
                 {
-                    dev->write(dev->synth, frames, dev->channels_count,
-                            channels_out, channels_off, channels_incr);
+                    dev->write(dev->synth, frames, dev->channelsCount,
+                            channelsOut, channelsOff, channelsIncr);
                 }
                 else
                 {
-                    dev->write((fluid_synth_t*)dev, frames, dev->channels_count,
-                            channels_out, channels_off, channels_incr);
+                    dev->write((synthT*)dev, frames, dev->channelsCount,
+                            channelsOut, channelsOff, channelsIncr);
                 }
-                cur_position += frames * dev->frame_size;
+                curPosition += frames * dev->frameSize;
             }
 
             /* Unlock */
-            IDirectSoundBuffer_Unlock(dev->sec_buffer, buf1, bytes1, buf2, bytes2);
+            IDirectSoundBuffer_Unlock(dev->secBuffer, buf1, bytes1, buf2, bytes2);
 
-            if(cur_position >= dev->queue_byte_size)
+            if(curPosition >= dev->queueByteSize)
             {
-                cur_position -= dev->queue_byte_size;
+                curPosition -= dev->queueByteSize;
             }
 
             /* 1 ms of wait */
@@ -678,7 +678,7 @@ static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter)
         else
         {
             /* Calculate how many milliseconds to sleep (minus 1 for safety) */
-            ms = (dev->buffer_byte_size - bytes) * 1000 / dev->bytes_per_second - 1;
+            ms = (dev->bufferByteSize - bytes) * 1000 / dev->bytesPerSecond - 1;
 
             if(ms < 1)
             {
@@ -687,7 +687,7 @@ static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter)
         }
 
         /* Wait quit event or timeout */
-        if(WaitForSingleObject(dev->quit_ev, ms) == WAIT_OBJECT_0)
+        if(WaitForSingleObject(dev->quitEv, ms) == WAIT_OBJECT_0)
         {
             break;
         }
@@ -696,34 +696,34 @@ static DWORD WINAPI fluid_dsound_audio_run(LPVOID lpParameter)
     return 0;
 }
 
-static int fluid_dsound_write_processed_channels(fluid_synth_t *data, int len,
-                               int channels_count,
-                               void *channels_out[], int channels_off[],
-                               int channels_incr[])
+static int dsoundWriteProcessedChannels(synthT *data, int len,
+                               int channelsCount,
+                               void *channelsOut[], int channelsOff[],
+                               int channelsIncr[])
 {
     int i, ch;
     int ret;
-    fluid_dsound_audio_driver_t *drv = (fluid_dsound_audio_driver_t*) data;
+    dsoundAudioDriverT *drv = (dsoundAudioDriverT*) data;
     float *optr[DSOUND_MAX_STEREO_CHANNELS * 2];
-    for(ch = 0; ch < drv->channels_count; ++ch)
+    for(ch = 0; ch < drv->channelsCount; ++ch)
     {
         FLUID_MEMSET(drv->drybuf[ch], 0, len * sizeof(float));
-        optr[ch] = (float*)channels_out[ch] + channels_off[ch];
+        optr[ch] = (float*)channelsOut[ch] + channelsOff[ch];
     }
-    ret = drv->func(drv->synth, len, 0, NULL, drv->channels_count, drv->drybuf);
-    for(ch = 0; ch < drv->channels_count; ++ch)
+    ret = drv->func(drv->synth, len, 0, NULL, drv->channelsCount, drv->drybuf);
+    for(ch = 0; ch < drv->channelsCount; ++ch)
     {
         for(i = 0; i < len; ++i)
         {
             *optr[ch] = drv->drybuf[ch][i];
-            optr[ch] += channels_incr[ch];
+            optr[ch] += channelsIncr[ch];
         }
     }
     return ret;
 }
 
 
-static char *fluid_win32_error(HRESULT hr)
+static char *win32_error(HRESULT hr)
 {
     char *s = "Don't know why";
 

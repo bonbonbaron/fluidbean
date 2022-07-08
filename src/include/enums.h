@@ -1,9 +1,6 @@
-#ifndef _FLUID_GEN_H
-#define _FLUID_GEN_H
-
-#include "chan.h"
-
-enum fluid_gen_type {
+#ifndef ENUMS_H_
+#define ENUMS_H_
+enum genType {
   GEN_STARTADDROFS,		/**< Sample start address offset (0-32767) */
   GEN_ENDADDROFS,		/**< Sample end address offset (-32767-0) */
   GEN_STARTLOOPADDROFS,		/**< Sample loop start address offset (-32767-32767) */
@@ -68,24 +65,21 @@ enum fluid_gen_type {
    * is used, however, as the destination for the default pitch wheel
    * modulator. */
   GEN_PITCH,			/**< Pitch (NOTE: Not a real SoundFont generator) */
-  GEN_LAST			/**< Value defines the count of generators (#fluid_gen_type) */
+  GEN_LAST			/**< Value defines the count of generators (#genType) */
 };
 
-typedef struct _fluid_gen_info_t {
-	S8 num;											/* Generator number */
-	S8 init;										/* Does the generator need to be initialized (cfr. fluid_voice_init()) */
-	S8 nrpn_scale;							/* The scale to convert from NRPN (cfr. fluid_gen_map_nrpn()) */
-	float min;										/* The minimum value */
-	float max;										/* The maximum value */
-	float def;										/* The default value (cfr. fluid_gen_set_default_values()) */
-} fluid_gen_info_t;
-
-#define fluid_gen_set_mod(_gen, _val)  { (_gen)->mod = (double) (_val); }
-#define fluid_gen_set_nrpn(_gen, _val) { (_gen)->nrpn = (double) (_val); }
-
-fluid_real_t fluid_gen_scale (S32 gen, float value);
-fluid_real_t fluid_gen_scale_nrpn (S32 gen, S32 nrpn);
-S32 fluid_gen_init (Generator * gen, struct _Channel * channel);
+enum genFlags {
+  GEN_UNUSED,		/**< Generator value is not set */
+  GEN_SET,		/**< Generator value is set */
+  GEN_ABS_NRPN		/**< DOCME */
+};
 
 
-#endif /* _FLUID_GEN_H */
+  /* for fluid_voice_add_mod */
+enum fluid_voice_add_mod{
+  VOICE_OVERWRITE,
+  VOICE_ADD,
+  VOICE_DEFAULT
+};
+
+#endif

@@ -57,6 +57,7 @@
  */
 
 #include "chorus.h"
+#include "soundfont.h"
 
 /* Length of one delay line in samples:
  * Set through MAX_SAMPLES_LN2.
@@ -89,20 +90,20 @@
 /* Private data for SKEL file */
 
 
-void fluid_chorus_triangle (int *buf, int len, int depth);
-void fluid_chorus_sine (int *buf, int len, int depth);
+void chorusTriangle (int *buf, int len, int depth);
+void chorusSine (int *buf, int len, int depth);
 
-Chorus *new_fluid_chorus (fluid_real_t sample_rate) {
+Chorus *newChorus (S16 sampleRate) {
 	int i;
 	int ii;
 	Chorus *chorus;
 
-	chorus = FLUID_NEW (Chorus);
+	chorus = NEW (Chorus);
 	if (chorus == NULL) 
 		return NULL;
 
-	FLUID_MEMSET (chorus, 0, sizeof (Chorus));
-	chorus->sample_rate = sample_rate;
+	MEMSET (chorus, 0, sizeof (Chorus));
+	chorus->sampleRate = sampleRate;
 
 	/* Lookup table for the SI function (impulse response of an ideal low pass) */
 	/* i: Offset in terms of whole samples */
@@ -110,177 +111,177 @@ Chorus *new_fluid_chorus (fluid_real_t sample_rate) {
 		/* ii: Offset in terms of fractional samples ('subsamples') */
 		for (ii = 0; ii < INTERPOLATION_SUBSAMPLES; ii++) {
 			/* Move the origin into the center of the table */
-			double i_shifted = ((double) i - ((double) INTERPOLATION_SAMPLES) / 2.
+			double iShifted = ((double) i - ((double) INTERPOLATION_SAMPLES) / 2.
 													+ (double) ii / (double) INTERPOLATION_SUBSAMPLES);
-			if (fabs (i_shifted) < 0.000001) {
+			if (fabs (iShifted) < 0.000001) {
 				/* sinc(0) cannot be calculated straightforward (limit needed
 				   for 0/0) */
-				chorus->sinc_table[i][ii] = (fluid_real_t) 1.;
+				chorus->sincTable[i][ii] = (S16) 1.;
 			} else {
-				chorus->sinc_table[i][ii] =
-					(fluid_real_t) sin (i_shifted * M_PI) / (M_PI * i_shifted);
+				chorus->sincTable[i][ii] =
+					(S16) sin (iShifted * M_PI) / (M_PI * iShifted);
 				/* Hamming window */
-				chorus->sinc_table[i][ii] *=
-					(fluid_real_t) 0.5 *(1.0 +
-															 cos (2.0 * M_PI * i_shifted /
-																		(fluid_real_t) INTERPOLATION_SAMPLES));
+				chorus->sincTable[i][ii] *=
+					(S16) 0.5 *(1.0 +
+															 cos (2.0 * M_PI * iShifted /
+																		(S16) INTERPOLATION_SAMPLES));
 			};
 		};
 	};
 
 	/* allocate lookup tables */
-	chorus->lookup_tab =
-		FLUID_ARRAY (int, (int) (chorus->sample_rate / MIN_SPEED_HZ));
-	if (chorus->lookup_tab == NULL) 
-		goto error_recovery;
+	chorus->lookupTab =
+		ARRAY (int, (int) (chorus->sampleRate / MIN_SPEED_HZ));
+	if (chorus->lookupTab == NULL) 
+		goto errorRecovery;
 
 	/* allocate sample buffer */
 
-	chorus->chorusbuf = FLUID_ARRAY (fluid_real_t, MAX_SAMPLES);
+	chorus->chorusbuf = ARRAY (S16, MAX_SAMPLES);
 	if (chorus->chorusbuf == NULL) 
-		goto error_recovery;
+		goto errorRecovery;
 
-	if (fluid_chorus_init (chorus) != FLUID_OK) 
-		goto error_recovery;
+	if (chorusInit (chorus) != OK) 
+		goto errorRecovery;
 
 	return chorus;
 
-error_recovery:
-	delete_fluid_chorus (chorus);
+errorRecovery:
+	deleteChorus (chorus);
 	return NULL;
 }
 
 
-int fluid_chorus_init (Chorus * chorus) {
+int chorusInit (Chorus * chorus) {
 	int i;
 
 	for (i = 0; i < MAX_SAMPLES; i++) 
 		chorus->chorusbuf[i] = 0.0;
 
 	/* initialize the chorus with the default settings */
-  chorus->number_blocks = FLUID_CHORUS_DEFAULT_N;
-  chorus->level = FLUID_CHORUS_DEFAULT_N;
-  chorus->speed_Hz = FLUID_CHORUS_DEFAULT_SPEED;
-  chorus->depth_ms = FLUID_CHORUS_DEFAULT_DEPTH;
-  chorus->type = FLUID_CHORUS_MOD_SINE;
+  chorus->numberBlocks = CHORUS_DEFAULT_N;
+  chorus->level = CHORUS_DEFAULT_N;
+  chorus->speed_Hz = CHORUS_DEFAULT_SPEED;
+  chorus->depthMs = CHORUS_DEFAULT_DEPTH;
+  chorus->type = CHORUS_MOD_SINE;
 
-	return fluid_chorus_update (chorus);
+	return chorusUpdate (chorus);
 }
 
-void delete_fluid_chorus (Chorus * chorus) {
+void deleteChorus (Chorus * chorus) {
 	if (chorus == NULL) {
 		return;
 	}
 
 	if (chorus->chorusbuf != NULL) {
-		FLUID_FREE (chorus->chorusbuf);
+		FREE (chorus->chorusbuf);
 	}
 
-	if (chorus->lookup_tab != NULL) {
-		FLUID_FREE (chorus->lookup_tab);
+	if (chorus->lookupTab != NULL) {
+		FREE (chorus->lookupTab);
 	}
 
-	FLUID_FREE (chorus);
+	FREE (chorus);
 }
 
 
 /* Purpose:
  * Calculates the internal chorus parameters using the settings from
- * fluid_chorus_set_xxx. */
-int fluid_chorus_update (Chorus * chorus) {
+ * chorusSetXxx. */
+int chorusUpdate (Chorus * chorus) {
 	int i;
-	int modulation_depth_samples;
+	int modulationDepthSamples;
 
-	if (chorus->new_number_blocks < 0) {
-		chorus->new_number_blocks = 0;
-	} else if (chorus->new_number_blocks > MAX_CHORUS) {
-		chorus->new_number_blocks = MAX_CHORUS;
+	if (chorus->newNumberBlocks < 0) {
+		chorus->newNumberBlocks = 0;
+	} else if (chorus->newNumberBlocks > MAX_CHORUS) {
+		chorus->newNumberBlocks = MAX_CHORUS;
 	};
 
-	if (chorus->new_speed_Hz < MIN_SPEED_HZ) {
-		chorus->new_speed_Hz = MIN_SPEED_HZ;
-	} else if (chorus->new_speed_Hz > MAX_SPEED_HZ) {
-		chorus->new_speed_Hz = MAX_SPEED_HZ;
+	if (chorus->newSpeed_Hz < MIN_SPEED_HZ) {
+		chorus->newSpeed_Hz = MIN_SPEED_HZ;
+	} else if (chorus->newSpeed_Hz > MAX_SPEED_HZ) {
+		chorus->newSpeed_Hz = MAX_SPEED_HZ;
 	}
-	if (chorus->new_depth_ms < 0.0) {
-		chorus->new_depth_ms = 0.0;
+	if (chorus->newDepthMs < 0.0) {
+		chorus->newDepthMs = 0.0;
 	}
-	/* Depth: Check for too high value through modulation_depth_samples. */
+	/* Depth: Check for too high value through modulationDepthSamples. */
 
-	if (chorus->new_level < 0.0) {
-		chorus->new_level = 0.0;
-	} else if (chorus->new_level > 10) {
-		chorus->new_level = 0.1;
+	if (chorus->newLevel < 0.0) {
+		chorus->newLevel = 0.0;
+	} else if (chorus->newLevel > 10) {
+		chorus->newLevel = 0.1;
 	}
 
 	/* The modulating LFO goes through a full period every x samples: */
-	chorus->modulation_period_samples =
-		chorus->sample_rate / chorus->new_speed_Hz;
+	chorus->modulationPeriodSamples =
+		chorus->sampleRate / chorus->newSpeed_Hz;
 
 	/* The variation in delay time is x: */
-	modulation_depth_samples = (int)
-		(chorus->new_depth_ms / 1000.0	/* convert modulation depth in ms to s */
-		 * chorus->sample_rate);
+	modulationDepthSamples = (int)
+		(chorus->newDepthMs / 1000.0	/* convert modulation depth in ms to s */
+		 * chorus->sampleRate);
 
-	if (modulation_depth_samples > MAX_SAMPLES) {
-		modulation_depth_samples = MAX_SAMPLES;
+	if (modulationDepthSamples > MAX_SAMPLES) {
+		modulationDepthSamples = MAX_SAMPLES;
 	}
 
 	/* initialize LFO table */
-	if (chorus->type == FLUID_CHORUS_MOD_SINE) {
-		fluid_chorus_sine (chorus->lookup_tab, chorus->modulation_period_samples,
-											 modulation_depth_samples);
-	} else if (chorus->type == FLUID_CHORUS_MOD_TRIANGLE) {
-		fluid_chorus_triangle (chorus->lookup_tab,
-													 chorus->modulation_period_samples,
-													 modulation_depth_samples);
+	if (chorus->type == CHORUS_MOD_SINE) {
+		chorusSine (chorus->lookupTab, chorus->modulationPeriodSamples,
+											 modulationDepthSamples);
+	} else if (chorus->type == CHORUS_MOD_TRIANGLE) {
+		chorusTriangle (chorus->lookupTab,
+													 chorus->modulationPeriodSamples,
+													 modulationDepthSamples);
 	} else {
-		chorus->type = FLUID_CHORUS_MOD_SINE;
-		fluid_chorus_sine (chorus->lookup_tab, chorus->modulation_period_samples,
-											 modulation_depth_samples);
+		chorus->type = CHORUS_MOD_SINE;
+		chorusSine (chorus->lookupTab, chorus->modulationPeriodSamples,
+											 modulationDepthSamples);
 	};
 
-	for (i = 0; i < chorus->number_blocks; i++) {
+	for (i = 0; i < chorus->numberBlocks; i++) {
 		/* Set the phase of the chorus blocks equally spaced */
-		chorus->phase[i] = (int) ((double) chorus->modulation_period_samples
-															* (double) i / (double) chorus->number_blocks);
+		chorus->phase[i] = (int) ((double) chorus->modulationPeriodSamples
+															* (double) i / (double) chorus->numberBlocks);
 	}
 
 	/* Start of the circular buffer */
 	chorus->counter = 0;
 
-	chorus->type = chorus->new_type;
-	chorus->depth_ms = chorus->new_depth_ms;
-	chorus->level = chorus->new_level;
-	chorus->speed_Hz = chorus->new_speed_Hz;
-	chorus->number_blocks = chorus->new_number_blocks;
-	return FLUID_OK;
+	chorus->type = chorus->newType;
+	chorus->depthMs = chorus->newDepthMs;
+	chorus->level = chorus->newLevel;
+	chorus->speed_Hz = chorus->newSpeed_Hz;
+	chorus->numberBlocks = chorus->newNumberBlocks;
+	return OK;
 
 }
 
 
 void
-fluid_chorus_processmix (Chorus * chorus, fluid_real_t * in,
-												 fluid_real_t * left_out, fluid_real_t * right_out) {
-	int sample_index;
+chorusProcessmix (Chorus * chorus, S16 * in,
+												 S16 * leftOut, S16 * rightOut) {
+	int sampleIndex;
 	int i;
-	fluid_real_t d_in, d_out;
+	S16 dIn, dOut;
 
-	for (sample_index = 0; sample_index < FLUID_BUFSIZE; sample_index++) {
+	for (sampleIndex = 0; sampleIndex < BUFSIZE; sampleIndex++) {
 
-		d_in = in[sample_index];
-		d_out = 0.0f;
+		dIn = in[sampleIndex];
+		dOut = 0.0f;
 
 #if 0
 		/* Debug: Listen to the chorus signal only */
-		left_out[sample_index] = 0;
-		right_out[sample_index] = 0;
+		leftOut[sampleIndex] = 0;
+		rightOut[sampleIndex] = 0;
 #endif
 
 		/* Write the current sample into the circular buffer */
-		chorus->chorusbuf[chorus->counter] = d_in;
+		chorus->chorusbuf[chorus->counter] = dIn;
 
-		for (i = 0; i < chorus->number_blocks; i++) {
+		for (i = 0; i < chorus->numberBlocks; i++) {
 			int ii;
 			/* Calculate the delay in subsamples for the delay line of chorus block nr. */
 
@@ -288,36 +289,36 @@ fluid_chorus_processmix (Chorus * chorus, fluid_real_t * in,
 			 * will always be positive.  It will always include a number of
 			 * full periods of MAX_SAMPLES*INTERPOLATION_SUBSAMPLES to
 			 * remain positive at all times. */
-			int pos_subsamples = (INTERPOLATION_SUBSAMPLES * chorus->counter
-														- chorus->lookup_tab[chorus->phase[i]]);
+			int posSubsamples = (INTERPOLATION_SUBSAMPLES * chorus->counter
+														- chorus->lookupTab[chorus->phase[i]]);
 
-			int pos_samples = pos_subsamples / INTERPOLATION_SUBSAMPLES;
+			int posSamples = posSubsamples / INTERPOLATION_SUBSAMPLES;
 
 			/* modulo divide by INTERPOLATION_SUBSAMPLES */
-			pos_subsamples &= INTERPOLATION_SUBSAMPLES_ANDMASK;
+			posSubsamples &= INTERPOLATION_SUBSAMPLES_ANDMASK;
 
 			for (ii = 0; ii < INTERPOLATION_SAMPLES; ii++) {
-				/* Add the delayed signal to the chorus sum d_out Note: The
+				/* Add the delayed signal to the chorus sum dOut Note: The
 				 * delay in the delay line moves backwards for increasing
 				 * delay!*/
 
 				/* The & in chorusbuf[...] is equivalent to a division modulo
 				   MAX_SAMPLES, only faster. */
-				d_out += chorus->chorusbuf[pos_samples & MAX_SAMPLES_ANDMASK]
-					* chorus->sinc_table[ii][pos_subsamples];
+				dOut += chorus->chorusbuf[posSamples & MAX_SAMPLES_ANDMASK]
+					* chorus->sincTable[ii][posSubsamples];
 
-				pos_samples--;
+				posSamples--;
 			};
 			/* Cycle the phase of the modulating LFO */
 			chorus->phase[i]++;
-			chorus->phase[i] %= (chorus->modulation_period_samples);
+			chorus->phase[i] %= (chorus->modulationPeriodSamples);
 		}														/* foreach chorus block */
 
-		d_out *= chorus->level;
+		dOut *= chorus->level;
 
-		/* Add the chorus sum d_out to output */
-		left_out[sample_index] += d_out;
-		right_out[sample_index] += d_out;
+		/* Add the chorus sum dOut to output */
+		leftOut[sampleIndex] += dOut;
+		rightOut[sampleIndex] += dOut;
 
 		/* Move forward in circular buffer */
 		chorus->counter++;
@@ -328,28 +329,28 @@ fluid_chorus_processmix (Chorus * chorus, fluid_real_t * in,
 
 /* Duplication of code ... (replaces sample data instead of mixing) */
 void
-fluid_chorus_processreplace (Chorus * chorus, fluid_real_t * in,
-														 fluid_real_t * left_out,
-														 fluid_real_t * right_out) {
-	int sample_index;
+chorusProcessreplace (Chorus * chorus, S16 * in,
+														 S16 * leftOut,
+														 S16 * rightOut) {
+	int sampleIndex;
 	int i;
-	fluid_real_t d_in, d_out;
+	S16 dIn, dOut;
 
-	for (sample_index = 0; sample_index < FLUID_BUFSIZE; sample_index++) {
+	for (sampleIndex = 0; sampleIndex < BUFSIZE; sampleIndex++) {
 
-		d_in = in[sample_index];
-		d_out = 0.0f;
+		dIn = in[sampleIndex];
+		dOut = 0.0f;
 
 #if 0
 		/* Debug: Listen to the chorus signal only */
-		left_out[sample_index] = 0;
-		right_out[sample_index] = 0;
+		leftOut[sampleIndex] = 0;
+		rightOut[sampleIndex] = 0;
 #endif
 
 		/* Write the current sample into the circular buffer */
-		chorus->chorusbuf[chorus->counter] = d_in;
+		chorus->chorusbuf[chorus->counter] = dIn;
 
-		for (i = 0; i < chorus->number_blocks; i++) {
+		for (i = 0; i < chorus->numberBlocks; i++) {
 			int ii;
 			/* Calculate the delay in subsamples for the delay line of chorus block nr. */
 
@@ -357,36 +358,36 @@ fluid_chorus_processreplace (Chorus * chorus, fluid_real_t * in,
 			 * will always be positive.  It will always include a number of
 			 * full periods of MAX_SAMPLES*INTERPOLATION_SUBSAMPLES to
 			 * remain positive at all times. */
-			int pos_subsamples = (INTERPOLATION_SUBSAMPLES * chorus->counter
-														- chorus->lookup_tab[chorus->phase[i]]);
+			int posSubsamples = (INTERPOLATION_SUBSAMPLES * chorus->counter
+														- chorus->lookupTab[chorus->phase[i]]);
 
-			int pos_samples = pos_subsamples / INTERPOLATION_SUBSAMPLES;
+			int posSamples = posSubsamples / INTERPOLATION_SUBSAMPLES;
 
 			/* modulo divide by INTERPOLATION_SUBSAMPLES */
-			pos_subsamples &= INTERPOLATION_SUBSAMPLES_ANDMASK;
+			posSubsamples &= INTERPOLATION_SUBSAMPLES_ANDMASK;
 
 			for (ii = 0; ii < INTERPOLATION_SAMPLES; ii++) {
-				/* Add the delayed signal to the chorus sum d_out Note: The
+				/* Add the delayed signal to the chorus sum dOut Note: The
 				 * delay in the delay line moves backwards for increasing
 				 * delay!*/
 
 				/* The & in chorusbuf[...] is equivalent to a division modulo
 				   MAX_SAMPLES, only faster. */
-				d_out += chorus->chorusbuf[pos_samples & MAX_SAMPLES_ANDMASK]
-					* chorus->sinc_table[ii][pos_subsamples];
+				dOut += chorus->chorusbuf[posSamples & MAX_SAMPLES_ANDMASK]
+					* chorus->sincTable[ii][posSubsamples];
 
-				pos_samples--;
+				posSamples--;
 			};
 			/* Cycle the phase of the modulating LFO */
 			chorus->phase[i]++;
-			chorus->phase[i] %= (chorus->modulation_period_samples);
+			chorus->phase[i] %= (chorus->modulationPeriodSamples);
 		}														/* foreach chorus block */
 
-		d_out *= chorus->level;
+		dOut *= chorus->level;
 
-		/* Store the chorus sum d_out to output */
-		left_out[sample_index] = d_out;
-		right_out[sample_index] = d_out;
+		/* Store the chorus sum dOut to output */
+		leftOut[sampleIndex] = dOut;
+		rightOut[sampleIndex] = dOut;
 
 		/* Move forward in circular buffer */
 		chorus->counter++;
@@ -404,7 +405,7 @@ fluid_chorus_processreplace (Chorus * chorus, fluid_real_t * in,
  * a couple of times here, the resulting (current position in
  * buffer)-(waveform sample) will always be positive.
  */
-void fluid_chorus_sine (int *buf, int len, int depth) {
+void chorusSine (int *buf, int len, int depth) {
 	int i;
 	double val;
 
@@ -421,9 +422,9 @@ void fluid_chorus_sine (int *buf, int len, int depth) {
 
 /* Purpose:
  * Calculates a modulation waveform (triangle)
- * See fluid_chorus_sine for comments.
+ * See chorusSine for comments.
  */
-void fluid_chorus_triangle (int *buf, int len, int depth) {
+void chorusTriangle (int *buf, int len, int depth) {
 	int i = 0;
 	int ii = len - 1;
 	double val;
@@ -437,6 +438,6 @@ void fluid_chorus_triangle (int *buf, int len, int depth) {
 	}
 }
 
-void fluid_chorus_reset (Chorus * chorus) {
-	fluid_chorus_init (chorus);
+void chorusReset (Chorus * chorus) {
+	chorusInit (chorus);
 }

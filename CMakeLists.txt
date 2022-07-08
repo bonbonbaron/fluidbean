@@ -15,14 +15,13 @@ set(MIDI_DRIVER_DIR ${DRIVER_DIR}/midi)
 
 # Includes
 list(APPEND HEADERS
+    ${CMAKE_SOURCE_DIR}/src/include/enums.h
     ${CMAKE_SOURCE_DIR}/src/include/chan.h
     ${CMAKE_SOURCE_DIR}/src/include/chorus.h
     ${CMAKE_SOURCE_DIR}/src/include/config.h
     ${CMAKE_SOURCE_DIR}/src/include/conv.h
     ${CMAKE_SOURCE_DIR}/src/include/fluidbean.h
-    ${CMAKE_SOURCE_DIR}/src/include/gen.h
     ${CMAKE_SOURCE_DIR}/src/include/midi.h
-    ${CMAKE_SOURCE_DIR}/src/include/mod.h
     ${CMAKE_SOURCE_DIR}/src/include/phase.h
     ${CMAKE_SOURCE_DIR}/src/include/rev.h
     ${CMAKE_SOURCE_DIR}/src/include/soundfont.h
@@ -42,7 +41,7 @@ list(APPEND SOURCES
     ${CMAKE_SOURCE_DIR}/src/mod.c
     ${CMAKE_SOURCE_DIR}/src/rev.c
     ${CMAKE_SOURCE_DIR}/src/synth.c
-    ${CMAKE_SOURCE_DIR}/src/sys.c
+    #${CMAKE_SOURCE_DIR}/src/sys.c
     ${CMAKE_SOURCE_DIR}/src/tuning.c
     ${CMAKE_SOURCE_DIR}/src/voice.c
     # AUdio driver files

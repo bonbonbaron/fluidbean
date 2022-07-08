@@ -19,9 +19,9 @@
  * 02110-1301, USA
  */
 
-#include "fluid_synth.h"
-#include "fluid_adriver.h"
-#include "fluid_settings.h"
+#include "synth.h"
+#include "adriver.h"
+#include "settings.h"
 
 #if SDL2_SUPPORT
 
@@ -29,34 +29,34 @@
 
 typedef struct
 {
-    fluid_audio_driver_t driver;
+    audioDriverT driver;
 
-    fluid_synth_t *synth;
-    fluid_audio_callback_t write_ptr;
+    synthT *synth;
+    audioCallbackT writePtr;
 
     SDL_AudioDeviceID devid;
 
-    int frame_size;
+    int frameSize;
 
-} fluid_sdl2_audio_driver_t;
+} sdl2_audioDriverT;
 
 
 static void
 SDLAudioCallback(void *data, void *stream, int len)
 {
-    fluid_sdl2_audio_driver_t *dev = (fluid_sdl2_audio_driver_t *)data;
+    sdl2_audioDriverT *dev = (sdl2_audioDriverT *)data;
 
-    len /= dev->frame_size;
+    len /= dev->frameSize;
 
-    dev->write_ptr(dev->synth, len, stream, 0, 2, stream, 1, 2);
+    dev->writePtr(dev->synth, len, stream, 0, 2, stream, 1, 2);
 }
 
-void fluid_sdl2_audio_driver_settings(FluidSettings *settings)
+void sdl2_audioDriverSettings(FluidSettings *settings)
 {
     int n, nDevs;
 
-    fluid_settings_register_str(settings, "audio.sdl2.device", "default", 0);
-    fluid_settings_add_option(settings, "audio.sdl2.device", "default");
+    settingsRegisterStr(settings, "audio.sdl2.device", "default", 0);
+    settingsAddOption(settings, "audio.sdl2.device", "default");
 
     if(!SDL_WasInit(SDL_INIT_AUDIO))
     {
@@ -70,30 +70,30 @@ void fluid_sdl2_audio_driver_settings(FluidSettings *settings)
 
     for(n = 0; n < nDevs; n++)
     {
-        const char *dev_name = SDL_GetAudioDeviceName(n, 0);
+        const char *devName = SDL_GetAudioDeviceName(n, 0);
 
-        if(dev_name != NULL)
+        if(devName != NULL)
         {
-            FLUID_LOG(FLUID_DBG, "SDL2 driver testing audio device: %s", dev_name);
-            fluid_settings_add_option(settings, "audio.sdl2.device", dev_name);
+            FLUID_LOG(FLUID_DBG, "SDL2 driver testing audio device: %s", devName);
+            settingsAddOption(settings, "audio.sdl2.device", devName);
         }
     }
 }
 
 
 /*
- * new_fluid_sdl2_audio_driver
+ * newFluidSdl2_audioDriver
  */
-fluid_audio_driver_t *
-new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidSdl2_audioDriver(FluidSettings *settings, synthT *synth)
 {
-    fluid_sdl2_audio_driver_t *dev = NULL;
-    fluid_audio_callback_t write_ptr;
-    double sample_rate;
-    int period_size, sample_size;
+    sdl2_audioDriverT *dev = NULL;
+    audioCallbackT writePtr;
+    double sampleRate;
+    int periodSize, sampleSize;
     SDL_AudioSpec aspec, rspec;
     char *device;
-    const char *dev_name;
+    const char *devName;
 
     /* Check if SDL library has been started */
     if(!SDL_WasInit(SDL_INIT_AUDIO))
@@ -103,18 +103,18 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     }
 
     /* Retrieve the settings */
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsGetint(settings, "audio.period-size", &periodSize);
 
     /* Lower values do not seem to give good results */
-    if(period_size < 1024)
+    if(periodSize < 1024)
     {
-        period_size = 1024;
+        periodSize = 1024;
     }
     else
     {
         /* According to documentation, it MUST be a power of two */
-        if((period_size & (period_size - 1)) != 0)
+        if((periodSize & (periodSize - 1)) != 0)
         {
             FLUID_LOG(FLUID_ERR, "\"audio.period-size\" must be a power of 2 for SDL2");
             return NULL;
@@ -124,24 +124,24 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     FLUID_MEMSET(&aspec, 0, sizeof(aspec));
 
     /* Setup mixing frequency */
-    aspec.freq = (int)sample_rate;
+    aspec.freq = (int)sampleRate;
 
     /* Check the format */
-    if(fluid_settings_str_equal(settings, "audio.sample-format", "float"))
+    if(settingsStrEqual(settings, "audio.sample-format", "float"))
     {
         FLUID_LOG(FLUID_DBG, "Selected 32 bit sample format");
 
-        sample_size = sizeof(float);
-        write_ptr   = fluid_synth_write_float;
+        sampleSize = sizeof(float);
+        writePtr   = synthWriteFloat;
 
         aspec.format = AUDIO_F32SYS;
     }
-    else if(fluid_settings_str_equal(settings, "audio.sample-format", "16bits"))
+    else if(settingsStrEqual(settings, "audio.sample-format", "16bits"))
     {
         FLUID_LOG(FLUID_DBG, "Selected 16 bit sample format");
 
-        sample_size = sizeof(short);
-        write_ptr   = fluid_synth_write_s16;
+        sampleSize = sizeof(short);
+        writePtr   = synthWriteS16;
 
         aspec.format = AUDIO_S16SYS;
     }
@@ -153,26 +153,26 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 
     /* Compile the format buffer */
     aspec.channels   = 2;
-    aspec.samples    = aspec.channels * ((period_size + 7) & ~7);
+    aspec.samples    = aspec.channels * ((periodSize + 7) & ~7);
     aspec.callback   = (SDL_AudioCallback)SDLAudioCallback;
 
     /* Set default device to use */
     device   = NULL;
-    dev_name = NULL;
+    devName = NULL;
 
     /* get the selected device name. if none is specified, use default device. */
-    if(fluid_settings_dupstr(settings, "audio.sdl2.device", &device) == FLUID_OK
+    if(settingsDupstr(settings, "audio.sdl2.device", &device) == FLUID_OK
             && device != NULL && device[0] != '\0')
     {
         int n, nDevs = SDL_GetNumAudioDevices(0);
 
         for(n = 0; n < nDevs; n++)
         {
-            dev_name = SDL_GetAudioDeviceName(n, 0);
+            devName = SDL_GetAudioDeviceName(n, 0);
 
-            if(FLUID_STRCASECMP(dev_name, device) == 0)
+            if(FLUID_STRCASECMP(devName, device) == 0)
             {
-                FLUID_LOG(FLUID_DBG, "Selected audio device GUID: %s", dev_name);
+                FLUID_LOG(FLUID_DBG, "Selected audio device GUID: %s", devName);
                 break;
             }
         }
@@ -180,7 +180,7 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
         if(n >= nDevs)
         {
             FLUID_LOG(FLUID_DBG, "Audio device %s, using \"default\"", device);
-            dev_name = NULL;
+            devName = NULL;
         }
     }
 
@@ -192,7 +192,7 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     do
     {
         /* create and clear the driver data */
-        dev = FLUID_NEW(fluid_sdl2_audio_driver_t);
+        dev = FLUID_NEW(sdl2_audioDriverT);
 
         if(dev == NULL)
         {
@@ -200,7 +200,7 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
             break;
         }
 
-        FLUID_MEMSET(dev, 0, sizeof(fluid_sdl2_audio_driver_t));
+        FLUID_MEMSET(dev, 0, sizeof(sdl2_audioDriverT));
 
         /* set device pointer to userdata */
         aspec.userdata = dev;
@@ -209,11 +209,11 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
         dev->synth = synth;
 
         /* Save copy of other variables */
-        dev->write_ptr = write_ptr;
-        dev->frame_size = sample_size * aspec.channels;
+        dev->writePtr = writePtr;
+        dev->frameSize = sampleSize * aspec.channels;
 
         /* Open audio device */
-        dev->devid = SDL_OpenAudioDevice(dev_name, 0, &aspec, &rspec, 0);
+        dev->devid = SDL_OpenAudioDevice(devName, 0, &aspec, &rspec, 0);
 
         if(!dev->devid)
         {
@@ -224,18 +224,18 @@ new_fluid_sdl2_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
         /* Start to play */
         SDL_PauseAudioDevice(dev->devid, 0);
 
-        return (fluid_audio_driver_t *) dev;
+        return (audioDriverT *) dev;
     }
     while(0);
 
-    delete_fluid_sdl2_audio_driver(&dev->driver);
+    deleteFluidSdl2_audioDriver(&dev->driver);
     return NULL;
 }
 
 
-void delete_fluid_sdl2_audio_driver(fluid_audio_driver_t *d)
+void deleteFluidSdl2_audioDriver(audioDriverT *d)
 {
-    fluid_sdl2_audio_driver_t *dev = (fluid_sdl2_audio_driver_t *) d;
+    sdl2_audioDriverT *dev = (sdl2_audioDriverT *) d;
 
     if(dev != NULL)
     {

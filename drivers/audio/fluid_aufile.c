@@ -18,37 +18,37 @@
  * 02110-1301, USA
  */
 
-/* fluid_aufile.c
+/* aufile.c
  *
  * Audio driver, outputs the audio to a file (non real-time)
  *
  */
 
-#include "fluid_sys.h"
-#include "fluid_adriver.h"
-#include "fluid_settings.h"
+#include "sys.h"
+#include "adriver.h"
+#include "settings.h"
 
 
 #if AUFILE_SUPPORT
 
-/** fluid_file_audio_driver_t
+/** fileAudioDriverT
  *
  * This structure should not be accessed directly. Use audio port
  * functions instead.
  */
 typedef struct
 {
-    fluid_audio_driver_t driver;
+    audioDriverT driver;
     void *data;
-    fluid_file_renderer_t *renderer;
-    int period_size;
-    double sample_rate;
-    fluid_timer_t *timer;
+    fileRendererT *renderer;
+    int periodSize;
+    double sampleRate;
+    timerT *timer;
     unsigned int samples;
-} fluid_file_audio_driver_t;
+} fileAudioDriverT;
 
 
-static int fluid_file_audio_run(void *d, unsigned int msec);
+static int fileAudioRun(void *d, unsigned int msec);
 
 /**************************************************************
  *
@@ -56,14 +56,14 @@ static int fluid_file_audio_run(void *d, unsigned int msec);
  *
  */
 
-fluid_audio_driver_t *
-new_fluid_file_audio_driver(FluidSettings *settings,
-                            fluid_synth_t *synth)
+audioDriverT *
+newFluidFileAudioDriver(FluidSettings *settings,
+                            synthT *synth)
 {
-    fluid_file_audio_driver_t *dev;
+    fileAudioDriverT *dev;
     int msec;
 
-    dev = FLUID_NEW(fluid_file_audio_driver_t);
+    dev = FLUID_NEW(fileAudioDriverT);
 
     if(dev == NULL)
     {
@@ -71,63 +71,63 @@ new_fluid_file_audio_driver(FluidSettings *settings,
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_file_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(fileAudioDriverT));
 
-    fluid_settings_getint(settings, "audio.period-size", &dev->period_size);
-    fluid_settings_getnum(settings, "synth.sample-rate", &dev->sample_rate);
+    settingsGetint(settings, "audio.period-size", &dev->periodSize);
+    settingsGetnum(settings, "synth.sample-rate", &dev->sampleRate);
 
     dev->data = synth;
     dev->samples = 0;
 
-    dev->renderer = new_fluid_file_renderer(synth);
+    dev->renderer = newFluidFileRenderer(synth);
 
     if(dev->renderer == NULL)
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    msec = (int)(0.5 + dev->period_size / dev->sample_rate * 1000.0);
-    dev->timer = new_fluid_timer(msec, fluid_file_audio_run, (void *) dev, TRUE, FALSE, TRUE);
+    msec = (int)(0.5 + dev->periodSize / dev->sampleRate * 1000.0);
+    dev->timer = newFluidTimer(msec, fileAudioRun, (void *) dev, TRUE, FALSE, TRUE);
 
     if(dev->timer == NULL)
     {
         FLUID_LOG(FLUID_PANIC, "Couldn't create the audio thread.");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    return (fluid_audio_driver_t *) dev;
+    return (audioDriverT *) dev;
 
-error_recovery:
-    delete_fluid_file_audio_driver((fluid_audio_driver_t *) dev);
+errorRecovery:
+    deleteFluidFileAudioDriver((audioDriverT *) dev);
     return NULL;
 }
 
-void delete_fluid_file_audio_driver(fluid_audio_driver_t *p)
+void deleteFluidFileAudioDriver(audioDriverT *p)
 {
-    fluid_file_audio_driver_t *dev = (fluid_file_audio_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    fileAudioDriverT *dev = (fileAudioDriverT *) p;
+    returnIfFail(dev != NULL);
 
-    delete_fluid_timer(dev->timer);
-    delete_fluid_file_renderer(dev->renderer);
+    deleteFluidTimer(dev->timer);
+    deleteFluidFileRenderer(dev->renderer);
 
     FLUID_FREE(dev);
 }
 
-static int fluid_file_audio_run(void *d, unsigned int clock_time)
+static int fileAudioRun(void *d, unsigned int clockTime)
 {
-    fluid_file_audio_driver_t *dev = (fluid_file_audio_driver_t *) d;
-    unsigned int sample_time;
+    fileAudioDriverT *dev = (fileAudioDriverT *) d;
+    unsigned int sampleTime;
 
-    sample_time = (unsigned int)(dev->samples / dev->sample_rate * 1000.0);
+    sampleTime = (unsigned int)(dev->samples / dev->sampleRate * 1000.0);
 
-    if(sample_time > clock_time)
+    if(sampleTime > clockTime)
     {
         return 1;
     }
 
-    dev->samples += dev->period_size;
+    dev->samples += dev->periodSize;
 
-    return fluid_file_renderer_process_block(dev->renderer) == FLUID_OK ? 1 : 0;
+    return fileRendererProcessBlock(dev->renderer) == FLUID_OK ? 1 : 0;
 }
 
 #endif /* AUFILE_SUPPORT */

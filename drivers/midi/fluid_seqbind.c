@@ -1,77 +1,41 @@
-/* FluidSynth - A Software Synthesizer
- *
- * Copyright (C) 2003  Peter Hanappe and others.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License
- * as published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301, USA
- */
+#include "fluidsynthPriv.h"
+#include "synth.h"
+#include "midi.h"
+#include "event.h"
+#include "seqbindNotes.h"
 
-
-
-/*
- 2002 : API design by Peter Hanappe and Antoine Schmitt
- August 2002 : Implementation by Antoine Schmitt as@gratin.org
-               as part of the infiniteCD author project
-               http://www.infiniteCD.org/
-*/
-
-#include "fluidsynth_priv.h"
-#include "fluid_synth.h"
-#include "fluid_midi.h"
-#include "fluid_event.h"
-#include "fluid_seqbind_notes.h"
-
-/***************************************************************
-*
-*                           SEQUENCER BINDING
-*/
-
-struct _fluid_seqbind_t
-{
-    fluid_synth_t *synth;
-    fluid_sequencer_t *seq;
-    Sampleimer_t *sample_timer;
-    fluid_seq_id_t client_id;
-    void* note_container;
+/* SEQUENCER BINDING */
+struct _fluidSeqbindT {
+    synthT *synth;
+    sequencerT *seq;
+    SampleimerT *sampleTimer;
+    seqIdT clientId;
+    void* noteContainer;
 };
-typedef struct _fluid_seqbind_t fluid_seqbind_t;
+typedef struct _fluidSeqbindT seqbindT;
 
-extern void fluid_sequencer_invalidate_note(fluid_sequencer_t *seq, fluid_seq_id_t dest, fluid_note_id_t id);
+extern void sequencerInvalidateNote(sequencerT *seq, seqIdT dest, noteIdT id);
 
-int fluid_seqbind_timer_callback(void *data, unsigned int msec);
-void fluid_seq_fluidsynth_callback(unsigned int time, fluid_event_t *event, fluid_sequencer_t *seq, void *data);
+int seqbindTimerCallback(void *data, unsigned int msec);
+void seqFluidsynthCallback(unsigned int time, eventT *event, sequencerT *seq, void *data);
 
 /* Proper cleanup of the seqbind struct. */
-void
-delete_fluid_seqbind(fluid_seqbind_t *seqbind)
-{
-    fluid_return_if_fail(seqbind != NULL);
+void deleteFluidSeqbind(seqbindT *seqbind) {
+    returnIfFail(seqbind != NULL);
 
-    if((seqbind->client_id != -1) && (seqbind->seq != NULL))
+    if((seqbind->clientId != -1) && (seqbind->seq != NULL))
     {
-        fluid_sequencer_unregister_client(seqbind->seq, seqbind->client_id);
-        seqbind->client_id = -1;
+        sequencerUnregisterClient(seqbind->seq, seqbind->clientId);
+        seqbind->clientId = -1;
     }
 
-    if((seqbind->sample_timer != NULL) && (seqbind->synth != NULL))
+    if((seqbind->sampleTimer != NULL) && (seqbind->synth != NULL))
     {
-        delete_Sampleimer(seqbind->synth, seqbind->sample_timer);
-        seqbind->sample_timer = NULL;
+        delete_Sampleimer(seqbind->synth, seqbind->sampleTimer);
+        seqbind->sampleTimer = NULL;
     }
 
-    delete_fluid_note_container(seqbind->note_container);
+    deleteFluidNoteContainer(seqbind->noteContainer);
     FLUID_FREE(seqbind);
 }
 
@@ -82,153 +46,140 @@ delete_fluid_seqbind(fluid_seqbind_t *seqbind)
  * @param synth Synthesizer instance
  * @returns Sequencer client ID, or #FLUID_FAILED on error.
  *
- * A convenience wrapper function around fluid_sequencer_register_client(), that allows you to
+ * A convenience wrapper function around sequencerRegisterClient(), that allows you to
  * easily process and render enqueued sequencer events with fluidsynth's synthesizer.
  * The client being registered will be named @c fluidsynth.
  *
  * @note Implementations are encouraged to explicitly unregister this client either by calling
- * fluid_sequencer_unregister_client() or by sending an unregistering event to the sequencer. Before
+ * sequencerUnregisterClient() or by sending an unregistering event to the sequencer. Before
  * fluidsynth 2.1.1 this was mandatory to avoid memory leaks.
  *
  * @code{.cpp}
- * fluid_seq_id_t seqid = fluid_sequencer_register_fluidsynth(seq, synth);
+ * seqIdT seqid = sequencerRegisterFluidsynth(seq, synth);
  *
  * // ... do work
  *
- * fluid_event_t* evt = new_fluid_event();
- * fluid_event_set_source(evt, -1);
- * fluid_event_set_dest(evt, seqid);
- * fluid_event_unregistering(evt);
+ * eventT* evt = newFluidEvent();
+ * eventSetSource(evt, -1);
+ * eventSetDest(evt, seqid);
+ * eventUnregistering(evt);
  *
  * // unregister the "fluidsynth" client immediately
- * fluid_sequencer_send_now(seq, evt);
- * delete_fluid_event(evt);
- * delete_fluid_synth(synth);
- * delete_fluid_sequencer(seq);
+ * sequencerSendNow(seq, evt);
+ * deleteFluidEvent(evt);
+ * deleteFluidSynth(synth);
+ * deleteFluidSequencer(seq);
  * @endcode
  */
-fluid_seq_id_t
-fluid_sequencer_register_fluidsynth(fluid_sequencer_t *seq, fluid_synth_t *synth)
-{
-    fluid_seqbind_t *seqbind;
+seqIdT sequencerRegisterFluidsynth(sequencerT *seq, synthT *synth) {
+    seqbindT *seqbind;
 
-    fluid_return_val_if_fail(seq != NULL, FLUID_FAILED);
-    fluid_return_val_if_fail(synth != NULL, FLUID_FAILED);
+    returnValIfFail(seq != NULL, FLUID_FAILED);
+    returnValIfFail(synth != NULL, FLUID_FAILED);
 
-    seqbind = FLUID_NEW(fluid_seqbind_t);
+    seqbind = FLUID_NEW(seqbindT);
 
     if(seqbind == NULL)
-    {
-        FLUID_LOG(FLUID_PANIC, "sequencer: Out of memory\n");
-        return FLUID_FAILED;
-    }
+      return FLUID_FAILED;
 
     FLUID_MEMSET(seqbind, 0, sizeof(*seqbind));
 
-    seqbind->client_id = -1;
+    seqbind->clientId = -1;
     seqbind->synth = synth;
     seqbind->seq = seq;
 
     /* set up the sample timer */
-    if(!fluid_sequencer_get_use_system_timer(seq))
-    {
-        seqbind->sample_timer =
-            new_Sampleimer(synth, fluid_seqbind_timer_callback, (void *) seqbind);
+    if(!sequencerGetUseSystemTimer(seq)) {
+        seqbind->sampleTimer =
+            new_Sampleimer(synth, seqbindTimerCallback, (void *) seqbind);
 
-        if(seqbind->sample_timer == NULL)
-        {
+        if(seqbind->sampleTimer == NULL) {
             FLUID_LOG(FLUID_PANIC, "sequencer: Out of memory\n");
             FLUID_FREE(seqbind);
             return FLUID_FAILED;
         }
     }
 
-    seqbind->note_container = new_fluid_note_container();
-    if(seqbind->note_container == NULL)
-    {
-        delete_Sampleimer(seqbind->synth, seqbind->sample_timer);
+    seqbind->noteContainer = newFluidNoteContainer();
+    if(seqbind->noteContainer == NULL) {
+        delete_Sampleimer(seqbind->synth, seqbind->sampleTimer);
         FLUID_FREE(seqbind);
         return FLUID_FAILED;
     }
 
     /* register fluidsynth itself */
-    seqbind->client_id =
-        fluid_sequencer_register_client(seq, "fluidsynth", fluid_seq_fluidsynth_callback, (void *)seqbind);
+    seqbind->clientId = sequencerRegisterClient(seq, "fluidsynth", seqFluidsynthCallback, (void *)seqbind);
 
-    if(seqbind->client_id == FLUID_FAILED)
-    {
-        delete_fluid_note_container(seqbind->note_container);
-        delete_Sampleimer(seqbind->synth, seqbind->sample_timer);
+    if(seqbind->clientId == FLUID_FAILED) {
+        deleteFluidNoteContainer(seqbind->noteContainer);
+        delete_Sampleimer(seqbind->synth, seqbind->sampleTimer);
         FLUID_FREE(seqbind);
         return FLUID_FAILED;
     }
 
-    return seqbind->client_id;
+    return seqbind->clientId;
 }
 
 /* Callback for sample timer */
-int
-fluid_seqbind_timer_callback(void *data, unsigned int msec)
+int seqbindTimerCallback(void *data, unsigned int msec)
 {
-    fluid_seqbind_t *seqbind = (fluid_seqbind_t *) data;
-    fluid_sequencer_process(seqbind->seq, msec);
+    seqbindT *seqbind = (seqbindT *) data;
+    sequencerProcess(seqbind->seq, msec);
     return 1;
 }
 
 /* Callback for midi events */
-void
-fluid_seq_fluidsynth_callback(unsigned int time, fluid_event_t *evt, fluid_sequencer_t *seq, void *data)
-{
-    fluid_synth_t *synth;
-    fluid_seqbind_t *seqbind = (fluid_seqbind_t *) data;
+void seqFluidsynthCallback(unsigned int time, eventT *evt, sequencerT *seq, void *data) {
+    synthT *synth;
+    seqbindT *seqbind = (seqbindT *) data;
     synth = seqbind->synth;
 
-    switch(fluid_event_get_type(evt))
+    switch(eventGetType(evt))
     {
     case FLUID_SEQ_NOTEON:
-        fluid_synth_noteon(synth, fluid_event_get_channel(evt), fluid_event_get_key(evt), fluid_event_get_velocity(evt));
+        synthNoteon(synth, eventGetChannel(evt), eventGetKey(evt), eventGetVelocity(evt));
         break;
 
     case FLUID_SEQ_NOTEOFF:
     {
-        fluid_note_id_t id = fluid_event_get_id(evt);
+        noteIdT id = eventGetId(evt);
         if(id != -1)
         {
-            fluid_note_container_remove(seqbind->note_container, id);
+            noteContainerRemove(seqbind->noteContainer, id);
         }
-        fluid_synth_noteoff(synth, fluid_event_get_channel(evt), fluid_event_get_key(evt));
+        synthNoteoff(synth, eventGetChannel(evt), eventGetKey(evt));
     }
     break;
 
     case FLUID_SEQ_NOTE:
     {
-        unsigned int dur = fluid_event_get_duration(evt);
-        short vel = fluid_event_get_velocity(evt);
-        short key = fluid_event_get_key(evt);
-        int chan = fluid_event_get_channel(evt);
+        unsigned int dur = eventGetDuration(evt);
+        short vel = eventGetVelocity(evt);
+        short key = eventGetKey(evt);
+        int chan = eventGetChannel(evt);
 
-        fluid_note_id_t id = fluid_note_compute_id(chan, key);
+        noteIdT id = noteComputeId(chan, key);
 
-        int res = fluid_note_container_insert(seqbind->note_container, id);
+        int res = noteContainerInsert(seqbind->noteContainer, id);
         if(res == FLUID_FAILED)
         {
             goto err;
         }
         else if(res)
         {
-            // Note is already playing ATM, the following call to fluid_synth_noteon() will kill that note.
+            // Note is already playing ATM, the following call to synthNoteon() will kill that note.
             // Thus, we need to remove its noteoff from the queue
-            fluid_sequencer_invalidate_note(seqbind->seq, seqbind->client_id, id);
+            sequencerInvalidateNote(seqbind->seq, seqbind->clientId, id);
         }
         else
         {
             // Note not playing, all good.
         }
 
-        fluid_event_noteoff(evt, chan, key);
-        fluid_event_set_id(evt, id);
+        eventNoteoff(evt, chan, key);
+        eventSetId(evt, id);
 
-        res = fluid_sequencer_send_at(seq, evt, dur, 0);
+        res = sequencerSendAt(seq, evt, dur, 0);
         if(res == FLUID_FAILED)
         {
             err:
@@ -236,89 +187,89 @@ fluid_seq_fluidsynth_callback(unsigned int time, fluid_event_t *evt, fluid_seque
             return;
         }
 
-        fluid_synth_noteon(synth, chan, key, vel);
+        synthNoteon(synth, chan, key, vel);
     }
     break;
 
     case FLUID_SEQ_ALLSOUNDSOFF:
-        fluid_note_container_clear(seqbind->note_container);
-        fluid_synth_all_sounds_off(synth, fluid_event_get_channel(evt));
+        noteContainerClear(seqbind->noteContainer);
+        synthAllSoundsOff(synth, eventGetChannel(evt));
         break;
 
     case FLUID_SEQ_ALLNOTESOFF:
-        fluid_note_container_clear(seqbind->note_container);
-        fluid_synth_all_notes_off(synth, fluid_event_get_channel(evt));
+        noteContainerClear(seqbind->noteContainer);
+        synthAllNotesOff(synth, eventGetChannel(evt));
         break;
 
     case FLUID_SEQ_BANKSELECT:
-        fluid_synth_bank_select(synth, fluid_event_get_channel(evt), fluid_event_get_bank(evt));
+        synthBankSelect(synth, eventGetChannel(evt), eventGetBank(evt));
         break;
 
     case FLUID_SEQ_PROGRAMCHANGE:
-        fluid_synth_program_change(synth, fluid_event_get_channel(evt), fluid_event_get_program(evt));
+        synthProgramChange(synth, eventGetChannel(evt), eventGetProgram(evt));
         break;
 
     case FLUID_SEQ_PROGRAMSELECT:
-        fluid_synth_program_select(synth,
-                                   fluid_event_get_channel(evt),
-                                   fluid_event_get_sfont_id(evt),
-                                   fluid_event_get_bank(evt),
-                                   fluid_event_get_program(evt));
+        synthProgramSelect(synth,
+                                   eventGetChannel(evt),
+                                   eventGetSfontId(evt),
+                                   eventGetBank(evt),
+                                   eventGetProgram(evt));
         break;
 
     case FLUID_SEQ_PITCHBEND:
-        fluid_synth_pitch_bend(synth, fluid_event_get_channel(evt), fluid_event_get_pitch(evt));
+        synthPitchBend(synth, eventGetChannel(evt), eventGetPitch(evt));
         break;
 
     case FLUID_SEQ_PITCHWHEELSENS:
-        fluid_synth_pitch_wheel_sens(synth, fluid_event_get_channel(evt), fluid_event_get_value(evt));
+        synthPitchWheelSens(synth, eventGetChannel(evt), eventGetValue(evt));
         break;
 
     case FLUID_SEQ_CONTROLCHANGE:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), fluid_event_get_control(evt), fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), eventGetControl(evt), eventGetValue(evt));
         break;
 
     case FLUID_SEQ_MODULATION:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), MODULATION_MSB, fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), MODULATION_MSB, eventGetValue(evt));
         break;
 
     case FLUID_SEQ_SUSTAIN:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), SUSTAIN_SWITCH, fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), SUSTAIN_SWITCH, eventGetValue(evt));
         break;
 
     case FLUID_SEQ_PAN:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), PAN_MSB, fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), PAN_MSB, eventGetValue(evt));
         break;
 
     case FLUID_SEQ_VOLUME:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), VOLUME_MSB, fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), VOLUME_MSB, eventGetValue(evt));
         break;
 
     case FLUID_SEQ_REVERBSEND:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), EFFECTS_DEPTH1, fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), EFFECTS_DEPTH1, eventGetValue(evt));
         break;
 
     case FLUID_SEQ_CHORUSSEND:
-        fluid_synth_cc(synth, fluid_event_get_channel(evt), EFFECTS_DEPTH3, fluid_event_get_value(evt));
+        synthCc(synth, eventGetChannel(evt), EFFECTS_DEPTH3, eventGetValue(evt));
         break;
 
     case FLUID_SEQ_CHANNELPRESSURE:
-        fluid_synth_channel_pressure(synth, fluid_event_get_channel(evt), fluid_event_get_value(evt));
+        synthChannelPressure(synth, eventGetChannel(evt), eventGetValue(evt));
         break;
 
     case FLUID_SEQ_KEYPRESSURE:
-        fluid_synth_key_pressure(synth,
-                                 fluid_event_get_channel(evt),
-                                 fluid_event_get_key(evt),
-                                 fluid_event_get_value(evt));
+        synthKeyPressure(synth,
+                                 eventGetChannel(evt),
+                                 eventGetKey(evt),
+                                 eventGetValue(evt));
         break;
 
     case FLUID_SEQ_SYSTEMRESET:
-        fluid_synth_system_reset(synth);
+        synthSystemReset(synth);
         break;
 
     case FLUID_SEQ_UNREGISTERING: /* free ourselves */
-        delete_fluid_seqbind(seqbind);
+        deleteFluidSeqbind(seqbind);
         break;
 
     case FLUID_SEQ_TIMER:
@@ -326,7 +277,7 @@ fluid_seq_fluidsynth_callback(unsigned int time, fluid_event_t *evt, fluid_seque
         break;
 
     case FLUID_SEQ_SCALE:
-        fluid_sequencer_set_time_scale(seq, fluid_event_get_scale(evt));
+        sequencerSetTimeScale(seq, eventGetScale(evt));
         break;
 
     default:
@@ -334,22 +285,18 @@ fluid_seq_fluidsynth_callback(unsigned int time, fluid_event_t *evt, fluid_seque
     }
 }
 
-static fluid_seq_id_t get_fluidsynth_dest(fluid_sequencer_t *seq)
-{
+static seqIdT getFluidsynthDest(sequencerT *seq) {
     int i;
-    fluid_seq_id_t id;
+    seqIdT id;
     char *name;
-    int j = fluid_sequencer_count_clients(seq);
+    int j = sequencerCountClients(seq);
 
-    for(i = 0; i < j; i++)
-    {
-        id = fluid_sequencer_get_client_id(seq, i);
-        name = fluid_sequencer_get_client_name(seq, id);
+    for(i = 0; i < j; i++) {
+        id = sequencerGetClientId(seq, i);
+        name = sequencerGetClientName(seq, id);
 
         if(name && (FLUID_STRCMP(name, "fluidsynth") == 0))
-        {
             return id;
-        }
     }
 
     return -1;
@@ -359,28 +306,27 @@ static fluid_seq_id_t get_fluidsynth_dest(fluid_sequencer_t *seq)
  * Transforms an incoming MIDI event (from a MIDI driver or MIDI router) to a
  * sequencer event and adds it to the sequencer queue for sending as soon as possible.
  *
- * @param data The sequencer, must be a valid #fluid_sequencer_t
+ * @param data The sequencer, must be a valid #sequencerT
  * @param event MIDI event
  * @return #FLUID_OK or #FLUID_FAILED
  *
- * The signature of this function is of type #handle_midi_event_func_t.
+ * The signature of this function is of type #handleMidiEventFuncT.
  *
  * @since 1.1.0
  */
-int fluid_sequencer_add_midi_event_to_buffer(void *data, fluid_midi_event_t *event)
-{
-    fluid_event_t evt;
-    fluid_sequencer_t *seq;
+int sequencerAddMidiEventToBuffer(void *data, midiEventT *event) {
+    eventT evt;
+    sequencerT *seq;
 
-    fluid_return_val_if_fail(data != NULL, FLUID_FAILED);
-    fluid_return_val_if_fail(event != NULL, FLUID_FAILED);
+    returnValIfFail(data != NULL, FLUID_FAILED);
+    returnValIfFail(event != NULL, FLUID_FAILED);
 
-    seq = (fluid_sequencer_t *)data;
+    seq = (sequencerT *)data;
 
-    fluid_event_clear(&evt);
-    fluid_event_from_midi_event(&evt, event);
-    fluid_event_set_dest(&evt, get_fluidsynth_dest(seq));
+    eventClear(&evt);
+    eventFromMidiEvent(&evt, event);
+    eventSetDest(&evt, getFluidsynthDest(seq));
 
-    /* Schedule for sending at next call to fluid_sequencer_process */
-    return fluid_sequencer_send_at(seq, &evt, 0, 0);
+    /* Schedule for sending at next call to sequencerProcess */
+    return sequencerSendAt(seq, &evt, 0, 0);
 }

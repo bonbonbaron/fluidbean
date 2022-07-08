@@ -19,7 +19,7 @@
  */
 
 
-/* fluid_midishare.c
+/* midishare.c
  *
  * Author: Stephane Letz  (letz@grame.fr)  Grame
  *
@@ -27,15 +27,15 @@
  * 21/12/01 : Add a compilation flag (MIDISHARE_DRIVER) for driver or application mode
  * 29/01/02 : Compilation on MacOSX, use a task for typeNote management
  * 03/06/03 : Adapdation for FluidSynth API
- * 18/03/04 : In application mode, connect MidiShare to the fluidsynth client (fluid_midishare_open_appl)
+ * 18/03/04 : In application mode, connect MidiShare to the fluidsynth client (midishareOpenAppl)
  */
 
 #include "config.h"
 
 #if MIDISHARE_SUPPORT
 
-#include "fluid_midi.h"
-#include "fluid_mdriver.h"
+#include "midi.h"
+#include "mdriver.h"
 #include <MidiShare.h>
 
 /* constants definitions    */
@@ -51,40 +51,40 @@
 
 typedef struct
 {
-    fluid_midi_driver_t driver;
+    midiDriverT driver;
     int status;
     short refnum;
     MidiFilterPtr filter;
 #if defined(MACINTOSH) && defined(MACOS9)
-    UPPRcvAlarmPtr upp_alarm_ptr;
-    UPPDriverPtr   upp_wakeup_ptr;
-    UPPDriverPtr   upp_sleep_ptr;
-    UPPTaskPtr     upp_task_ptr;
+    UPPRcvAlarmPtr uppAlarmPtr;
+    UPPDriverPtr   uppWakeupPtr;
+    UPPDriverPtr   uppSleepPtr;
+    UPPTaskPtr     uppTaskPtr;
 #endif
     SlotRefNum	slotRef;
     unsigned char sysexbuf[FLUID_MIDI_PARSER_MAX_DATA_SIZE];
-} fluid_midishare_midi_driver_t;
+} midishareMidiDriverT;
 
 
-static void fluid_midishare_midi_driver_receive(short ref);
+static void midishareMidiDriverReceive(short ref);
 
 #if defined(MIDISHARE_DRIVER)
-static int fluid_midishare_open_driver(fluid_midishare_midi_driver_t *dev);
-static void fluid_midishare_close_driver(fluid_midishare_midi_driver_t *dev);
+static int midishareOpenDriver(midishareMidiDriverT *dev);
+static void midishareCloseDriver(midishareMidiDriverT *dev);
 #else
-static int fluid_midishare_open_appl(fluid_midishare_midi_driver_t *dev);
-static void fluid_midishare_close_appl(fluid_midishare_midi_driver_t *dev);
+static int midishareOpenAppl(midishareMidiDriverT *dev);
+static void midishareCloseAppl(midishareMidiDriverT *dev);
 #endif
 
 /*
- * new_fluid_midishare_midi_driver
+ * newFluidMidishareMidiDriver
  */
-fluid_midi_driver_t *
-new_fluid_midishare_midi_driver(FluidSettings *settings,
-                                handle_midi_event_func_t handler,
+midiDriverT *
+newFluidMidishareMidiDriver(FluidSettings *settings,
+                                handleMidiEventFuncT handler,
                                 void *data)
 {
-    fluid_midishare_midi_driver_t *dev;
+    midishareMidiDriverT *dev;
     int i;
 
     FLUID_LOG(FLUID_WARN,
@@ -106,7 +106,7 @@ new_fluid_midishare_midi_driver(FluidSettings *settings,
     }
 
     /* allocate the device */
-    dev = FLUID_NEW(fluid_midishare_midi_driver_t);
+    dev = FLUID_NEW(midishareMidiDriverT);
 
     if(dev == NULL)
     {
@@ -114,23 +114,23 @@ new_fluid_midishare_midi_driver(FluidSettings *settings,
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_midishare_midi_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(midishareMidiDriverT));
     dev->driver.handler = handler;
     dev->driver.data = data;
 
     /* register to MidiShare as Application or Driver */
 #if defined(MIDISHARE_DRIVER)
 
-    if(!fluid_midishare_open_driver(dev))
+    if(!midishareOpenDriver(dev))
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
 #else
 
-    if(!fluid_midishare_open_appl(dev))
+    if(!midishareOpenAppl(dev))
     {
-        goto error_recovery;
+        goto errorRecovery;
     }
 
 #endif
@@ -142,7 +142,7 @@ new_fluid_midishare_midi_driver(FluidSettings *settings,
     if(dev->filter == 0)
     {
         FLUID_LOG(FLUID_ERR, "Can not allocate MidiShare filter");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     for(i = 0 ; i < 256; i++)
@@ -169,20 +169,20 @@ new_fluid_midishare_midi_driver(FluidSettings *settings,
     MidiSetFilter(dev->refnum, dev->filter);
 
     dev->status = FLUID_MIDI_READY;
-    return (fluid_midi_driver_t *) dev;
+    return (midiDriverT *) dev;
 
-error_recovery:
-    delete_fluid_midishare_midi_driver((fluid_midi_driver_t *) dev);
+errorRecovery:
+    deleteFluidMidishareMidiDriver((midiDriverT *) dev);
     return NULL;
 }
 
 /*
- * delete_fluid_midishare_midi_driver
+ * deleteFluidMidishareMidiDriver
  */
-void delete_fluid_midishare_midi_driver(fluid_midi_driver_t *p)
+void deleteFluidMidishareMidiDriver(midiDriverT *p)
 {
-    fluid_midishare_midi_driver_t *dev = (fluid_midishare_midi_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    midishareMidiDriverT *dev = (midishareMidiDriverT *) p;
+    returnIfFail(dev != NULL);
 
     if(dev->filter)
     {
@@ -190,16 +190,16 @@ void delete_fluid_midishare_midi_driver(fluid_midi_driver_t *p)
     }
 
 #if defined(MIDISHARE_DRIVER)
-    fluid_midishare_close_driver(dev);
+    midishareCloseDriver(dev);
 #else
-    fluid_midishare_close_appl(dev);
+    midishareCloseAppl(dev);
 #endif
 
 #if defined(MACINTOSH) && defined(MACOS9)
-    DisposeRoutineDescriptor(dev->upp_alarm_ptr);
-    DisposeRoutineDescriptor(dev->upp_wakeup_ptr);
-    DisposeRoutineDescriptor(dev->upp_sleep_ptr);
-    DisposeRoutineDescriptor(dev->upp_task_ptr);
+    DisposeRoutineDescriptor(dev->uppAlarmPtr);
+    DisposeRoutineDescriptor(dev->uppWakeupPtr);
+    DisposeRoutineDescriptor(dev->uppSleepPtr);
+    DisposeRoutineDescriptor(dev->uppTaskPtr);
 #endif
 
     dev->status = FLUID_MIDI_DONE;
@@ -209,33 +209,33 @@ void delete_fluid_midishare_midi_driver(fluid_midi_driver_t *p)
 
 
 /*
- * fluid_midishare_keyoff_task
+ * midishareKeyoffTask
  */
-static void fluid_midishare_keyoff_task(long date, short ref, long a1, long a2, long a3)
+static void midishareKeyoffTask(long date, short ref, long a1, long a2, long a3)
 {
-    fluid_midishare_midi_driver_t *dev = (fluid_midishare_midi_driver_t *)MidiGetInfo(ref);
-    fluid_midi_event_t new_event;
+    midishareMidiDriverT *dev = (midishareMidiDriverT *)MidiGetInfo(ref);
+    midiEventT newEvent;
     MidiEvPtr e = (MidiEvPtr)a1;
 
-    fluid_midi_event_set_type(&new_event, NOTE_OFF);
-    fluid_midi_event_set_channel(&new_event, Chan(e));
-    fluid_midi_event_set_pitch(&new_event, Pitch(e));
-    fluid_midi_event_set_velocity(&new_event, Vel(e)); /* release vel */
+    midiEventSetType(&newEvent, NOTE_OFF);
+    midiEventSetChannel(&newEvent, Chan(e));
+    midiEventSetPitch(&newEvent, Pitch(e));
+    midiEventSetVelocity(&newEvent, Vel(e)); /* release vel */
 
     /* and send it on its way to the router */
-    (*dev->driver.handler)(dev->driver.data, &new_event);
+    (*dev->driver.handler)(dev->driver.data, &newEvent);
 
     MidiFreeEv(e);
 }
 
 
 /*
- * fluid_midishare_midi_driver_receive
+ * midishareMidiDriverReceive
  */
-static void fluid_midishare_midi_driver_receive(short ref)
+static void midishareMidiDriverReceive(short ref)
 {
-    fluid_midishare_midi_driver_t *dev = (fluid_midishare_midi_driver_t *)MidiGetInfo(ref);
-    fluid_midi_event_t new_event;
+    midishareMidiDriverT *dev = (midishareMidiDriverT *)MidiGetInfo(ref);
+    midiEventT newEvent;
     MidiEvPtr e;
     int count, i;
 
@@ -244,60 +244,60 @@ static void fluid_midishare_midi_driver_receive(short ref)
         switch(EvType(e))
         {
         case typeNote:
-            /* Copy the data to fluid_midi_event_t */
-            fluid_midi_event_set_type(&new_event, NOTE_ON);
-            fluid_midi_event_set_channel(&new_event, Chan(e));
-            fluid_midi_event_set_pitch(&new_event, Pitch(e));
-            fluid_midi_event_set_velocity(&new_event, Vel(e));
+            /* Copy the data to midiEventT */
+            midiEventSetType(&newEvent, NOTE_ON);
+            midiEventSetChannel(&newEvent, Chan(e));
+            midiEventSetPitch(&newEvent, Pitch(e));
+            midiEventSetVelocity(&newEvent, Vel(e));
 
             /* and send it on its way to the router */
-            (*dev->driver.handler)(dev->driver.data, &new_event);
+            (*dev->driver.handler)(dev->driver.data, &newEvent);
 
 #if defined(MACINTOSH) && defined(MACOS9)
-            MidiTask(dev->upp_task_ptr, MidiGetTime() + Dur(e), ref, (long)e, 0, 0);
+            MidiTask(dev->uppTaskPtr, MidiGetTime() + Dur(e), ref, (long)e, 0, 0);
 #else
-            MidiTask(fluid_midishare_keyoff_task, MidiGetTime() + Dur(e), ref, (long)e, 0, 0);
+            MidiTask(midishareKeyoffTask, MidiGetTime() + Dur(e), ref, (long)e, 0, 0);
 #endif
 
-            /* e gets freed in fluid_midishare_keyoff_task */
+            /* e gets freed in midishareKeyoffTask */
             continue;
 
         case typeKeyOn:
-            /* Copy the data to fluid_midi_event_t */
-            fluid_midi_event_set_type(&new_event, NOTE_ON);
-            fluid_midi_event_set_channel(&new_event, Chan(e));
-            fluid_midi_event_set_pitch(&new_event, Pitch(e));
-            fluid_midi_event_set_velocity(&new_event, Vel(e));
+            /* Copy the data to midiEventT */
+            midiEventSetType(&newEvent, NOTE_ON);
+            midiEventSetChannel(&newEvent, Chan(e));
+            midiEventSetPitch(&newEvent, Pitch(e));
+            midiEventSetVelocity(&newEvent, Vel(e));
             break;
 
         case typeKeyOff:
-            /* Copy the data to fluid_midi_event_t */
-            fluid_midi_event_set_type(&new_event, NOTE_OFF);
-            fluid_midi_event_set_channel(&new_event, Chan(e));
-            fluid_midi_event_set_pitch(&new_event, Pitch(e));
-            fluid_midi_event_set_velocity(&new_event, Vel(e)); /* release vel */
+            /* Copy the data to midiEventT */
+            midiEventSetType(&newEvent, NOTE_OFF);
+            midiEventSetChannel(&newEvent, Chan(e));
+            midiEventSetPitch(&newEvent, Pitch(e));
+            midiEventSetVelocity(&newEvent, Vel(e)); /* release vel */
             break;
 
         case typeCtrlChange:
-            /* Copy the data to fluid_midi_event_t */
-            fluid_midi_event_set_type(&new_event, CONTROL_CHANGE);
-            fluid_midi_event_set_channel(&new_event, Chan(e));
-            fluid_midi_event_set_control(&new_event, MidiGetField(e, 0));
-            fluid_midi_event_set_value(&new_event, MidiGetField(e, 1));
+            /* Copy the data to midiEventT */
+            midiEventSetType(&newEvent, CONTROL_CHANGE);
+            midiEventSetChannel(&newEvent, Chan(e));
+            midiEventSetControl(&newEvent, MidiGetField(e, 0));
+            midiEventSetValue(&newEvent, MidiGetField(e, 1));
             break;
 
         case typeProgChange:
-            /* Copy the data to fluid_midi_event_t */
-            fluid_midi_event_set_type(&new_event, PROGRAM_CHANGE);
-            fluid_midi_event_set_channel(&new_event, Chan(e));
-            fluid_midi_event_set_program(&new_event, MidiGetField(e, 0));
+            /* Copy the data to midiEventT */
+            midiEventSetType(&newEvent, PROGRAM_CHANGE);
+            midiEventSetChannel(&newEvent, Chan(e));
+            midiEventSetProgram(&newEvent, MidiGetField(e, 0));
             break;
 
         case typePitchWheel:
-            /* Copy the data to fluid_midi_event_t */
-            fluid_midi_event_set_type(&new_event, PITCH_BEND);
-            fluid_midi_event_set_channel(&new_event, Chan(e));
-            fluid_midi_event_set_value(&new_event, ((MidiGetField(e, 0)
+            /* Copy the data to midiEventT */
+            midiEventSetType(&newEvent, PITCH_BEND);
+            midiEventSetChannel(&newEvent, Chan(e));
+            midiEventSetValue(&newEvent, ((MidiGetField(e, 0)
                                                     + (MidiGetField(e, 1) << 7))
                                                     - 8192));
             break;
@@ -318,7 +318,7 @@ static void fluid_midishare_midi_driver_receive(short ref)
                 dev->sysexbuf[i] = MidiGetField(e, i);
             }
 
-            fluid_midi_event_set_sysex(&new_event, dev->sysexbuf, count, FALSE);
+            midiEventSetSysex(&newEvent, dev->sysexbuf, count, FALSE);
             break;
 
         default:
@@ -329,7 +329,7 @@ static void fluid_midishare_midi_driver_receive(short ref)
         MidiFreeEv(e);
 
         /* Send the MIDI event */
-        (*dev->driver.handler)(dev->driver.data, &new_event);
+        (*dev->driver.handler)(dev->driver.data, &newEvent);
     }
 }
 
@@ -337,35 +337,35 @@ static void fluid_midishare_midi_driver_receive(short ref)
 #if defined(MIDISHARE_DRIVER)
 
 /*
- * fluid_midishare_wakeup
+ * midishareWakeup
  */
-static void fluid_midishare_wakeup(short r)
+static void midishareWakeup(short r)
 {
     MidiConnect(MidiShareDrvRef, r, true);
     MidiConnect(r, MidiShareDrvRef, true);
 }
 
 /*
- * fluid_midishare_sleep
+ * midishareSleep
  */
-static void fluid_midishare_sleep(short r) {}
+static void midishareSleep(short r) {}
 
 /*
- * fluid_midishare_open_driver
+ * midishareOpenDriver
  */
-static int fluid_midishare_open_driver(fluid_midishare_midi_driver_t *dev)
+static int midishareOpenDriver(midishareMidiDriverT *dev)
 {
     /* gcc wanted me to use {0,0} to initialize the reserved[2] fields */
     TDriverInfos infos = { MSHDriverName, 100, 0, { 0, 0 } };
-    TDriverOperation op = { fluid_midishare_wakeup, fluid_midishare_sleep, { 0, 0, 0 } };
+    TDriverOperation op = { midishareWakeup, midishareSleep, { 0, 0, 0 } };
 
     /* register to MidiShare */
 #if defined(MACINTOSH) && defined(MACOS9)
-    dev->upp_wakeup_ptr = NewDriverPtr(fluid_midishare_wakeup);
-    dev->upp_sleep_ptr = NewDriverPtr(fluid_midishare_sleep);
+    dev->uppWakeupPtr = NewDriverPtr(midishareWakeup);
+    dev->uppSleepPtr = NewDriverPtr(midishareSleep);
 
-    op.wakeup = (WakeupPtr)dev->upp_wakeup_ptr;
-    op.sleep = (SleepPtr)dev->upp_sleep_ptr;
+    op.wakeup = (WakeupPtr)dev->uppWakeupPtr;
+    op.sleep = (SleepPtr)dev->uppSleepPtr;
 
     dev->refnum = MidiRegisterDriver(&infos, &op);
 
@@ -376,9 +376,9 @@ static int fluid_midishare_open_driver(fluid_midishare_midi_driver_t *dev)
     }
 
     dev->slotRef = MidiAddSlot(dev->refnum, MSHSlotName, MidiOutputSlot);
-    dev->upp_alarm_ptr = NewRcvAlarmPtr(fluid_midishare_midi_driver_receive);
-    dev->upp_task_ptr = NewTaskPtr(fluid_midishare_keyoff_task);
-    MidiSetRcvAlarm(dev->refnum, dev->upp_alarm_ptr);
+    dev->uppAlarmPtr = NewRcvAlarmPtr(midishareMidiDriverReceive);
+    dev->uppTaskPtr = NewTaskPtr(midishareKeyoffTask);
+    MidiSetRcvAlarm(dev->refnum, dev->uppAlarmPtr);
 #else
     dev->refnum = MidiRegisterDriver(&infos, &op);
 
@@ -389,15 +389,15 @@ static int fluid_midishare_open_driver(fluid_midishare_midi_driver_t *dev)
     }
 
     dev->slotRef = MidiAddSlot(dev->refnum, MSHSlotName, MidiOutputSlot);
-    MidiSetRcvAlarm(dev->refnum, fluid_midishare_midi_driver_receive);
+    MidiSetRcvAlarm(dev->refnum, midishareMidiDriverReceive);
 #endif
     return 1;
 }
 
 /*
- * fluid_midishare_close_driver
+ * midishareCloseDriver
  */
-static void fluid_midishare_close_driver(fluid_midishare_midi_driver_t *dev)
+static void midishareCloseDriver(midishareMidiDriverT *dev)
 {
     if(dev->refnum > 0)
     {
@@ -408,9 +408,9 @@ static void fluid_midishare_close_driver(fluid_midishare_midi_driver_t *dev)
 #else   /* #if defined(MIDISHARE_DRIVER) */
 
 /*
- * fluid_midishare_open_appl
+ * midishareOpenAppl
  */
-static int fluid_midishare_open_appl(fluid_midishare_midi_driver_t *dev)
+static int midishareOpenAppl(midishareMidiDriverT *dev)
 {
     /* register to MidiShare */
 #if defined(MACINTOSH) && defined(MACOS9)
@@ -422,9 +422,9 @@ static int fluid_midishare_open_appl(fluid_midishare_midi_driver_t *dev)
         return 0;
     }
 
-    dev->upp_alarm_ptr = NewRcvAlarmPtr(fluid_midishare_midi_driver_receive);
-    dev->upp_task_ptr = NewTaskPtr(fluid_midishare_keyoff_task);
-    MidiSetRcvAlarm(dev->refnum, dev->upp_alarm_ptr);
+    dev->uppAlarmPtr = NewRcvAlarmPtr(midishareMidiDriverReceive);
+    dev->uppTaskPtr = NewTaskPtr(midishareKeyoffTask);
+    MidiSetRcvAlarm(dev->refnum, dev->uppAlarmPtr);
 #else
     dev->refnum = MidiOpen(MSHDriverName);
 
@@ -434,16 +434,16 @@ static int fluid_midishare_open_appl(fluid_midishare_midi_driver_t *dev)
         return 0;
     }
 
-    MidiSetRcvAlarm(dev->refnum, fluid_midishare_midi_driver_receive);
+    MidiSetRcvAlarm(dev->refnum, midishareMidiDriverReceive);
     MidiConnect(0, dev->refnum, true);
 #endif
     return 1;
 }
 
 /*
- * fluid_midishare_close_appl
+ * midishareCloseAppl
  */
-static void fluid_midishare_close_appl(fluid_midishare_midi_driver_t *dev)
+static void midishareCloseAppl(midishareMidiDriverT *dev)
 {
     if(dev->refnum > 0)
     {

@@ -48,14 +48,13 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE FILE FILES
+    "/home/bonbonbaron/hack/fluidbean/src/include/enums.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/chan.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/chorus.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/config.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/conv.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/fluidbean.h"
-    "/home/bonbonbaron/hack/fluidbean/src/include/gen.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/midi.h"
-    "/home/bonbonbaron/hack/fluidbean/src/include/mod.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/phase.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/rev.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/soundfont.h"

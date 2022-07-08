@@ -1,5 +1,5 @@
-#ifndef _FLUID_PHASE_H
-#define _FLUID_PHASE_H
+#ifndef _PHASE_H
+#define _PHASE_H
 
 #include "config.h"
 
@@ -7,55 +7,55 @@
  *  phase
  */
 
-#define FLUID_INTERP_BITS        8
-#define FLUID_INTERP_BITS_MASK   0xff000000
-#define FLUID_INTERP_BITS_SHIFT  24
-#define FLUID_INTERP_MAX         256
+#define INTERP_BITS        8
+#define INTERP_BITS_MASK   0xff000000
+#define INTERP_BITS_SHIFT  24
+#define INTERP_MAX         256
 
-#define FLUID_FRACT_MAX ((double)4294967296.0)
+#define FRACT_MAX ((double)4294967296.0)
 
-/* fluid_phase_t
+/* phaseT
 * Purpose:
 * Playing pointer for voice playback
 *
 * When a sample is played back at a different pitch, the playing pointer in the
 * source sample will not advance exactly one sample per output sample.
-* This playing pointer is implemented using fluid_phase_t.
+* This playing pointer is implemented using phaseT.
 * It is a 64 bit number. The higher 32 bits contain the 'index' (number of
 * the current sample), the lower 32 bits the fractional part.
 */
-typedef unsigned long long fluid_phase_t;
+typedef unsigned long long phaseT;
 
 /* Purpose:
  * Set a to b.
- * a: fluid_phase_t
- * b: fluid_phase_t
+ * a: phaseT
+ * b: phaseT
  */
-#define fluid_phase_set(a,b) a=b;
+#define phaseSet(a,b) a=b;
 
-#define fluid_phase_set_int(a, b)    ((a) = ((unsigned long long)(b)) << 32)
+#define phaseSetInt(a, b)    ((a) = ((unsigned long long)(b)) << 32)
 
 /* Purpose:
  * Sets the phase a to a phase increment given in b.
  * For example, assume b is 0.9. After setting a to it, adding a to
  * the playing pointer will advance it by 0.9 samples. */
-#define fluid_phase_set_float(a, b) \
+#define phaseSetFloat(a, b) \
   (a) = (((unsigned long long)(b)) << 32) \
-  | (uint32) (((double)(b) - (S32)(b)) * (double)FLUID_FRACT_MAX)
+  | (uint32) (((double)(b) - (S32)(b)) * (double)FRACT_MAX)
 
-/* create a fluid_phase_t from an index and a fraction value */
-#define fluid_phase_from_index_fract(index, fract) \
+/* create a phaseT from an index and a fraction value */
+#define phaseFromIndexFract(index, fract) \
   ((((unsigned long long)(index)) << 32) + (fract))
 
 /* Purpose:
  * Return the index and the fractional part, respectively. */
-#define fluid_phase_index(_x) \
+#define phaseIndex(_x) \
   ((U32)((_x) >> 32))
-#define fluid_phase_fract(_x) \
+#define phaseFract(_x) \
   ((uint32)((_x) & 0xFFFFFFFF))
 
 /* Get the phase index with fractional rounding */
-#define fluid_phase_index_round(_x) \
+#define phaseIndexRound(_x) \
   ((U32)(((_x) + 0x80000000) >> 32))
 
 
@@ -66,29 +66,29 @@ typedef unsigned long long fluid_phase_t;
  * resolution (32 bits). It would be unpractical to keep a set of interpolation
  * coefficients for each possible fractional part...
  */
-#define fluid_phase_fract_to_tablerow(_x) \
-  ((U32)(fluid_phase_fract(_x) & FLUID_INTERP_BITS_MASK) >> FLUID_INTERP_BITS_SHIFT)
+#define phaseFractToTablerow(_x) \
+  ((U32)(phaseFract(_x) & INTERP_BITS_MASK) >> INTERP_BITS_SHIFT)
 
-#define fluid_phase_double(_x) \
-  ((double)(fluid_phase_index(_x)) + ((double)fluid_phase_fract(_x) / FLUID_FRACT_MAX))
-
-/* Purpose:
- * Advance a by a step of b (both are fluid_phase_t).
- */
-#define fluid_phase_incr(a, b)  a += b
+#define phaseDouble(_x) \
+  ((double)(phaseIndex(_x)) + ((double)phaseFract(_x) / FRACT_MAX))
 
 /* Purpose:
- * Subtract b from a (both are fluid_phase_t).
+ * Advance a by a step of b (both are phaseT).
  */
-#define fluid_phase_decr(a, b)  a -= b
+#define phaseIncr(a, b)  a += b
+
+/* Purpose:
+ * Subtract b from a (both are phaseT).
+ */
+#define phaseDecr(a, b)  a -= b
 
 /* Purpose:
  * Subtract b samples from a.
  */
-#define fluid_phase_sub_int(a, b)  ((a) -= (unsigned long long)(b) << 32)
+#define phaseSubInt(a, b)  ((a) -= (unsigned long long)(b) << 32)
 
 /* Purpose:
  * Creates the expression a.index++. */
-#define fluid_phase_index_plusplus(a)  (((a) += 0x100000000LL)
+#define phaseIndexPlusplus(a)  (((a) += 0x100000000LL)
 
-#endif /* _FLUID_PHASE_H */
+#endif /* _PHASE_H */

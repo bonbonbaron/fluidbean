@@ -18,13 +18,13 @@
  * 02110-1301, USA
  */
 
-/* fluid_opensles.c
+/* opensles.c
  *
  * Audio driver for OpenSLES.
  *
  */
 
-#include "fluid_adriver.h"
+#include "adriver.h"
 
 #if OPENSLES_SUPPORT
 
@@ -33,58 +33,58 @@
 
 static const int NUM_CHANNELS = 2;
 
-/** fluid_opensles_audio_driver_t
+/** openslesAudioDriverT
  *
  * This structure should not be accessed directly. Use audio port
  * functions instead.
  */
 typedef struct
 {
-    fluid_audio_driver_t driver;
+    audioDriverT driver;
     SLObjectItf engine;
-    SLObjectItf output_mix_object;
-    SLObjectItf audio_player;
-    SLPlayItf audio_player_interface;
-    SLAndroidSimpleBufferQueueItf player_buffer_queue_interface;
+    SLObjectItf outputMixObject;
+    SLObjectItf audioPlayer;
+    SLPlayItf audioPlayerInterface;
+    SLAndroidSimpleBufferQueueItf playerBufferQueueInterface;
 
     void *synth;
-    int period_frames;
+    int periodFrames;
 
-    int is_sample_format_float;
+    int isSampleFormatFloat;
 
     /* used only by callback mode */
-    short *sles_buffer_short;
-    float *sles_buffer_float;
+    short *slesBufferShort;
+    float *slesBufferFloat;
 
     int cont;
 
-    double sample_rate;
-} fluid_opensles_audio_driver_t;
+    double sampleRate;
+} openslesAudioDriverT;
 
 
-static void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext);
-static void process_fluid_buffer(fluid_opensles_audio_driver_t *dev);
+static void openslesCallback(SLAndroidSimpleBufferQueueItf caller, void *pContext);
+static void processFluidBuffer(openslesAudioDriverT *dev);
 
-void fluid_opensles_audio_driver_settings(FluidSettings *settings)
+void openslesAudioDriverSettings(FluidSettings *settings)
 {
 }
 
 
 /*
- * new_fluid_opensles_audio_driver
+ * newFluidOpenslesAudioDriver
  */
-fluid_audio_driver_t *
-new_fluid_opensles_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidOpenslesAudioDriver(FluidSettings *settings, synthT *synth)
 {
     SLresult result;
-    fluid_opensles_audio_driver_t *dev;
-    double sample_rate;
-    int period_size;
-    int realtime_prio = 0;
-    int is_sample_format_float;
-    SLEngineItf engine_interface;
+    openslesAudioDriverT *dev;
+    double sampleRate;
+    int periodSize;
+    int realtimePrio = 0;
+    int isSampleFormatFloat;
+    SLEngineItf engineInterface;
 
-    dev = FLUID_NEW(fluid_opensles_audio_driver_t);
+    dev = FLUID_NEW(openslesAudioDriverT);
 
     if(dev == NULL)
     {
@@ -94,15 +94,15 @@ new_fluid_opensles_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
 
     FLUID_MEMSET(dev, 0, sizeof(*dev));
 
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_getint(settings, "audio.realtime-prio", &realtime_prio);
-    is_sample_format_float = fluid_settings_str_equal(settings, "audio.sample-format", "float");
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsGetint(settings, "audio.realtime-prio", &realtimePrio);
+    isSampleFormatFloat = settingsStrEqual(settings, "audio.sample-format", "float");
 
     dev->synth = synth;
-    dev->is_sample_format_float = is_sample_format_float;
-    dev->period_frames = period_size;
-    dev->sample_rate = sample_rate;
+    dev->isSampleFormatFloat = isSampleFormatFloat;
+    dev->periodFrames = periodSize;
+    dev->sampleRate = sampleRate;
     dev->cont = 1;
 
     result = slCreateEngine(&(dev->engine), 0, NULL, 0, NULL, NULL);
@@ -110,7 +110,7 @@ new_fluid_opensles_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     if(!dev->engine)
     {
         FLUID_LOG(FLUID_ERR, "Failed to create the OpenSL ES engine, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     result = (*dev->engine)->Realize(dev->engine, SL_BOOLEAN_FALSE);
@@ -118,181 +118,181 @@ new_fluid_opensles_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to realize the OpenSL ES engine, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->engine)->GetInterface(dev->engine, SL_IID_ENGINE, &engine_interface);
+    result = (*dev->engine)->GetInterface(dev->engine, SL_IID_ENGINE, &engineInterface);
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to retrieve the OpenSL ES engine interface, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*engine_interface)->CreateOutputMix(engine_interface, &dev->output_mix_object, 0, 0, 0);
+    result = (*engineInterface)->CreateOutputMix(engineInterface, &dev->outputMixObject, 0, 0, 0);
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to create the OpenSL ES output mix object, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->output_mix_object)->Realize(dev->output_mix_object, SL_BOOLEAN_FALSE);
+    result = (*dev->outputMixObject)->Realize(dev->outputMixObject, SL_BOOLEAN_FALSE);
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to realize the OpenSL ES output mix object, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     {
-        SLDataLocator_AndroidSimpleBufferQueue loc_buffer_queue =
+        SLDataLocator_AndroidSimpleBufferQueue locBufferQueue =
         {
             SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
             2 /* number of buffers */
         };
-        SLAndroidDataFormat_PCM_EX format_pcm =
+        SLAndroidDataFormat_PCM_EX formatPcm =
         {
             SL_ANDROID_DATAFORMAT_PCM_EX,
             NUM_CHANNELS,
-            ((SLuint32) sample_rate) * 1000,
-            is_sample_format_float ? SL_PCMSAMPLEFORMAT_FIXED_32 : SL_PCMSAMPLEFORMAT_FIXED_16,
-            is_sample_format_float ? SL_PCMSAMPLEFORMAT_FIXED_32 : SL_PCMSAMPLEFORMAT_FIXED_16,
+            ((SLuint32) sampleRate) * 1000,
+            isSampleFormatFloat ? SL_PCMSAMPLEFORMAT_FIXED_32 : SL_PCMSAMPLEFORMAT_FIXED_16,
+            isSampleFormatFloat ? SL_PCMSAMPLEFORMAT_FIXED_32 : SL_PCMSAMPLEFORMAT_FIXED_16,
             SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
             SL_BYTEORDER_LITTLEENDIAN,
-            is_sample_format_float ? SL_ANDROID_PCM_REPRESENTATION_FLOAT : SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT
+            isSampleFormatFloat ? SL_ANDROID_PCM_REPRESENTATION_FLOAT : SL_ANDROID_PCM_REPRESENTATION_SIGNED_INT
         };
-        SLDataSource audio_src =
+        SLDataSource audioSrc =
         {
-            &loc_buffer_queue,
-            &format_pcm
+            &locBufferQueue,
+            &formatPcm
         };
 
-        SLDataLocator_OutputMix loc_outmix =
+        SLDataLocator_OutputMix locOutmix =
         {
             SL_DATALOCATOR_OUTPUTMIX,
-            dev->output_mix_object
+            dev->outputMixObject
         };
-        SLDataSink audio_sink = {&loc_outmix, NULL};
+        SLDataSink audioSink = {&locOutmix, NULL};
 
         const SLInterfaceID ids1[] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
         const SLboolean req1[] = {SL_BOOLEAN_TRUE};
-        result = (*engine_interface)->CreateAudioPlayer(engine_interface,
-                &(dev->audio_player), &audio_src, &audio_sink, 1, ids1, req1);
+        result = (*engineInterface)->CreateAudioPlayer(engineInterface,
+                &(dev->audioPlayer), &audioSrc, &audioSink, 1, ids1, req1);
     }
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to create the OpenSL ES audio player object, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->audio_player)->Realize(dev->audio_player, SL_BOOLEAN_FALSE);
+    result = (*dev->audioPlayer)->Realize(dev->audioPlayer, SL_BOOLEAN_FALSE);
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to realize the OpenSL ES audio player object, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->audio_player)->GetInterface(dev->audio_player,
-             SL_IID_PLAY, &(dev->audio_player_interface));
+    result = (*dev->audioPlayer)->GetInterface(dev->audioPlayer,
+             SL_IID_PLAY, &(dev->audioPlayerInterface));
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to retrieve the OpenSL ES audio player interface, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->audio_player)->GetInterface(dev->audio_player,
-             SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &(dev->player_buffer_queue_interface));
+    result = (*dev->audioPlayer)->GetInterface(dev->audioPlayer,
+             SL_IID_ANDROIDSIMPLEBUFFERQUEUE, &(dev->playerBufferQueueInterface));
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to retrieve the OpenSL ES buffer queue interface, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if(dev->is_sample_format_float)
+    if(dev->isSampleFormatFloat)
     {
-        dev->sles_buffer_float = FLUID_ARRAY(float, dev->period_frames * NUM_CHANNELS);
+        dev->slesBufferFloat = FLUID_ARRAY(float, dev->periodFrames * NUM_CHANNELS);
     }
     else
     {
-        dev->sles_buffer_short = FLUID_ARRAY(short, dev->period_frames * NUM_CHANNELS);
+        dev->slesBufferShort = FLUID_ARRAY(short, dev->periodFrames * NUM_CHANNELS);
     }
 
-    if(dev->sles_buffer_float == NULL && dev->sles_buffer_short == NULL)
+    if(dev->slesBufferFloat == NULL && dev->slesBufferShort == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory.");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->player_buffer_queue_interface)->RegisterCallback(dev->player_buffer_queue_interface, opensles_callback, dev);
+    result = (*dev->playerBufferQueueInterface)->RegisterCallback(dev->playerBufferQueueInterface, openslesCallback, dev);
 
     if(result != SL_RESULT_SUCCESS)
     {
-        FLUID_LOG(FLUID_ERR, "Failed to register the opensles_callback, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        FLUID_LOG(FLUID_ERR, "Failed to register the openslesCallback, error code 0x%lx", (unsigned long)result);
+        goto errorRecovery;
     }
 
-    if(dev->is_sample_format_float)
+    if(dev->isSampleFormatFloat)
     {
-        result = (*dev->player_buffer_queue_interface)->Enqueue(dev->player_buffer_queue_interface, dev->sles_buffer_float, dev->period_frames * NUM_CHANNELS * sizeof(float));
+        result = (*dev->playerBufferQueueInterface)->Enqueue(dev->playerBufferQueueInterface, dev->slesBufferFloat, dev->periodFrames * NUM_CHANNELS * sizeof(float));
     }
     else
     {
-        result = (*dev->player_buffer_queue_interface)->Enqueue(dev->player_buffer_queue_interface, dev->sles_buffer_short, dev->period_frames * NUM_CHANNELS * sizeof(short));
+        result = (*dev->playerBufferQueueInterface)->Enqueue(dev->playerBufferQueueInterface, dev->slesBufferShort, dev->periodFrames * NUM_CHANNELS * sizeof(short));
     }
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to add a buffer to the queue, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->audio_player_interface)->SetCallbackEventsMask(dev->audio_player_interface, SL_PLAYEVENT_HEADATEND);
+    result = (*dev->audioPlayerInterface)->SetCallbackEventsMask(dev->audioPlayerInterface, SL_PLAYEVENT_HEADATEND);
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to set OpenSL ES audio player callback events, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    result = (*dev->audio_player_interface)->SetPlayState(dev->audio_player_interface, SL_PLAYSTATE_PLAYING);
+    result = (*dev->audioPlayerInterface)->SetPlayState(dev->audioPlayerInterface, SL_PLAYSTATE_PLAYING);
 
     if(result != SL_RESULT_SUCCESS)
     {
         FLUID_LOG(FLUID_ERR, "Failed to set OpenSL ES audio player play state to playing, error code 0x%lx", (unsigned long)result);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     FLUID_LOG(FLUID_INFO, "Using OpenSLES driver.");
 
-    return (fluid_audio_driver_t *) dev;
+    return (audioDriverT *) dev;
 
-error_recovery:
+errorRecovery:
 
-    delete_fluid_opensles_audio_driver((fluid_audio_driver_t *) dev);
+    deleteFluidOpenslesAudioDriver((audioDriverT *) dev);
     return NULL;
 }
 
-void delete_fluid_opensles_audio_driver(fluid_audio_driver_t *p)
+void deleteFluidOpenslesAudioDriver(audioDriverT *p)
 {
-    fluid_opensles_audio_driver_t *dev = (fluid_opensles_audio_driver_t *) p;
+    openslesAudioDriverT *dev = (openslesAudioDriverT *) p;
 
-    fluid_return_if_fail(dev != NULL);
+    returnIfFail(dev != NULL);
 
     dev->cont = 0;
 
-    if(dev->audio_player)
+    if(dev->audioPlayer)
     {
-        (*dev->audio_player)->Destroy(dev->audio_player);
+        (*dev->audioPlayer)->Destroy(dev->audioPlayer);
     }
 
-    if(dev->output_mix_object)
+    if(dev->outputMixObject)
     {
-        (*dev->output_mix_object)->Destroy(dev->output_mix_object);
+        (*dev->outputMixObject)->Destroy(dev->outputMixObject);
     }
 
     if(dev->engine)
@@ -300,35 +300,35 @@ void delete_fluid_opensles_audio_driver(fluid_audio_driver_t *p)
         (*dev->engine)->Destroy(dev->engine);
     }
 
-    if(dev->sles_buffer_float)
+    if(dev->slesBufferFloat)
     {
-        FLUID_FREE(dev->sles_buffer_float);
+        FLUID_FREE(dev->slesBufferFloat);
     }
 
-    if(dev->sles_buffer_short)
+    if(dev->slesBufferShort)
     {
-        FLUID_FREE(dev->sles_buffer_short);
+        FLUID_FREE(dev->slesBufferShort);
     }
 
     FLUID_FREE(dev);
 }
 
-void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext)
+void openslesCallback(SLAndroidSimpleBufferQueueItf caller, void *pContext)
 {
-    fluid_opensles_audio_driver_t *dev = (fluid_opensles_audio_driver_t *) pContext;
+    openslesAudioDriverT *dev = (openslesAudioDriverT *) pContext;
     SLresult result;
 
-    process_fluid_buffer(dev);
+    processFluidBuffer(dev);
 
-    if(dev->is_sample_format_float)
+    if(dev->isSampleFormatFloat)
     {
         result = (*caller)->Enqueue(
-                     dev->player_buffer_queue_interface, dev->sles_buffer_float, dev->period_frames * sizeof(float) * NUM_CHANNELS);
+                     dev->playerBufferQueueInterface, dev->slesBufferFloat, dev->periodFrames * sizeof(float) * NUM_CHANNELS);
     }
     else
     {
         result = (*caller)->Enqueue(
-                     dev->player_buffer_queue_interface, dev->sles_buffer_short, dev->period_frames * sizeof(short) * NUM_CHANNELS);
+                     dev->playerBufferQueueInterface, dev->slesBufferShort, dev->periodFrames * sizeof(short) * NUM_CHANNELS);
     }
 
     /*
@@ -339,19 +339,19 @@ void opensles_callback(SLAndroidSimpleBufferQueueItf caller, void *pContext)
     */
 }
 
-void process_fluid_buffer(fluid_opensles_audio_driver_t *dev)
+void processFluidBuffer(openslesAudioDriverT *dev)
 {
-    short *out_short = dev->sles_buffer_short;
-    float *out_float = dev->sles_buffer_float;
-    int period_frames = dev->period_frames;
+    short *outShort = dev->slesBufferShort;
+    float *outFloat = dev->slesBufferFloat;
+    int periodFrames = dev->periodFrames;
 
-    if(dev->is_sample_format_float)
+    if(dev->isSampleFormatFloat)
     {
-        fluid_synth_write_float(dev->synth, period_frames, out_float, 0, 2, out_float, 1, 2);
+        synthWriteFloat(dev->synth, periodFrames, outFloat, 0, 2, outFloat, 1, 2);
     }
     else
     {
-        fluid_synth_write_s16(dev->synth, period_frames, out_short, 0, 2, out_short, 1, 2);
+        synthWriteS16(dev->synth, periodFrames, outShort, 0, 2, outShort, 1, 2);
     }
 }
 

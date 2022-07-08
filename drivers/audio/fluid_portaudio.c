@@ -18,7 +18,7 @@
  * 02110-1301, USA
  */
 
-/* fluid_portaudio.c
+/* portaudio.c
  *
  * Drivers for the PortAudio API : www.portaudio.com
  * Implementation files for PortAudio on each platform have to be added
@@ -30,47 +30,47 @@
  * 2009-01-28 Overhauled for PortAudio 19 API and current FluidSynth API (was broken)
  */
 
-#include "fluid_synth.h"
-#include "fluid_settings.h"
-#include "fluid_adriver.h"
+#include "synth.h"
+#include "settings.h"
+#include "adriver.h"
 
 #if PORTAUDIO_SUPPORT
 
 #include <portaudio.h>
 
 
-/** fluid_portaudio_driver_t
+/** portaudioDriverT
  *
  * This structure should not be accessed directly. Use audio port
  * functions instead.
  */
 typedef struct
 {
-    fluid_audio_driver_t driver;
-    fluid_synth_t *synth;
-    fluid_audio_callback_t read;
+    audioDriverT driver;
+    synthT *synth;
+    audioCallbackT read;
     PaStream *stream;
-} fluid_portaudio_driver_t;
+} portaudioDriverT;
 
 static int
-fluid_portaudio_run(const void *input, void *output, unsigned long frameCount,
+portaudioRun(const void *input, void *output, unsigned long frameCount,
                     const PaStreamCallbackTimeInfo *timeInfo,
                     PaStreamCallbackFlags statusFlags, void *userData);
 
 #define PORTAUDIO_DEFAULT_DEVICE "PortAudio Default"
 
 /**
- * Checks if device_num is a valid device and returns the name of the portaudio device.
+ * Checks if deviceNum is a valid device and returns the name of the portaudio device.
  * A device is valid if it is an output device with at least 2 channels.
  *
- * @param device_num index of the portaudio device to check.
- * @param name_ptr if device_num is valid, set to a unique device name, ignored otherwise
+ * @param deviceNum index of the portaudio device to check.
+ * @param namePtr if deviceNum is valid, set to a unique device name, ignored otherwise
  *
- * The name returned is unique for each num_device index, so this
+ * The name returned is unique for each numDevice index, so this
  * name is useful to identify any available host audio device.
  * This name is convenient for audio.portaudio.device setting.
  *
- * The format of the name is: device_index:host_api_name:host_device_name
+ * The format of the name is: deviceIndex:hostApiName:hostDeviceName
  *
  *   example: 5:MME:SB PCI
  *
@@ -78,21 +78,21 @@ fluid_portaudio_run(const void *input, void *output, unsigned long frameCount,
  *   MME: is the host API name.
  *   SB PCI: is the host device name.
  *
- * @return #FLUID_OK if device_num is a valid output device, #FLUID_FAILED otherwise.
+ * @return #FLUID_OK if deviceNum is a valid output device, #FLUID_FAILED otherwise.
  * When #FLUID_OK, the name is returned in allocated memory. The caller must check
  * the name pointer for a valid memory allocation and should free the memory.
  */
-static int fluid_portaudio_get_device_name(int device_num, char **name_ptr)
+static int portaudioGetDeviceName(int deviceNum, char **namePtr)
 {
-    const PaDeviceInfo *deviceInfo =  Pa_GetDeviceInfo(device_num);
+    const PaDeviceInfo *deviceInfo =  Pa_GetDeviceInfo(deviceNum);
 
     if(deviceInfo->maxOutputChannels >= 2)
     {
         const PaHostApiInfo *hostInfo = Pa_GetHostApiInfo(deviceInfo->hostApi);
         /* The size of the buffer name for the following format:
-           device_index:host_api_name:host_device_name.
+           deviceIndex:hostApiName:hostDeviceName.
         */
-        int i =  device_num;
+        int i =  deviceNum;
         size_t size = 0;
 
         do
@@ -104,20 +104,20 @@ static int fluid_portaudio_get_device_name(int device_num, char **name_ptr)
 
         /* host API size +  host device size + 2 separators + zero termination */
         size += FLUID_STRLEN(hostInfo->name) + FLUID_STRLEN(deviceInfo->name) + 3u;
-        *name_ptr = FLUID_MALLOC(size);
+        *namePtr = FLUID_MALLOC(size);
 
-        if(*name_ptr)
+        if(*namePtr)
         {
             /* the name is filled if allocation is successful */
-            FLUID_SPRINTF(*name_ptr, "%d:%s:%s", device_num,
+            FLUID_SPRINTF(*namePtr, "%d:%s:%s", deviceNum,
                           hostInfo->name, deviceInfo->name);
         }
 
-        return FLUID_OK; /* device_num is a valid device */
+        return FLUID_OK; /* deviceNum is a valid device */
     }
     else
     {
-        return FLUID_FAILED;    /* device_num is an invalid device */
+        return FLUID_FAILED;    /* deviceNum is an invalid device */
     }
 }
 
@@ -127,14 +127,14 @@ static int fluid_portaudio_get_device_name(int device_num, char **name_ptr)
  * @param settings pointer to settings.
  */
 void
-fluid_portaudio_driver_settings(FluidSettings *settings)
+portaudioDriverSettings(FluidSettings *settings)
 {
     int numDevices;
     PaError err;
     int i;
 
-    fluid_settings_register_str(settings, "audio.portaudio.device", PORTAUDIO_DEFAULT_DEVICE, 0);
-    fluid_settings_add_option(settings, "audio.portaudio.device", PORTAUDIO_DEFAULT_DEVICE);
+    settingsRegisterStr(settings, "audio.portaudio.device", PORTAUDIO_DEFAULT_DEVICE, 0);
+    settingsAddOption(settings, "audio.portaudio.device", PORTAUDIO_DEFAULT_DEVICE);
 
     err = Pa_Initialize();
 
@@ -157,13 +157,13 @@ fluid_portaudio_driver_settings(FluidSettings *settings)
         {
             char *name;
 
-            if(fluid_portaudio_get_device_name(i, &name) == FLUID_OK)
+            if(portaudioGetDeviceName(i, &name) == FLUID_OK)
             {
                 /* the device i is a valid output device */
                 if(name)
                 {
                     /* registers this name in the option list */
-                    fluid_settings_add_option(settings, "audio.portaudio.device", name);
+                    settingsAddOption(settings, "audio.portaudio.device", name);
                     FLUID_FREE(name);
                 }
                 else
@@ -192,17 +192,17 @@ fluid_portaudio_driver_settings(FluidSettings *settings)
  * @param synth the synthesizer instance
  * @return pointer to the driver on success, NULL otherwise.
  */
-fluid_audio_driver_t *
-new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidPortaudioDriver(FluidSettings *settings, synthT *synth)
 {
-    fluid_portaudio_driver_t *dev = NULL;
+    portaudioDriverT *dev = NULL;
     PaStreamParameters outputParams;
     char *device = NULL; /* the portaudio device name to work with */
-    double sample_rate;  /* intended sample rate */
-    int period_size;     /* intended buffer size */
+    double sampleRate;  /* intended sample rate */
+    int periodSize;     /* intended buffer size */
     PaError err;
 
-    dev = FLUID_NEW(fluid_portaudio_driver_t);
+    dev = FLUID_NEW(portaudioDriverT);
 
     if(dev == NULL)
     {
@@ -220,18 +220,18 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_portaudio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(portaudioDriverT));
 
     dev->synth = synth;
 
     /* gets audio parameters from the settings */
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_dupstr(settings, "audio.portaudio.device", &device);   /* ++ alloc device name */
+    settingsGetint(settings, "audio.period-size", &periodSize);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsDupstr(settings, "audio.portaudio.device", &device);   /* ++ alloc device name */
 
     memset(&outputParams, 0, sizeof(outputParams));
     outputParams.channelCount = 2; /* For stereo output */
-    outputParams.suggestedLatency = (PaTime)period_size / sample_rate;
+    outputParams.suggestedLatency = (PaTime)periodSize / sampleRate;
 
     /* Locate the device if specified */
     if(FLUID_STRCMP(device, PORTAUDIO_DEFAULT_DEVICE) != 0)
@@ -246,14 +246,14 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
         if(numDevices < 0)
         {
             FLUID_LOG(FLUID_ERR, "PortAudio returned unexpected device count %d", numDevices);
-            goto error_recovery;
+            goto errorRecovery;
         }
 
         for(i = 0; i < numDevices; i++)
         {
             char *name;
 
-            if(fluid_portaudio_get_device_name(i, &name) == FLUID_OK)
+            if(portaudioGetDeviceName(i, &name) == FLUID_OK)
             {
                 /* the device i is a valid output device */
                 if(name)
@@ -273,7 +273,7 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
                 else
                 {
                     FLUID_LOG(FLUID_ERR, "Out of memory");
-                    goto error_recovery;
+                    goto errorRecovery;
                 }
             }
         }
@@ -281,7 +281,7 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
         if(i == numDevices)
         {
             FLUID_LOG(FLUID_ERR, "PortAudio device '%s' was not found", device);
-            goto error_recovery;
+            goto errorRecovery;
         }
     }
     else
@@ -293,20 +293,20 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
     /* The device is found. We set the sample format and the audio rendering
        function suited to this format.
     */
-    if(fluid_settings_str_equal(settings, "audio.sample-format", "16bits"))
+    if(settingsStrEqual(settings, "audio.sample-format", "16bits"))
     {
         outputParams.sampleFormat = paInt16;
-        dev->read = fluid_synth_write_s16;
+        dev->read = synthWriteS16;
     }
-    else if(fluid_settings_str_equal(settings, "audio.sample-format", "float"))
+    else if(settingsStrEqual(settings, "audio.sample-format", "float"))
     {
         outputParams.sampleFormat = paFloat32;
-        dev->read = fluid_synth_write_float;
+        dev->read = synthWriteFloat;
     }
     else
     {
         FLUID_LOG(FLUID_ERR, "Unknown sample format");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     /* PortAudio section */
@@ -315,17 +315,17 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
     err = Pa_OpenStream(&dev->stream,
                         NULL,              /* Input parameters */
                         &outputParams,     /* Output parameters */
-                        sample_rate,
-                        period_size,
+                        sampleRate,
+                        periodSize,
                         paNoFlag,
-                        fluid_portaudio_run, /* callback */
+                        portaudioRun, /* callback */
                         dev);
 
     if(err != paNoError)
     {
         FLUID_LOG(FLUID_ERR, "Error opening PortAudio stream: %s",
                   Pa_GetErrorText(err));
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     err = Pa_StartStream(dev->stream);  /* starts the I/O stream */
@@ -334,7 +334,7 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
     {
         FLUID_LOG(FLUID_ERR, "Error starting PortAudio stream: %s",
                   Pa_GetErrorText(err));
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     if(device)
@@ -342,42 +342,42 @@ new_fluid_portaudio_driver(FluidSettings *settings, fluid_synth_t *synth)
         FLUID_FREE(device);    /* -- free device name */
     }
 
-    return (fluid_audio_driver_t *)dev;
+    return (audioDriverT *)dev;
 
-error_recovery:
+errorRecovery:
 
     if(device)
     {
         FLUID_FREE(device);    /* -- free device name */
     }
 
-    delete_fluid_portaudio_driver((fluid_audio_driver_t *)dev);
+    deleteFluidPortaudioDriver((audioDriverT *)dev);
     return NULL;
 }
 
 /* PortAudio callback
- * fluid_portaudio_run
+ * portaudioRun
  */
 static int
-fluid_portaudio_run(const void *input, void *output, unsigned long frameCount,
+portaudioRun(const void *input, void *output, unsigned long frameCount,
                     const PaStreamCallbackTimeInfo *timeInfo,
                     PaStreamCallbackFlags statusFlags, void *userData)
 {
-    fluid_portaudio_driver_t *dev = (fluid_portaudio_driver_t *)userData;
+    portaudioDriverT *dev = (portaudioDriverT *)userData;
     /* it's as simple as that: */
     dev->read(dev->synth, frameCount, output, 0, 2, output, 1, 2);
     return 0;
 }
 
 /*
- * delete_fluid_portaudio_driver
+ * deleteFluidPortaudioDriver
  */
 void
-delete_fluid_portaudio_driver(fluid_audio_driver_t *p)
+deleteFluidPortaudioDriver(audioDriverT *p)
 {
-    fluid_portaudio_driver_t *dev = (fluid_portaudio_driver_t *)p;
+    portaudioDriverT *dev = (portaudioDriverT *)p;
     PaError err;
-    fluid_return_if_fail(dev != NULL);
+    returnIfFail(dev != NULL);
 
     /* PortAudio section */
     if(dev->stream)

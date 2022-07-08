@@ -27,10 +27,10 @@
   http://www.infiniteCD.org/
 */
 
-#include "fluid_event.h"
-#include "fluid_sys.h"	// timer, threads, etc...
-#include "fluid_list.h"
-#include "fluid_seq_queue.h"
+#include "event.h"
+#include "sys.h"	// timer, threads, etc...
+#include "list.h"
+#include "seqQueue.h"
 
 /***************************************************************
  *
@@ -40,20 +40,20 @@
 #define FLUID_SEQUENCER_EVENTS_MAX	1000
 
 /* Private data for SEQUENCER */
-struct _fluid_sequencer_t
+struct _fluidSequencerT
 {
     // A backup of currentMs when we have received the last scale change
     unsigned int startMs;
 
     // The number of milliseconds passed since we have started the sequencer,
     // as indicated by the synth's sample timer
-    fluid_atomic_int_t currentMs;
+    atomicIntT currentMs;
 
-    // A backup of cur_ticks when we have received the last scale change
-    unsigned int start_ticks;
+    // A backup of curTicks when we have received the last scale change
+    unsigned int startTicks;
 
     // The tick count which we've used for the most recent event dispatching
-    unsigned int cur_ticks;
+    unsigned int curTicks;
 
     int useSystemTimer;
 
@@ -61,22 +61,22 @@ struct _fluid_sequencer_t
     // If you think of MIDI, this is equivalent to: (PPQN / 1000) / (USPQN / 1000)
     double scale;
 
-    fluid_list_t *clients;
-    fluid_seq_id_t clientsID;
+    listT *clients;
+    seqIdT clientsID;
 
     // Pointer to the C++ event queue
     void *queue;
-    fluid_rec_mutex_t mutex;
+    recMutexT mutex;
 };
 
 /* Private data for clients */
-typedef struct _fluid_sequencer_client_t
+typedef struct _fluidSequencerClientT
 {
-    fluid_seq_id_t id;
+    seqIdT id;
     char *name;
-    fluid_event_callback_t callback;
+    eventCallbackT callback;
     void *data;
-} fluid_sequencer_client_t;
+} sequencerClientT;
 
 
 /* API implementation */
@@ -86,22 +86,22 @@ typedef struct _fluid_sequencer_client_t
  *
  * @return New sequencer instance
  *
- * Use new_fluid_sequencer2() to specify whether the system timer or
- * fluid_sequencer_process() is used to advance the sequencer.
+ * Use newFluidSequencer2() to specify whether the system timer or
+ * sequencerProcess() is used to advance the sequencer.
  *
  * @deprecated As of fluidsynth 2.1.1 the use of the system timer has been deprecated.
  */
-fluid_sequencer_t *
-new_fluid_sequencer(void)
+sequencerT *
+newFluidSequencer(void)
 {
-    return new_fluid_sequencer2(TRUE);
+    return newFluidSequencer2(TRUE);
 }
 
 /**
  * Create a new sequencer object.
  *
- * @param use_system_timer If TRUE, sequencer will advance at the rate of the
- *   system clock. If FALSE, call fluid_sequencer_process() to advance
+ * @param useSystemTimer If TRUE, sequencer will advance at the rate of the
+ *   system clock. If FALSE, call sequencerProcess() to advance
  *   the sequencer.
  * @return New sequencer instance
  *
@@ -109,17 +109,17 @@ new_fluid_sequencer(void)
  *
  * @since 1.1.0
  */
-fluid_sequencer_t *
-new_fluid_sequencer2(int use_system_timer)
+sequencerT *
+newFluidSequencer2(int useSystemTimer)
 {
-    fluid_sequencer_t *seq;
+    sequencerT *seq;
 
-    if(use_system_timer)
+    if(useSystemTimer)
     {
         FLUID_LOG(FLUID_WARN, "sequencer: Usage of the system timer has been deprecated!");
     }
 
-    seq = FLUID_NEW(fluid_sequencer_t);
+    seq = FLUID_NEW(sequencerT);
 
     if(seq == NULL)
     {
@@ -127,19 +127,19 @@ new_fluid_sequencer2(int use_system_timer)
         return NULL;
     }
 
-    FLUID_MEMSET(seq, 0, sizeof(fluid_sequencer_t));
+    FLUID_MEMSET(seq, 0, sizeof(sequencerT));
 
     seq->scale = 1000;	// default value
-    seq->useSystemTimer = use_system_timer ? 1 : 0;
-    seq->startMs = seq->useSystemTimer ? fluid_curtime() : 0;
+    seq->useSystemTimer = useSystemTimer ? 1 : 0;
+    seq->startMs = seq->useSystemTimer ? curtime() : 0;
 
-    fluid_rec_mutex_init(seq->mutex);
+    recMutexInit(seq->mutex);
 
-    seq->queue = new_fluid_seq_queue(FLUID_SEQUENCER_EVENTS_MAX);
+    seq->queue = newFluidSeqQueue(FLUID_SEQUENCER_EVENTS_MAX);
     if(seq->queue == NULL)
     {
         FLUID_LOG(FLUID_PANIC, "sequencer: Out of memory\n");
-        delete_fluid_sequencer(seq);
+        deleteFluidSequencer(seq);
         return NULL;
     }
 
@@ -154,19 +154,19 @@ new_fluid_sequencer2(int use_system_timer)
  * @note Before fluidsynth 2.1.1 registered sequencer clients may not be fully freed by this function.
  */
 void
-delete_fluid_sequencer(fluid_sequencer_t *seq)
+deleteFluidSequencer(sequencerT *seq)
 {
-    fluid_return_if_fail(seq != NULL);
+    returnIfFail(seq != NULL);
 
     /* cleanup clients */
     while(seq->clients)
     {
-        fluid_sequencer_client_t *client = (fluid_sequencer_client_t *)seq->clients->data;
-        fluid_sequencer_unregister_client(seq, client->id);
+        sequencerClientT *client = (sequencerClientT *)seq->clients->data;
+        sequencerUnregisterClient(seq, client->id);
     }
 
-    fluid_rec_mutex_destroy(seq->mutex);
-    delete_fluid_seq_queue(seq->queue);
+    recMutexDestroy(seq->mutex);
+    deleteFluidSeqQueue(seq->queue);
 
     FLUID_FREE(seq);
 }
@@ -182,9 +182,9 @@ delete_fluid_sequencer(fluid_sequencer_t *seq)
  * @since 1.1.0
  */
 int
-fluid_sequencer_get_use_system_timer(fluid_sequencer_t *seq)
+sequencerGetUseSystemTimer(sequencerT *seq)
 {
-    fluid_return_val_if_fail(seq != NULL, FALSE);
+    returnValIfFail(seq != NULL, FALSE);
 
     return seq->useSystemTimer;
 }
@@ -204,18 +204,18 @@ fluid_sequencer_get_use_system_timer(fluid_sequencer_t *seq)
  * Clients can be sources or destinations of events. Sources don't need to
  * register a callback.
  *
- * @note Implementations are encouraged to explicitly unregister any registered client with fluid_sequencer_unregister_client() before deleting the sequencer.
+ * @note Implementations are encouraged to explicitly unregister any registered client with sequencerUnregisterClient() before deleting the sequencer.
  */
-fluid_seq_id_t
-fluid_sequencer_register_client(fluid_sequencer_t *seq, const char *name,
-                                fluid_event_callback_t callback, void *data)
+seqIdT
+sequencerRegisterClient(sequencerT *seq, const char *name,
+                                eventCallbackT callback, void *data)
 {
-    fluid_sequencer_client_t *client;
+    sequencerClientT *client;
     char *nameCopy;
 
-    fluid_return_val_if_fail(seq != NULL, FLUID_FAILED);
+    returnValIfFail(seq != NULL, FLUID_FAILED);
 
-    client = FLUID_NEW(fluid_sequencer_client_t);
+    client = FLUID_NEW(sequencerClientT);
 
     if(client == NULL)
     {
@@ -239,7 +239,7 @@ fluid_sequencer_register_client(fluid_sequencer_t *seq, const char *name,
     client->callback = callback;
     client->data = data;
 
-    seq->clients = fluid_list_append(seq->clients, (void *)client);
+    seq->clients = listAppend(seq->clients, (void *)client);
 
     return (client->id);
 }
@@ -248,34 +248,34 @@ fluid_sequencer_register_client(fluid_sequencer_t *seq, const char *name,
  * Unregister a previously registered client.
  *
  * @param seq Sequencer object
- * @param id Client ID as returned by fluid_sequencer_register_client().
+ * @param id Client ID as returned by sequencerRegisterClient().
  *
  * The client's callback function will receive a FLUID_SEQ_UNREGISTERING event right before it is being unregistered.
  */
 void
-fluid_sequencer_unregister_client(fluid_sequencer_t *seq, fluid_seq_id_t id)
+sequencerUnregisterClient(sequencerT *seq, seqIdT id)
 {
-    fluid_list_t *tmp;
-    fluid_event_t evt;
-    unsigned int now = fluid_sequencer_get_tick(seq);
+    listT *tmp;
+    eventT evt;
+    unsigned int now = sequencerGetTick(seq);
 
-    fluid_return_if_fail(seq != NULL);
+    returnIfFail(seq != NULL);
 
-    fluid_event_clear(&evt);
-    fluid_event_unregistering(&evt);
-    fluid_event_set_dest(&evt, id);
-    fluid_event_set_time(&evt, now);
+    eventClear(&evt);
+    eventUnregistering(&evt);
+    eventSetDest(&evt, id);
+    eventSetTime(&evt, now);
 
     tmp = seq->clients;
 
     while(tmp)
     {
-        fluid_sequencer_client_t *client = (fluid_sequencer_client_t *)tmp->data;
+        sequencerClientT *client = (sequencerClientT *)tmp->data;
 
         if(client->id == id)
         {
             // client found, remove it from the list to avoid recursive call when calling callback
-            seq->clients = fluid_list_remove_link(seq->clients, tmp);
+            seq->clients = listRemoveLink(seq->clients, tmp);
 
             // call the callback (if any), to free underlying memory (e.g. seqbind structure)
             if (client->callback != NULL)
@@ -287,7 +287,7 @@ fluid_sequencer_unregister_client(fluid_sequencer_t *seq, fluid_seq_id_t id)
             {
                 FLUID_FREE(client->name);
             }
-            delete1_fluid_list(tmp);
+            delete1_fluidList(tmp);
             FLUID_FREE(client);
             return;
         }
@@ -305,14 +305,14 @@ fluid_sequencer_unregister_client(fluid_sequencer_t *seq, fluid_seq_id_t id)
  * @return Count of sequencer clients.
  */
 int
-fluid_sequencer_count_clients(fluid_sequencer_t *seq)
+sequencerCountClients(sequencerT *seq)
 {
     if(seq == NULL || seq->clients == NULL)
     {
         return 0;
     }
 
-    return fluid_list_size(seq->clients);
+    return listSize(seq->clients);
 }
 
 /**
@@ -322,14 +322,14 @@ fluid_sequencer_count_clients(fluid_sequencer_t *seq)
  * @param index Index of register client
  * @return Client ID or #FLUID_FAILED if not found
  */
-fluid_seq_id_t fluid_sequencer_get_client_id(fluid_sequencer_t *seq, int index)
+seqIdT sequencerGetClientId(sequencerT *seq, int index)
 {
-    fluid_list_t *tmp;
+    listT *tmp;
 
-    fluid_return_val_if_fail(seq != NULL, FLUID_FAILED);
-    fluid_return_val_if_fail(index >= 0, FLUID_FAILED);
+    returnValIfFail(seq != NULL, FLUID_FAILED);
+    returnValIfFail(index >= 0, FLUID_FAILED);
 
-    tmp = fluid_list_nth(seq->clients, index);
+    tmp = listNth(seq->clients, index);
 
     if(tmp == NULL)
     {
@@ -337,7 +337,7 @@ fluid_seq_id_t fluid_sequencer_get_client_id(fluid_sequencer_t *seq, int index)
     }
     else
     {
-        fluid_sequencer_client_t *client = (fluid_sequencer_client_t *)tmp->data;
+        sequencerClientT *client = (sequencerClientT *)tmp->data;
         return client->id;
     }
 }
@@ -351,17 +351,17 @@ fluid_seq_id_t fluid_sequencer_get_client_id(fluid_sequencer_t *seq, int index)
  *   be modified or freed.
  */
 char *
-fluid_sequencer_get_client_name(fluid_sequencer_t *seq, fluid_seq_id_t id)
+sequencerGetClientName(sequencerT *seq, seqIdT id)
 {
-    fluid_list_t *tmp;
+    listT *tmp;
 
-    fluid_return_val_if_fail(seq != NULL, NULL);
+    returnValIfFail(seq != NULL, NULL);
 
     tmp = seq->clients;
 
     while(tmp)
     {
-        fluid_sequencer_client_t *client = (fluid_sequencer_client_t *)tmp->data;
+        sequencerClientT *client = (sequencerClientT *)tmp->data;
 
         if(client->id == id)
         {
@@ -382,17 +382,17 @@ fluid_sequencer_get_client_name(fluid_sequencer_t *seq, fluid_seq_id_t id)
  * @return TRUE if client is a destination client, FALSE otherwise or if not found
  */
 int
-fluid_sequencer_client_is_dest(fluid_sequencer_t *seq, fluid_seq_id_t id)
+sequencerClientIsDest(sequencerT *seq, seqIdT id)
 {
-    fluid_list_t *tmp;
+    listT *tmp;
 
-    fluid_return_val_if_fail(seq != NULL, FALSE);
+    returnValIfFail(seq != NULL, FALSE);
 
     tmp = seq->clients;
 
     while(tmp)
     {
-        fluid_sequencer_client_t *client = (fluid_sequencer_client_t *)tmp->data;
+        sequencerClientT *client = (sequencerClientT *)tmp->data;
 
         if(client->id == id)
         {
@@ -412,34 +412,34 @@ fluid_sequencer_client_is_dest(fluid_sequencer_t *seq, fluid_seq_id_t id)
  * @param evt Event to send (not copied, used directly)
  */
 void
-fluid_sequencer_send_now(fluid_sequencer_t *seq, fluid_event_t *evt)
+sequencerSendNow(sequencerT *seq, eventT *evt)
 {
-    fluid_seq_id_t destID;
-    fluid_list_t *tmp;
+    seqIdT destID;
+    listT *tmp;
 
-    fluid_return_if_fail(seq != NULL);
-    fluid_return_if_fail(evt != NULL);
+    returnIfFail(seq != NULL);
+    returnIfFail(evt != NULL);
 
-    destID = fluid_event_get_dest(evt);
+    destID = eventGetDest(evt);
 
     /* find callback */
     tmp = seq->clients;
 
     while(tmp)
     {
-        fluid_sequencer_client_t *dest = (fluid_sequencer_client_t *)tmp->data;
+        sequencerClientT *dest = (sequencerClientT *)tmp->data;
 
         if(dest->id == destID)
         {
-            if(fluid_event_get_type(evt) == FLUID_SEQ_UNREGISTERING)
+            if(eventGetType(evt) == FLUID_SEQ_UNREGISTERING)
             {
-                fluid_sequencer_unregister_client(seq, destID);
+                sequencerUnregisterClient(seq, destID);
             }
             else
             {
                 if(dest->callback)
                 {
-                    (dest->callback)(fluid_sequencer_get_tick(seq), evt, seq, dest->data);
+                    (dest->callback)(sequencerGetTick(seq), evt, seq, dest->data);
                 }
             }
             return;
@@ -470,17 +470,17 @@ fluid_sequencer_send_now(fluid_sequencer_t *seq, fluid_event_t *evt)
  * \n
  * Or mathematically: #FLUID_SEQ_SYSTEMRESET < #FLUID_SEQ_UNREGISTERING < ... < (#FLUID_SEQ_NOTEON && #FLUID_SEQ_NOTE)
  *
- * @warning Be careful with relative ticks when sending many events! See #fluid_event_callback_t for details.
+ * @warning Be careful with relative ticks when sending many events! See #eventCallbackT for details.
  */
 int
-fluid_sequencer_send_at(fluid_sequencer_t *seq, fluid_event_t *evt,
+sequencerSendAt(sequencerT *seq, eventT *evt,
                         unsigned int time, int absolute)
 {
     int res;
-    unsigned int now = fluid_sequencer_get_tick(seq);
+    unsigned int now = sequencerGetTick(seq);
 
-    fluid_return_val_if_fail(seq != NULL, FLUID_FAILED);
-    fluid_return_val_if_fail(evt != NULL, FLUID_FAILED);
+    returnValIfFail(seq != NULL, FLUID_FAILED);
+    returnValIfFail(evt != NULL, FLUID_FAILED);
 
     /* set absolute */
     if(!absolute)
@@ -489,11 +489,11 @@ fluid_sequencer_send_at(fluid_sequencer_t *seq, fluid_event_t *evt,
     }
 
     /* time stamp event */
-    fluid_event_set_time(evt, time);
+    eventSetTime(evt, time);
 
-    fluid_rec_mutex_lock(seq->mutex);
-    res = fluid_seq_queue_push(seq->queue, evt);
-    fluid_rec_mutex_unlock(seq->mutex);
+    recMutexLock(seq->mutex);
+    res = seqQueuePush(seq->queue, evt);
+    recMutexUnlock(seq->mutex);
 
     return res;
 }
@@ -504,17 +504,17 @@ fluid_sequencer_send_at(fluid_sequencer_t *seq, fluid_event_t *evt,
  * @param seq Sequencer object
  * @param source Source client ID to match or -1 for wildcard
  * @param dest Destination client ID to match or -1 for wildcard
- * @param type Event type to match or -1 for wildcard (#fluid_seq_event_type)
+ * @param type Event type to match or -1 for wildcard (#seqEventType)
  */
 void
-fluid_sequencer_remove_events(fluid_sequencer_t *seq, fluid_seq_id_t source,
-                              fluid_seq_id_t dest, int type)
+sequencerRemoveEvents(sequencerT *seq, seqIdT source,
+                              seqIdT dest, int type)
 {
-    fluid_return_if_fail(seq != NULL);
+    returnIfFail(seq != NULL);
 
-    fluid_rec_mutex_lock(seq->mutex);
-    fluid_seq_queue_remove(seq->queue, source, dest, type);
-    fluid_rec_mutex_unlock(seq->mutex);
+    recMutexLock(seq->mutex);
+    seqQueueRemove(seq->queue, source, dest, type);
+    recMutexUnlock(seq->mutex);
 }
 
 
@@ -523,18 +523,18 @@ fluid_sequencer_remove_events(fluid_sequencer_t *seq, fluid_seq_id_t source,
 **************************************/
 
 static unsigned int
-fluid_sequencer_get_tick_LOCAL(fluid_sequencer_t *seq, unsigned int cur_msec)
+sequencerGetTick_LOCAL(sequencerT *seq, unsigned int curMsec)
 {
     unsigned int absMs;
     double nowFloat;
     unsigned int now;
 
-    fluid_return_val_if_fail(seq != NULL, 0u);
+    returnValIfFail(seq != NULL, 0u);
 
-    absMs = seq->useSystemTimer ? (unsigned int) fluid_curtime() : cur_msec;
+    absMs = seq->useSystemTimer ? (unsigned int) curtime() : curMsec;
     nowFloat = ((double)(absMs - seq->startMs)) * seq->scale / 1000.0f;
     now = nowFloat;
-    return seq->start_ticks + now;
+    return seq->startTicks + now;
 }
 
 /**
@@ -544,9 +544,9 @@ fluid_sequencer_get_tick_LOCAL(fluid_sequencer_t *seq, unsigned int cur_msec)
  * @return Current tick value
  */
 unsigned int
-fluid_sequencer_get_tick(fluid_sequencer_t *seq)
+sequencerGetTick(sequencerT *seq)
 {
-    return fluid_sequencer_get_tick_LOCAL(seq, fluid_atomic_int_get(&seq->currentMs));
+    return sequencerGetTick_LOCAL(seq, atomicIntGet(&seq->currentMs));
 }
 
 /**
@@ -564,9 +564,9 @@ fluid_sequencer_get_tick(fluid_sequencer_t *seq)
  * affected by the scale change.
  */
 void
-fluid_sequencer_set_time_scale(fluid_sequencer_t *seq, double scale)
+sequencerSetTimeScale(sequencerT *seq, double scale)
 {
-    fluid_return_if_fail(seq != NULL);
+    returnIfFail(seq != NULL);
 
     if(scale != scale)
     {
@@ -581,8 +581,8 @@ fluid_sequencer_set_time_scale(fluid_sequencer_t *seq, double scale)
     }
 
     seq->scale = scale;
-    seq->startMs = fluid_atomic_int_get(&seq->currentMs);
-    seq->start_ticks = seq->cur_ticks;
+    seq->startMs = atomicIntGet(&seq->currentMs);
+    seq->startTicks = seq->curTicks;
 }
 
 /**
@@ -592,9 +592,9 @@ fluid_sequencer_set_time_scale(fluid_sequencer_t *seq, double scale)
  * @return Time scale value in ticks per second.
  */
 double
-fluid_sequencer_get_time_scale(fluid_sequencer_t *seq)
+sequencerGetTimeScale(sequencerT *seq)
 {
-    fluid_return_val_if_fail(seq != NULL, 0);
+    returnValIfFail(seq != NULL, 0);
     return seq->scale;
 }
 
@@ -604,29 +604,29 @@ fluid_sequencer_get_time_scale(fluid_sequencer_t *seq)
  * @param seq Sequencer object
  * @param msec Time to advance sequencer to (absolute time since sequencer start).
  *
- * If you have registered the synthesizer as client (fluid_sequencer_register_fluidsynth()), the synth
- * will take care of calling fluid_sequencer_process(). Otherwise it is up to the user to
+ * If you have registered the synthesizer as client (sequencerRegisterFluidsynth()), the synth
+ * will take care of calling sequencerProcess(). Otherwise it is up to the user to
  * advance the sequencer manually.
  *
  * @since 1.1.0
  */
 void
-fluid_sequencer_process(fluid_sequencer_t *seq, unsigned int msec)
+sequencerProcess(sequencerT *seq, unsigned int msec)
 {
-    fluid_atomic_int_set(&seq->currentMs, msec);
-    seq->cur_ticks = fluid_sequencer_get_tick_LOCAL(seq, msec);
+    atomicIntSet(&seq->currentMs, msec);
+    seq->curTicks = sequencerGetTick_LOCAL(seq, msec);
 
-    fluid_rec_mutex_lock(seq->mutex);
-    fluid_seq_queue_process(seq->queue, seq, seq->cur_ticks);
-    fluid_rec_mutex_unlock(seq->mutex);
+    recMutexLock(seq->mutex);
+    seqQueueProcess(seq->queue, seq, seq->curTicks);
+    recMutexUnlock(seq->mutex);
 }
 
 
 /**
  * @internal
- * only used privately by fluid_seqbind and only from sequencer callback, thus lock acquire is not needed.
+ * only used privately by seqbind and only from sequencer callback, thus lock acquire is not needed.
  */
-void fluid_sequencer_invalidate_note(fluid_sequencer_t *seq, fluid_seq_id_t dest, fluid_note_id_t id)
+void sequencerInvalidateNote(sequencerT *seq, seqIdT dest, noteIdT id)
 {
-    fluid_seq_queue_invalidate_note_private(seq->queue, dest, id);
+    seqQueueInvalidateNotePrivate(seq->queue, dest, id);
 }

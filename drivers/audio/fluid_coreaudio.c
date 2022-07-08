@@ -18,14 +18,14 @@
  * 02110-1301, USA
  */
 
-/* fluid_coreaudio.c
+/* coreaudio.c
  *
  * Driver for the Apple's CoreAudio on MacOS X
  *
  */
 
-#include "fluid_adriver.h"
-#include "fluid_settings.h"
+#include "adriver.h"
+#include "settings.h"
 
 /*
  * !!! Make sure that no include above includes <netinet/tcp.h> !!!
@@ -41,24 +41,24 @@
 #include <AudioUnit/AudioUnit.h>
 
 /*
- * fluid_core_audio_driver_t
+ * coreAudioDriverT
  *
  */
 typedef struct
 {
-    fluid_audio_driver_t driver;
+    audioDriverT driver;
     AudioUnit outputUnit;
     AudioStreamBasicDescription format;
-    fluid_audio_func_t callback;
+    audioFuncT callback;
     void *data;
-    unsigned int buffer_size;
-    unsigned int buffer_count;
+    unsigned int bufferSize;
+    unsigned int bufferCount;
     float **buffers;
     double phase;
-} fluid_core_audio_driver_t;
+} coreAudioDriverT;
 
 
-OSStatus fluid_core_audio_callback(void *data,
+OSStatus coreAudioCallback(void *data,
                                    AudioUnitRenderActionFlags *ioActionFlags,
                                    const AudioTimeStamp *inTimeStamp,
                                    UInt32 inBusNumber,
@@ -79,7 +79,7 @@ OSStatus fluid_core_audio_callback(void *data,
 #endif
 
 int
-get_num_outputs(AudioDeviceID deviceID)
+getNumOutputs(AudioDeviceID deviceID)
 {
     int i, total = 0;
     UInt32 size;
@@ -116,59 +116,59 @@ get_num_outputs(AudioDeviceID deviceID)
 }
 
 void
-set_channel_map(AudioUnit outputUnit, int audio_channels, const char *map_string)
+setChannelMap(AudioUnit outputUnit, int audioChannels, const char *mapString)
 {
     OSStatus status;
-    long int number_of_channels;
-    int i, *channel_map;
-    UInt32 property_size;
+    long int numberOfChannels;
+    int i, *channelMap;
+    UInt32 propertySize;
     Boolean writable = false;
 
     status = AudioUnitGetPropertyInfo(outputUnit,
                                       kAudioOutputUnitProperty_ChannelMap,
                                       kAudioUnitScope_Output,
                                       0,
-                                      &property_size, &writable);
+                                      &propertySize, &writable);
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to get the channel map size. Status=%ld\n", (long int) status);
         return;
     }
 
-    number_of_channels = property_size / sizeof(int);
-    if(!number_of_channels)
+    numberOfChannels = propertySize / sizeof(int);
+    if(!numberOfChannels)
     {
         return;
     }
 
-    channel_map = FLUID_ARRAY(int, number_of_channels);
-    if(channel_map == NULL)
+    channelMap = FLUID_ARRAY(int, numberOfChannels);
+    if(channelMap == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory.\n");
         return;
     }
 
-    FLUID_MEMSET(channel_map, 0xff, property_size);
+    FLUID_MEMSET(channelMap, 0xff, propertySize);
 
     status = AudioUnitGetProperty(outputUnit,
                                   kAudioOutputUnitProperty_ChannelMap,
                                   kAudioUnitScope_Output,
                                   0,
-                                  channel_map, &property_size);
+                                  channelMap, &propertySize);
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to get the existing channel map. Status=%ld\n", (long int) status);
-        FLUID_FREE(channel_map);
+        FLUID_FREE(channelMap);
         return;
     }
 
-    fluid_settings_split_csv(map_string, channel_map, (int) number_of_channels);
-    for(i = 0; i < number_of_channels; i++)
+    settingsSplitCsv(mapString, channelMap, (int) numberOfChannels);
+    for(i = 0; i < numberOfChannels; i++)
     {
-        if(channel_map[i] < -1 || channel_map[i] >= audio_channels)
+        if(channelMap[i] < -1 || channelMap[i] >= audioChannels)
         {
             FLUID_LOG(FLUID_DBG, "Channel map of output channel %d is out-of-range. Silencing.", i);
-            channel_map[i] = -1;
+            channelMap[i] = -1;
         }
     }
 
@@ -176,17 +176,17 @@ set_channel_map(AudioUnit outputUnit, int audio_channels, const char *map_string
                                   kAudioOutputUnitProperty_ChannelMap,
                                   kAudioUnitScope_Output,
                                   0,
-                                  channel_map, property_size);
+                                  channelMap, propertySize);
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to set the channel map. Status=%ld\n", (long int) status);
     }
 
-    FLUID_FREE(channel_map);
+    FLUID_FREE(channelMap);
 }
 
 void
-fluid_core_audio_driver_settings(FluidSettings *settings)
+coreAudioDriverSettings(FluidSettings *settings)
 {
     int i;
     UInt32 size;
@@ -195,9 +195,9 @@ fluid_core_audio_driver_settings(FluidSettings *settings)
     pa.mScope = kAudioObjectPropertyScopeWildcard;
     pa.mElement = kAudioObjectPropertyElementMain;
 
-    fluid_settings_register_str(settings, "audio.coreaudio.device", "default", 0);
-    fluid_settings_register_str(settings, "audio.coreaudio.channel-map", "", 0);
-    fluid_settings_add_option(settings, "audio.coreaudio.device", "default");
+    settingsRegisterStr(settings, "audio.coreaudio.device", "default", 0);
+    settingsRegisterStr(settings, "audio.coreaudio.channel-map", "", 0);
+    settingsAddOption(settings, "audio.coreaudio.device", "default");
 
     if(OK(AudioObjectGetPropertyDataSize(kAudioObjectSystemObject, &pa, 0, 0, &size)))
     {
@@ -214,9 +214,9 @@ fluid_core_audio_driver_settings(FluidSettings *settings)
 
                 if(OK(AudioObjectGetPropertyData(devs[i], &pa, 0, 0, &size, name)))
                 {
-                    if(get_num_outputs(devs[i]) > 0)
+                    if(getNumOutputs(devs[i]) > 0)
                     {
-                        fluid_settings_add_option(settings, "audio.coreaudio.device", name);
+                        settingsAddOption(settings, "audio.coreaudio.device", name);
                     }
                 }
             }
@@ -225,26 +225,26 @@ fluid_core_audio_driver_settings(FluidSettings *settings)
 }
 
 /*
- * new_fluid_core_audio_driver
+ * newFluidCoreAudioDriver
  */
-fluid_audio_driver_t *
-new_fluid_core_audio_driver(FluidSettings *settings, fluid_synth_t *synth)
+audioDriverT *
+newFluidCoreAudioDriver(FluidSettings *settings, synthT *synth)
 {
-    return new_fluid_core_audio_driver2(settings,
+    return newFluidCoreAudioDriver2(settings,
                                         NULL,
                                         synth);
 }
 
 /*
- * new_fluid_core_audio_driver2
+ * newFluidCoreAudioDriver2
  */
-fluid_audio_driver_t *
-new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, void *data)
+audioDriverT *
+newFluidCoreAudioDriver2(FluidSettings *settings, audioFuncT func, void *data)
 {
-    char *devname = NULL, *channel_map = NULL;
-    fluid_core_audio_driver_t *dev = NULL;
-    int period_size, periods, audio_channels = 1;
-    double sample_rate;
+    char *devname = NULL, *channelMap = NULL;
+    coreAudioDriverT *dev = NULL;
+    int periodSize, periods, audioChannels = 1;
+    double sampleRate;
     OSStatus status;
     UInt32 size;
     int i;
@@ -257,7 +257,7 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
 #endif
     AURenderCallbackStruct render;
 
-    dev = FLUID_NEW(fluid_core_audio_driver_t);
+    dev = FLUID_NEW(coreAudioDriverT);
 
     if(dev == NULL)
     {
@@ -265,7 +265,7 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
         return NULL;
     }
 
-    FLUID_MEMSET(dev, 0, sizeof(fluid_core_audio_driver_t));
+    FLUID_MEMSET(dev, 0, sizeof(coreAudioDriverT));
 
     dev->callback = func;
     dev->data = data;
@@ -286,7 +286,7 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
     if(comp == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Failed to get the default audio device");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
@@ -298,11 +298,11 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to open the default audio device. Status=%ld\n", (long int)status);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     // Set up a callback function to generate output
-    render.inputProc = fluid_core_audio_callback;
+    render.inputProc = coreAudioCallback;
     render.inputProcRefCon = (void *) dev;
     status = AudioUnitSetProperty(dev->outputUnit,
                                   kAudioUnitProperty_SetRenderCallback,
@@ -314,19 +314,19 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Error setting the audio callback. Status=%ld\n", (long int)status);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    fluid_settings_getint(settings, "synth.audio-channels", &audio_channels);
-    fluid_settings_getnum(settings, "synth.sample-rate", &sample_rate);
-    fluid_settings_getint(settings, "audio.periods", &periods);
-    fluid_settings_getint(settings, "audio.period-size", &period_size);
+    settingsGetint(settings, "synth.audio-channels", &audioChannels);
+    settingsGetnum(settings, "synth.sample-rate", &sampleRate);
+    settingsGetint(settings, "audio.periods", &periods);
+    settingsGetint(settings, "audio.period-size", &periodSize);
 
     /* audio channels are in stereo, with a minimum of one pair */
-    audio_channels = (audio_channels > 0) ? (2 * audio_channels) : 2;
+    audioChannels = (audioChannels > 0) ? (2 * audioChannels) : 2;
 
     /* get the selected device name. if none is specified, use NULL for the default device. */
-    if(fluid_settings_dupstr(settings, "audio.coreaudio.device", &devname) == FLUID_OK   /* alloc device name */
+    if(settingsDupstr(settings, "audio.coreaudio.device", &devname) == FLUID_OK   /* alloc device name */
             && devname && strlen(devname) > 0)
     {
         AudioObjectPropertyAddress pa;
@@ -349,7 +349,7 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
 
                     if(OK(AudioObjectGetPropertyData(devs[i], &pa, 0, 0, &size, name)))
                     {
-                        if(get_num_outputs(devs[i]) > 0 && FLUID_STRCASECMP(devname, name) == 0)
+                        if(getNumOutputs(devs[i]) > 0 && FLUID_STRCASECMP(devname, name) == 0)
                         {
                             AudioDeviceID selectedID = devs[i];
                             status = AudioUnitSetProperty(dev->outputUnit,
@@ -362,7 +362,7 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
                             if(status != noErr)
                             {
                                 FLUID_LOG(FLUID_ERR, "Error setting the selected output device. Status=%ld\n", (long int)status);
-                                goto error_recovery;
+                                goto errorRecovery;
                             }
                         }
                     }
@@ -373,17 +373,17 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
 
     FLUID_FREE(devname);  /* free device name */
 
-    dev->buffer_size = period_size * periods;
+    dev->bufferSize = periodSize * periods;
 
     // The DefaultOutputUnit should do any format conversions
     // necessary from our format to the device's format.
-    dev->format.mSampleRate = sample_rate; // sample rate of the audio stream
+    dev->format.mSampleRate = sampleRate; // sample rate of the audio stream
     dev->format.mFormatID = kAudioFormatLinearPCM; // encoding type of the audio stream
     dev->format.mFormatFlags = kLinearPCMFormatFlagIsFloat | kAudioFormatFlagIsNonInterleaved;
     dev->format.mBytesPerPacket = sizeof(float);
     dev->format.mFramesPerPacket = 1;
     dev->format.mBytesPerFrame = sizeof(float);
-    dev->format.mChannelsPerFrame = audio_channels;
+    dev->format.mChannelsPerFrame = audioChannels;
     dev->format.mBitsPerChannel = 8 * sizeof(float);
 
     FLUID_LOG(FLUID_DBG, "mSampleRate %g", dev->format.mSampleRate);
@@ -404,40 +404,40 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Error setting the audio format. Status=%ld\n", (long int)status);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    if(fluid_settings_dupstr(settings, "audio.coreaudio.channel-map", &channel_map) == FLUID_OK   /* alloc channel map */
-            && channel_map && strlen(channel_map) > 0)
+    if(settingsDupstr(settings, "audio.coreaudio.channel-map", &channelMap) == FLUID_OK   /* alloc channel map */
+            && channelMap && strlen(channelMap) > 0)
     {
-        set_channel_map(dev->outputUnit, audio_channels, channel_map);
+        setChannelMap(dev->outputUnit, audioChannels, channelMap);
     }
-    FLUID_FREE(channel_map);  /* free channel map */
+    FLUID_FREE(channelMap);  /* free channel map */
 
     status = AudioUnitSetProperty(dev->outputUnit,
                                   kAudioUnitProperty_MaximumFramesPerSlice,
                                   kAudioUnitScope_Input,
                                   0,
-                                  &dev->buffer_size,
+                                  &dev->bufferSize,
                                   sizeof(unsigned int));
 
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to set the MaximumFramesPerSlice. Status=%ld\n", (long int)status);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    FLUID_LOG(FLUID_DBG, "MaximumFramesPerSlice = %d", dev->buffer_size);
+    FLUID_LOG(FLUID_DBG, "MaximumFramesPerSlice = %d", dev->bufferSize);
 
-    dev->buffers = FLUID_ARRAY(float *, audio_channels);
+    dev->buffers = FLUID_ARRAY(float *, audioChannels);
 
     if(dev->buffers == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory.");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    dev->buffer_count = (unsigned int) audio_channels;
+    dev->bufferCount = (unsigned int) audioChannels;
 
     // Initialize the audio unit
     status = AudioUnitInitialize(dev->outputUnit);
@@ -445,7 +445,7 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Error calling AudioUnitInitialize(). Status=%ld\n", (long int)status);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     // Start the rendering
@@ -454,25 +454,25 @@ new_fluid_core_audio_driver2(FluidSettings *settings, fluid_audio_func_t func, v
     if(status != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Error calling AudioOutputUnitStart(). Status=%ld\n", (long int)status);
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    return (fluid_audio_driver_t *) dev;
+    return (audioDriverT *) dev;
 
-error_recovery:
+errorRecovery:
 
-    delete_fluid_core_audio_driver((fluid_audio_driver_t *) dev);
+    deleteFluidCoreAudioDriver((audioDriverT *) dev);
     return NULL;
 }
 
 /*
- * delete_fluid_core_audio_driver
+ * deleteFluidCoreAudioDriver
  */
 void
-delete_fluid_core_audio_driver(fluid_audio_driver_t *p)
+deleteFluidCoreAudioDriver(audioDriverT *p)
 {
-    fluid_core_audio_driver_t *dev = (fluid_core_audio_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    coreAudioDriverT *dev = (coreAudioDriverT *) p;
+    returnIfFail(dev != NULL);
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED < 1060
     CloseComponent(dev->outputUnit);
@@ -489,19 +489,19 @@ delete_fluid_core_audio_driver(fluid_audio_driver_t *p)
 }
 
 OSStatus
-fluid_core_audio_callback(void *data,
+coreAudioCallback(void *data,
                           AudioUnitRenderActionFlags *ioActionFlags,
                           const AudioTimeStamp *inTimeStamp,
                           UInt32 inBusNumber,
                           UInt32 inNumberFrames,
                           AudioBufferList *ioData)
 {
-    fluid_core_audio_driver_t *dev = (fluid_core_audio_driver_t *) data;
+    coreAudioDriverT *dev = (coreAudioDriverT *) data;
     int len = inNumberFrames;
     UInt32 i, nBuffers = ioData->mNumberBuffers;
-    fluid_audio_func_t callback = (dev->callback != NULL) ? dev->callback : (fluid_audio_func_t) fluid_synth_process;
+    audioFuncT callback = (dev->callback != NULL) ? dev->callback : (audioFuncT) synthProcess;
 
-    for(i = 0; i < ioData->mNumberBuffers && i < dev->buffer_count; i++)
+    for(i = 0; i < ioData->mNumberBuffers && i < dev->bufferCount; i++)
     {
         dev->buffers[i] = ioData->mBuffers[i].mData;
         FLUID_MEMSET(dev->buffers[i], 0, len * sizeof(float));

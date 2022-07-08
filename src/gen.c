@@ -1,112 +1,117 @@
 #include "fluidbean.h"
-#include "gen.h"
+#include "data.h"
+#include "enums.h"
+#include "soundfont.h"
+#include "chan.h"
 
+typedef struct {
+	S8 init;										/* Does the generator need to be initialized (cfr. voiceInit()) */
+	S8 nrpnScale;							/* The scale to convert from NRPN (cfr. genMapNrpn()) */
+	S32 min;										/* The minimum value */
+	S32 max;										/* The maximum value */
+	S32 def;										/* The default value (cfr. genSetDefaultValues()) */
+} GenDefault;
 
 /* See SFSpec21 $8.1.3 */
-fluid_gen_info_t fluid_gen_info[] = {
-	/* number/name             init  scale         min        max         def */
-	{GEN_STARTADDROFS, 1, 1, 0.0f, 1e10f, 0.0f},
-	{GEN_ENDADDROFS, 1, 1, -1e10f, 0.0f, 0.0f},
-	{GEN_STARTLOOPADDROFS, 1, 1, -1e10f, 1e10f, 0.0f},
-	{GEN_ENDLOOPADDROFS, 1, 1, -1e10f, 1e10f, 0.0f},
-	{GEN_STARTADDRCOARSEOFS, 0, 1, 0.0f, 1e10f, 0.0f},
-	{GEN_MODLFOTOPITCH, 1, 2, -12000.0f, 12000.0f, 0.0f},
-	{GEN_VIBLFOTOPITCH, 1, 2, -12000.0f, 12000.0f, 0.0f},
-	{GEN_MODENVTOPITCH, 1, 2, -12000.0f, 12000.0f, 0.0f},
-	{GEN_FILTERFC, 1, 2, 1500.0f, 13500.0f, 13500.0f},
-	{GEN_FILTERQ, 1, 1, 0.0f, 960.0f, 0.0f},
-	{GEN_MODLFOTOFILTERFC, 1, 2, -12000.0f, 12000.0f, 0.0f},
-	{GEN_MODENVTOFILTERFC, 1, 2, -12000.0f, 12000.0f, 0.0f},
-	{GEN_ENDADDRCOARSEOFS, 0, 1, -1e10f, 0.0f, 0.0f},
-	{GEN_MODLFOTOVOL, 1, 1, -960.0f, 960.0f, 0.0f},
-	{GEN_UNUSED1, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_CHORUSSEND, 1, 1, 0.0f, 1000.0f, 0.0f},
-	{GEN_REVERBSEND, 1, 1, 0.0f, 1000.0f, 0.0f},
-	{GEN_PAN, 1, 1, -500.0f, 500.0f, 0.0f},
-	{GEN_UNUSED2, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_UNUSED3, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_UNUSED4, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_MODLFODELAY, 1, 2, -12000.0f, 5000.0f, -12000.0f},
-	{GEN_MODLFOFREQ, 1, 4, -16000.0f, 4500.0f, 0.0f},
-	{GEN_VIBLFODELAY, 1, 2, -12000.0f, 5000.0f, -12000.0f},
-	{GEN_VIBLFOFREQ, 1, 4, -16000.0f, 4500.0f, 0.0f},
-	{GEN_MODENVDELAY, 1, 2, -12000.0f, 5000.0f, -12000.0f},
-	{GEN_MODENVATTACK, 1, 2, -12000.0f, 8000.0f, -12000.0f},
-	{GEN_MODENVHOLD, 1, 2, -12000.0f, 5000.0f, -12000.0f},
-	{GEN_MODENVDECAY, 1, 2, -12000.0f, 8000.0f, -12000.0f},
-	{GEN_MODENVSUSTAIN, 0, 1, 0.0f, 1000.0f, 0.0f},
-	{GEN_MODENVRELEASE, 1, 2, -12000.0f, 8000.0f, -12000.0f},
-	{GEN_KEYTOMODENVHOLD, 0, 1, -1200.0f, 1200.0f, 0.0f},
-	{GEN_KEYTOMODENVDECAY, 0, 1, -1200.0f, 1200.0f, 0.0f},
-	{GEN_VOLENVDELAY, 1, 2, -12000.0f, 5000.0f, -12000.0f},
-	{GEN_VOLENVATTACK, 1, 2, -12000.0f, 8000.0f, -12000.0f},
-	{GEN_VOLENVHOLD, 1, 2, -12000.0f, 5000.0f, -12000.0f},
-	{GEN_VOLENVDECAY, 1, 2, -12000.0f, 8000.0f, -12000.0f},
-	{GEN_VOLENVSUSTAIN, 0, 1, 0.0f, 1440.0f, 0.0f},
-	{GEN_VOLENVRELEASE, 1, 2, -12000.0f, 8000.0f, -12000.0f},
-	{GEN_KEYTOVOLENVHOLD, 0, 1, -1200.0f, 1200.0f, 0.0f},
-	{GEN_KEYTOVOLENVDECAY, 0, 1, -1200.0f, 1200.0f, 0.0f},
-	{GEN_INSTRUMENT, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_RESERVED1, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_KEYRANGE, 0, 0, 0.0f, 127.0f, 0.0f},
-	{GEN_VELRANGE, 0, 0, 0.0f, 127.0f, 0.0f},
-	{GEN_STARTLOOPADDRCOARSEOFS, 0, 1, -1e10f, 1e10f, 0.0f},
-	{GEN_KEYNUM, 1, 0, 0.0f, 127.0f, -1.0f},
-	{GEN_VELOCITY, 1, 1, 0.0f, 127.0f, -1.0f},
-	{GEN_ATTENUATION, 1, 1, 0.0f, 1440.0f, 0.0f},
-	{GEN_RESERVED2, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_ENDLOOPADDRCOARSEOFS, 0, 1, -1e10f, 1e10f, 0.0f},
-	{GEN_COARSETUNE, 0, 1, -120.0f, 120.0f, 0.0f},
-	{GEN_FINETUNE, 0, 1, -99.0f, 99.0f, 0.0f},
-	{GEN_SAMPLEID, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_SAMPLEMODE, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_RESERVED3, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_SCALETUNE, 0, 1, 0.0f, 1200.0f, 100.0f},
-	{GEN_EXCLUSIVECLASS, 0, 0, 0.0f, 0.0f, 0.0f},
-	{GEN_OVERRIDEROOTKEY, 1, 0, 0.0f, 127.0f, -1.0f},
-	{GEN_PITCH, 1, 0, 0.0f, 127.0f, 0.0f}
+GenDefault genDefaultsA[] = {
+	/* init  scale         min        max         de */
+	{1, 1, 0, 0xFFFFFFFF, 0}, // GEN_STARTADDROFS, 
+	{1, 1, 0, 0xFFFFFFFF, 0}, // GEN_ENDADDROFS, 
+	{1, 1, 0, 0xFFFFFFFF, 0}, // GEN_STARTLOOPADDROFS, 
+	{1, 1, 0, 0xFFFFFFFF, 0}, // GEN_ENDLOOPADDROFS, 
+	{0, 1, 0, 0xFFFFFFFF, 0}, // GEN_STARTADDRCOARSEOFS, 
+	{1, 2, -12000, 12000, 0}, // GEN_MODLFOTOPITCH, 
+	{1, 2, -12000, 12000, 0}, // GEN_VIBLFOTOPITCH, 
+	{1, 2, -12000, 12000, 0}, // GEN_MODENVTOPITCH, 
+	{1, 2, 1500, 13500, 13500}, // GEN_FILTERFC, 
+	{1, 1, 0, 960, 0}, // GEN_FILTERQ, 
+	{1, 2, -12000, 12000, 0}, // GEN_MODLFOTOFILTERFC, 
+	{1, 2, -12000, 12000, 0}, // GEN_MODENVTOFILTERFC, 
+	{0, 1, 0, 0, 0}, // GEN_ENDADDRCOARSEOFS, 
+	{1, 1, -960, 960, 0}, // GEN_MODLFOTOVOL, 
+	{0, 0, 0, 0, 0}, // GEN_UNUSED1, 
+	{1, 1, 0, 1000, 0}, // GEN_CHORUSSEND, 
+	{1, 1, 0, 1000, 0}, // GEN_REVERBSEND, 
+	{1, 1, -500, 500, 0}, // GEN_PAN, 
+	{0, 0, 0, 0, 0}, // GEN_UNUSED2, 
+	{0, 0, 0, 0, 0}, // GEN_UNUSED3, 
+	{0, 0, 0, 0, 0}, // GEN_UNUSED4, 
+	{1, 2, -12000, 5000, -12000}, // GEN_MODLFODELAY, 
+	{1, 4, -16000, 4500, 0}, // GEN_MODLFOFREQ, 
+	{1, 2, -12000, 5000, -12000}, // GEN_VIBLFODELAY, 
+	{1, 4, -16000, 4500, 0}, // GEN_VIBLFOFREQ, 
+	{1, 2, -12000, 5000, -12000}, // GEN_MODENVDELAY, 
+	{1, 2, -12000, 8000, -12000}, // GEN_MODENVATTACK, 
+	{1, 2, -12000, 5000, -12000}, // GEN_MODENVHOLD, 
+	{1, 2, -12000, 8000, -12000}, // GEN_MODENVDECAY, 
+	{0, 1, 0, 1000, 0}, // GEN_MODENVSUSTAIN, 
+	{1, 2, -12000, 8000, -12000}, // GEN_MODENVRELEASE, 
+	{0, 1, -1200, 1200, 0}, // GEN_KEYTOMODENVHOLD, 
+	{0, 1, -1200, 1200, 0}, // GEN_KEYTOMODENVDECAY, 
+	{1, 2, -12000, 5000, -12000}, // GEN_VOLENVDELAY, 
+	{1, 2, -12000, 8000, -12000}, // GEN_VOLENVATTACK, 
+	{1, 2, -12000, 5000, -12000}, // GEN_VOLENVHOLD, 
+	{1, 2, -12000, 8000, -12000}, // GEN_VOLENVDECAY, 
+	{0, 1, 0, 1440, 0}, // GEN_VOLENVSUSTAIN, 
+	{1, 2, -12000, 8000, -12000}, // GEN_VOLENVRELEASE, 
+	{0, 1, -1200, 1200, 0}, // GEN_KEYTOVOLENVHOLD, 
+	{0, 1, -1200, 1200, 0}, // GEN_KEYTOVOLENVDECAY, 
+	{0, 0, 0, 0, 0}, // GEN_INSTRUMENT, 
+	{0, 0, 0, 0, 0}, // GEN_RESERVED1, 
+	{0, 0, 0, 127, 0}, // GEN_KEYRANGE, 
+	{0, 0, 0, 127, 0}, // GEN_VELRANGE, 
+	{0, 1, 0, 0xFFFFFFFF, 0}, // GEN_STARTLOOPADDRCOARSEOFS, 
+	{1, 0, 0, 127, -1}, // GEN_KEYNUM, 
+	{1, 1, 0, 127, -1}, // GEN_VELOCITY, 
+	{1, 1, 0, 1440, 0}, // GEN_ATTENUATION, 
+	{0, 0, 0, 0, 0}, // GEN_RESERVED2, 
+	{0, 1, 0, 0xFFFFFFFF, 0}, // GEN_ENDLOOPADDRCOARSEOFS, 
+	{0, 1, -120, 120, 0}, // GEN_COARSETUNE, 
+	{0, 1, -99, 99, 0}, // GEN_FINETUNE, 
+	{0, 0, 0, 0, 0}, // GEN_SAMPLEID, 
+	{0, 0, 0, 0, 0}, // GEN_SAMPLEMODE, 
+	{0, 0, 0, 0, 0}, // GEN_RESERVED3, 
+	{0, 1, 0, 1200, 100}, // GEN_SCALETUNE, 
+	{0, 0, 0, 0, 0}, // GEN_EXCLUSIVECLASS, 
+	{1, 0, 0, 127, -1}, // GEN_OVERRIDEROOTKEY, 
+	{1, 0, 0, 127, 0} // GEN_PITCH, 
 };
 
-void fluid_gen_set_default_values (Generator * genA, U8 nGens) {
-	int i;
+void genSetDefaultValues (Generator *genA, U8 nGens) {
   Generator *genEndP = genA + nGens;
-
   for (Generator *genP = genA; genP < genEndP; ++genP) {
 		genP->flags = GEN_UNUSED;
-		genP->mod = 0.0;
-		genP->nrpn = 0.0;
-		genP->val = fluid_gen_info[genP->genType].def;
+		genP->mod = 0;
+		genP->nrpn = 0;
+		genP->val = genDefaultsA[genP->genType].def;  // val is the soundfont's nominal value for this generator.
 	}
 }
 
 
-/* fluid_gen_init
- *
- * Set an array of generators to their initial value
- */
-int fluid_gen_init (Generator * genA, U8 nGens, Channel * channelP) {
-	fluid_gen_set_default_values (gen);
+/* genInit: Set an array of generators to their initial value */
+int genInit (Generator * genA, U8 nGens, Channel * channelP) {
+	genSetDefaultValues(genA, nGens);
 
   Generator *genEndP = genA + nGens;
 
   for (Generator *genP = genA; genP < genEndP; ++genP) {
-		genP->nrpn = fluid_channel_get_gen (channel, i);
+		genP->nrpn = channelGetGen (channelP, genP->genType);
 		/* This is an extension to the SoundFont standard. More
-		 * documentation is available at the fluid_synth_set_gen2()
+		 * documentation is available at the synthSetGen2()
 		 * function. */
-    if (channelP->gen_abs[genP->genType])
-			gen[i].flags = GEN_ABS_NRPN;
+    if (channelP->genAbs[genP->genType])
+			genP->flags = GEN_ABS_NRPN;
 	}
 
-	return FLUID_OK;
+	return OK;
 }
 
-fluid_real_t fluid_gen_scale (int gen, float value) {
-	return (fluid_gen_info[gen].min + value * (fluid_gen_info[gen].max - fluid_gen_info[gen].min));
+U32 genScale (U8 gen, U32 value) {
+	return (genDefaultsA[gen].min + value * (genDefaultsA[gen].max - genDefaultsA[gen].min));
 }
 
-fluid_real_t fluid_gen_scale_nrpn (int gen, int data) {
-	fluid_real_t value = (float) data - 8192.0f;
-	fluid_clip (value, -8192, 8192);
-	return value * (float) fluid_gen_info[gen].nrpn_scale;
+U32 genScaleNrpn (U8 gen, int data) {
+	realT value = data - 8192;
+	clip (value, -8192, 8192);
+	return value * genDefaultsA[gen].nrpnScale;
 }

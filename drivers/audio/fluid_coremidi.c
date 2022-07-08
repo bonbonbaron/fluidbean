@@ -18,19 +18,19 @@
  * 02110-1301, USA
  */
 
-/* fluid_coremidi.c
+/* coremidi.c
  *
  * Driver for Mac OSX native MIDI
  * Pedro Lopez-Cabanillas, Jan 2009
  */
 
-#include "fluidsynth_priv.h"
+#include "fluidsynthPriv.h"
 
 #if COREMIDI_SUPPORT
 
-#include "fluid_midi.h"
-#include "fluid_mdriver.h"
-#include "fluid_settings.h"
+#include "midi.h"
+#include "mdriver.h"
+#include "settings.h"
 
 /* Work around for OSX 10.4 */
 
@@ -55,66 +55,66 @@
 
 typedef struct
 {
-    fluid_midi_driver_t driver;
+    midiDriverT driver;
     MIDIClientRef client;
     MIDIEndpointRef endpoint;
-    MIDIPortRef input_port;
-    fluid_midi_parser_t *parser;
-    int autoconn_inputs;
-} fluid_coremidi_driver_t;
+    MIDIPortRef inputPort;
+    midiParserT *parser;
+    int autoconnInputs;
+} coremidiDriverT;
 
-static const MIDIClientRef invalid_client = (MIDIClientRef)-1;
-static const MIDIEndpointRef invalid_endpoint = (MIDIEndpointRef)-1;
-static const MIDIPortRef invalid_port = (MIDIPortRef)-1;
+static const MIDIClientRef invalidClient = (MIDIClientRef)-1;
+static const MIDIEndpointRef invalidEndpoint = (MIDIEndpointRef)-1;
+static const MIDIPortRef invalidPort = (MIDIPortRef)-1;
 
-void fluid_coremidi_callback(const MIDIPacketList *list, void *p, void *src);
+void coremidiCallback(const MIDIPacketList *list, void *p, void *src);
 
-void fluid_coremidi_driver_settings(FluidSettings *settings)
+void coremidiDriverSettings(FluidSettings *settings)
 {
-    fluid_settings_register_str(settings, "midi.coremidi.id", "pid", 0);
+    settingsRegisterStr(settings, "midi.coremidi.id", "pid", 0);
 }
 
-static void fluid_coremidi_autoconnect(fluid_coremidi_driver_t *dev, MIDIPortRef input_port)
+static void coremidiAutoconnect(coremidiDriverT *dev, MIDIPortRef inputPort)
 {
     int i;
-    int source_count = MIDIGetNumberOfSources();
-    for(i = 0; i < source_count; ++i)
+    int sourceCount = MIDIGetNumberOfSources();
+    for(i = 0; i < sourceCount; ++i)
     {
         MIDIEndpointRef source = MIDIGetSource(i);
 
         CFStringRef externalName;
         OSStatus result = MIDIObjectGetStringProperty(source, kMIDIPropertyName, &externalName);
-        const char *source_name = CFStringGetCStringPtr(externalName, kCFStringEncodingASCII);
+        const char *sourceName = CFStringGetCStringPtr(externalName, kCFStringEncodingASCII);
         CFRelease(externalName);
 
-        result = MIDIPortConnectSource(input_port, source, NULL);
+        result = MIDIPortConnectSource(inputPort, source, NULL);
         if(result != noErr)
         {
-            FLUID_LOG(FLUID_ERR, "Failed to connect \"%s\" device to input port.", source_name);
+            FLUID_LOG(FLUID_ERR, "Failed to connect \"%s\" device to input port.", sourceName);
         }
         else
         {
-            FLUID_LOG(FLUID_DBG, "Connected input port to \"%s\".", source_name);
+            FLUID_LOG(FLUID_DBG, "Connected input port to \"%s\".", sourceName);
         }
     }
 }
 
 /*
- * new_fluid_coremidi_driver
+ * newFluidCoremidiDriver
  */
-fluid_midi_driver_t *
-new_fluid_coremidi_driver(FluidSettings *settings, handle_midi_event_func_t handler, void *data)
+midiDriverT *
+newFluidCoremidiDriver(FluidSettings *settings, handleMidiEventFuncT handler, void *data)
 {
-    fluid_coremidi_driver_t *dev;
+    coremidiDriverT *dev;
     MIDIClientRef client;
     MIDIEndpointRef endpoint;
     char clientid[32];
     char *portname;
     char *id;
-    CFStringRef str_portname;
-    CFStringRef str_clientname;
+    CFStringRef strPortname;
+    CFStringRef strClientname;
     OSStatus result;
-    CFStringRef str_input_portname;
+    CFStringRef strInputPortname;
 
     /* not much use doing anything */
     if(handler == NULL)
@@ -123,7 +123,7 @@ new_fluid_coremidi_driver(FluidSettings *settings, handle_midi_event_func_t hand
         return NULL;
     }
 
-    dev = FLUID_MALLOC(sizeof(fluid_coremidi_driver_t));
+    dev = FLUID_MALLOC(sizeof(coremidiDriverT));
 
     if(dev == NULL)
     {
@@ -131,22 +131,22 @@ new_fluid_coremidi_driver(FluidSettings *settings, handle_midi_event_func_t hand
         return NULL;
     }
 
-    dev->client = invalid_client;
-    dev->endpoint = invalid_endpoint;
-    dev->input_port = invalid_port;
+    dev->client = invalidClient;
+    dev->endpoint = invalidEndpoint;
+    dev->inputPort = invalidPort;
     dev->parser = NULL;
     dev->driver.handler = handler;
     dev->driver.data = data;
 
-    dev->parser = new_fluid_midi_parser();
+    dev->parser = newFluidMidiParser();
 
     if(dev->parser == NULL)
     {
         FLUID_LOG(FLUID_ERR, "Out of memory");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    fluid_settings_dupstr(settings, "midi.coremidi.id", &id);     /* ++ alloc id string */
+    settingsDupstr(settings, "midi.coremidi.id", &id);     /* ++ alloc id string */
     memset(clientid, 0, sizeof(clientid));
 
     if(id != NULL)
@@ -163,17 +163,17 @@ new_fluid_coremidi_driver(FluidSettings *settings, handle_midi_event_func_t hand
         FLUID_FREE(id);   /* -- free id string */
     }
 
-    str_clientname = CFStringCreateWithFormat(NULL, NULL,
+    strClientname = CFStringCreateWithFormat(NULL, NULL,
                      CFSTR("FluidSynth%s"), clientid);
 
-    fluid_settings_dupstr(settings, "midi.portname", &portname);  /* ++ alloc port name */
+    settingsDupstr(settings, "midi.portname", &portname);  /* ++ alloc port name */
 
     if(!portname || strlen(portname) == 0)
-        str_portname = CFStringCreateWithFormat(NULL, NULL,
+        strPortname = CFStringCreateWithFormat(NULL, NULL,
                                                 CFSTR("FluidSynth virtual port%s"),
                                                 clientid);
     else
-        str_portname = CFStringCreateWithCString(NULL, portname,
+        strPortname = CFStringCreateWithCString(NULL, portname,
                        kCFStringEncodingASCII);
 
     if(portname)
@@ -181,100 +181,100 @@ new_fluid_coremidi_driver(FluidSettings *settings, handle_midi_event_func_t hand
         FLUID_FREE(portname);    /* -- free port name */
     }
 
-    result = MIDIClientCreate(str_clientname, NULL, NULL, &client);
-    CFRelease(str_clientname);
+    result = MIDIClientCreate(strClientname, NULL, NULL, &client);
+    CFRelease(strClientname);
 
     if(result != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to create the MIDI input client");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
     dev->client = client;
 
-    result = MIDIDestinationCreate(client, str_portname,
-                                   fluid_coremidi_callback,
+    result = MIDIDestinationCreate(client, strPortname,
+                                   coremidiCallback,
                                    (void *)dev, &endpoint);
 
     if(result != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to create the MIDI input port. MIDI input not available.");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    str_input_portname = CFSTR("input");
-    result = MIDIInputPortCreate(client, str_input_portname,
-                                 fluid_coremidi_callback,
-                                 (void *)dev, &dev->input_port);
-    CFRelease(str_input_portname);
+    strInputPortname = CFSTR("input");
+    result = MIDIInputPortCreate(client, strInputPortname,
+                                 coremidiCallback,
+                                 (void *)dev, &dev->inputPort);
+    CFRelease(strInputPortname);
 
     if(result != noErr)
     {
         FLUID_LOG(FLUID_ERR, "Failed to create input port.");
-        goto error_recovery;
+        goto errorRecovery;
     }
 
-    fluid_settings_getint(settings, "midi.autoconnect", &dev->autoconn_inputs);
+    settingsGetint(settings, "midi.autoconnect", &dev->autoconnInputs);
 
-    if(dev->autoconn_inputs)
+    if(dev->autoconnInputs)
     {
-        fluid_coremidi_autoconnect(dev, dev->input_port);
+        coremidiAutoconnect(dev, dev->inputPort);
     }
 
     dev->endpoint = endpoint;
 
-    return (fluid_midi_driver_t *) dev;
+    return (midiDriverT *) dev;
 
-error_recovery:
-    delete_fluid_coremidi_driver((fluid_midi_driver_t *) dev);
+errorRecovery:
+    deleteFluidCoremidiDriver((midiDriverT *) dev);
     return NULL;
 }
 
 /*
- * delete_fluid_coremidi_driver
+ * deleteFluidCoremidiDriver
  */
 void
-delete_fluid_coremidi_driver(fluid_midi_driver_t *p)
+deleteFluidCoremidiDriver(midiDriverT *p)
 {
-    fluid_coremidi_driver_t *dev = (fluid_coremidi_driver_t *) p;
-    fluid_return_if_fail(dev != NULL);
+    coremidiDriverT *dev = (coremidiDriverT *) p;
+    returnIfFail(dev != NULL);
 
-    if(dev->input_port != invalid_port)
+    if(dev->inputPort != invalidPort)
     {
-        MIDIPortDispose(dev->input_port);
+        MIDIPortDispose(dev->inputPort);
     }
 
-    if(dev->client != invalid_client)
+    if(dev->client != invalidClient)
     {
         MIDIClientDispose(dev->client);
     }
 
-    if(dev->endpoint != invalid_endpoint)
+    if(dev->endpoint != invalidEndpoint)
     {
         MIDIEndpointDispose(dev->endpoint);
     }
 
     if(dev->parser != NULL)
     {
-        delete_fluid_midi_parser(dev->parser);
+        deleteFluidMidiParser(dev->parser);
     }
 
     FLUID_FREE(dev);
 }
 
 void
-fluid_coremidi_callback(const MIDIPacketList *list, void *p, void *src)
+coremidiCallback(const MIDIPacketList *list, void *p, void *src)
 {
     unsigned int i, j;
-    fluid_midi_event_t *event;
-    fluid_coremidi_driver_t *dev = (fluid_coremidi_driver_t *)p;
+    midiEventT *event;
+    coremidiDriverT *dev = (coremidiDriverT *)p;
     const MIDIPacket *packet = &list->packet[0];
 
     for(i = 0; i < list->numPackets; ++i)
     {
         for(j = 0; j < packet->length; ++j)
         {
-            event = fluid_midi_parser_parse(dev->parser, packet->data[j]);
+            event = midiParserParse(dev->parser, packet->data[j]);
 
             if(event != NULL)
             {
