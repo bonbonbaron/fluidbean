@@ -7,6 +7,10 @@
 #include "chorus.h"
 #include "enums.h"
 #include "voice.h"
+#include "midi.h"
+#include "mod.h"
+#include "gen.h"
+
 
 int synthProgramSelect2 (Synthesizer * synth, int chan, char *sfontName, U32 bankNum, U32 presetNum);
 int synthSetGen2 (Synthesizer * synth, int chan, int genId, float value, int absolute, int normalized);
@@ -2356,15 +2360,14 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
              *global instrument zone generator.  Both cases supersede
              *the default generator -> voiceGenSet */
             if (genP->flags) 
-              voiceP->gen[i] = izoneP->genA[i];
+              voiceP->gen[genP->genType] = *genP;
             else if ((globalIzoneP != NULL) && (globalIzoneP->genA[i].flags)) 
-              voiceP->gen[i] = globalIzoneP->genA[i];
+              voiceP->gen[genP->genType] = globalIzoneP->genA[genP->genType];
+            voiceP->gen[i].flags = (voiceP->gen[i].val != 0);  // true evalutes to GEN_SET enum (1).
           }                     /* for all generators */
 
           /* global instrument zone, modulators: Put them all into a list. */
-
           modListCount = 0;
-
           if (globalIzoneP) {
             Generator *genEndP = globalIzoneP->genA + 
                                  globalIzoneP->nGens;
@@ -2418,7 +2421,6 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
           }
 
           /* Preset level, generators */
-
           for (i = 0; i < GEN_LAST; i++) {
 
             /* SF 2.01 section 8.5 page 58: If some generators are
@@ -2452,6 +2454,7 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
                  *Do nothing, leave it unchanged.
                  */
               }
+              voiceP->gen[i].flags = (voiceP->gen[i].val != 0);  // true evalutes to GEN_SET enum (1).
             }                   /* if available at preset level */
           }                     /* for all generators */
 
@@ -2491,11 +2494,11 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
                 /* Finally add the new modulator to the list. */
                 modList[modListCount++] = modP;
             }
-
           }
 
           /* Add preset modulators (global / local) to the voiceP. */
           Modulator **modEndPP = modList + modListCount;
+          U32 nModsActuallyUsed = 0;
           for (Modulator **modPP = modList;
               modPP < modEndPP;
               ++modPP) {
@@ -2504,8 +2507,10 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
               /* Preset modulators -add- to existing instrument /
                *default modulators.  SF2.01 page 70 first bullet on page */
               voiceAddMod (voiceP, (*modPP), VOICE_ADD);
+              ++nModsActuallyUsed;
             }
           }
+          voiceP->nMods = nModsActuallyUsed;
 
           /* add the synthesis process to the synthesis loop. */
           synthStartVoice (synth, voiceP);

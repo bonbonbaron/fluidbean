@@ -5,6 +5,9 @@
 #include "synth.h"
 #include "sys.h"
 #include "soundfont.h"
+#include "gen.h"
+#include "mod.h"
+#include "midi.h"
 
 /* used for filter turn off optimization - if filter cutoff is above the
    specified value and filter q is below the other value, turn filter off */
@@ -26,10 +29,10 @@
 
 //removed inline
 static void voiceEffects (Voice * voice, int count,
-																 realT * dspLeftBuf,
-																 realT * dspRightBuf,
-																 realT * dspReverbBuf,
-																 realT * dspChorusBuf);
+																 S16 * dspLeftBuf,
+																 S16 * dspRightBuf,
+																 S16 * dspReverbBuf,
+																 S16 * dspChorusBuf);
 /*
  * newVoice
  */
@@ -100,7 +103,7 @@ int voiceInit (Voice * voice, Sample * sample, Channel * channel, int key, int v
 	 * of IIR filters, position in sample etc) is initialized. */
 
 	voice->id = id;
-	voice->chan = channelGetNum (channel);
+	voice->chan = channel->channum;
 	voice->key = (unsigned char) key;
 	voice->vel = (unsigned char) vel;
 	voice->channel = channel;
@@ -112,7 +115,7 @@ int voiceInit (Voice * voice, Sample * sample, Channel * channel, int key, int v
 	voice->hasLooped = 0;				/* Will be set during voiceWrite when the 2nd loop point is reached */
 	voice->lastFres = -1;				/* The filter coefficients have to be calculated later in the DSP loop. */
 	voice->filterStartup = 1;		/* Set the filter immediately, don't fade between old and new settings */
-	voice->interpMethod = channelGetInterpMethod (voice->channel);
+	voice->interpMethod = voice->channel->interpMethod;
 
 	/* vol env initialization */
 	voice->volenvCount = 0;
@@ -145,7 +148,8 @@ int voiceInit (Voice * voice, Sample * sample, Channel * channel, int key, int v
 	 * loader overwrites them. The generator values are later converted
 	 * into voice parameters in
 	 * voiceCalculateRuntimeSynthesisParameters.  */
-	genInit (&voice->gen[0], channel);
+  genInit (&voice->gen[0], voice->channel->gen, voice->channel->genAbs);
+	//genInit (&voice->gen[0], channel);
 
 	voice->synthGain = gain;
 	/* avoid division by zero later */
@@ -158,14 +162,8 @@ int voiceInit (Voice * voice, Sample * sample, Channel * channel, int key, int v
 	 * This value can be kept, it is a worst-case estimate.
 	 */
 
-	voice->amplitudeThatReachesNoiseFloorNonloop =
-		NOISE_FLOOR / voice->synthGain;
-	voice->amplitudeThatReachesNoiseFloorLoop =
-		NOISE_FLOOR / voice->synthGain;
-
-	/* Increment the reference count of the sample to prevent the
-	   unloading of the soundfont while this voice is playing. */
-	sampleIncrRef (voice->sampleP);
+	voice->amplitudeThatReachesNoiseFloorNonloop = NOISE_FLOOR / voice->synthGain;
+	voice->amplitudeThatReachesNoiseFloorLoop = NOISE_FLOOR / voice->synthGain;
 
 	return OK;
 }
@@ -209,16 +207,12 @@ realT voiceGenValue (Voice * voice, int num) {
  * dsp parameters). The dsp routine is #included in several places (dspCore.c).
  */
 // MB: Hmmm, okay... So what does dsp do then? 
-int
-voiceWrite (Voice * voice,
-									 S16 * dspLeftBuf, S16 * dspRightBuf,
-									 S16 * dspReverbBuf,
-									 S16 * dspChorusBuf) {
+int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspReverbBuf, S16 * dspChorusBuf) {
 	realT fres;
 	realT targetAmp;			/* target amplitude */
 	int count;
 
-	realT dspBuf[BUFSIZE];
+	S16 dspBuf[BUFSIZE];
 	envDataT *envData;
 	realT x;
 
@@ -369,11 +363,9 @@ voiceWrite (Voice * voice,
 
 		/* Is the playing pointer already in the loop? */
 		if (voice->hasLooped)
-			amplitudeThatReachesNoiseFloor =
-				voice->amplitudeThatReachesNoiseFloorLoop;
+			amplitudeThatReachesNoiseFloor = voice->amplitudeThatReachesNoiseFloorLoop;
 		else
-			amplitudeThatReachesNoiseFloor =
-				voice->amplitudeThatReachesNoiseFloorNonloop;
+			amplitudeThatReachesNoiseFloor = voice->amplitudeThatReachesNoiseFloorNonloop;
 
 		/* voice->attenuationMin is a lower boundary for the attenuation
 		 * now and in the future (possibly 0 in the worst case).  Now the
@@ -581,37 +573,32 @@ postProcess:
  */
 static void voiceEffects (
                      Voice * voice, int count,
-										 realT * dspLeftBuf,
-										 realT * dspRightBuf,
-										 realT * dspReverbBuf,
-										 realT * dspChorusBuf) {
+										 S16 *dspLeftBuf,
+										 S16 *dspRightBuf,
+										 S16 *dspReverbBuf,
+										 S16 *dspChorusBuf) {
 	/* IIR filter sample history */
-	realT dspHist1 = voice->hist1;
-	realT dspHist2 = voice->hist2;
+	S16 dspHist1 = voice->hist1;
+	S16 dspHist2 = voice->hist2;
 
 	/* IIR filter coefficients */
-	realT dspA1 = voice->a1;
-	realT dspA2 = voice->a2;
-	realT dspB02 = voice->b02;
-	realT dspB1 = voice->b1;
-	realT dspA1_incr = voice->a1_incr;
-	realT dspA2_incr = voice->a2_incr;
-	realT dspB02_incr = voice->b02_incr;
-	realT dspB1_incr = voice->b1_incr;
+	S16 dspA1 = voice->a1;
+	S16 dspA2 = voice->a2;
+	S16 dspB02 = voice->b02;
+	S16 dspB1 = voice->b1;
+	S16 dspA1_incr = voice->a1_incr;
+	S16 dspA2_incr = voice->a2_incr;
+	S16 dspB02_incr = voice->b02_incr;
+	S16 dspB1_incr = voice->b1_incr;
 	int dspFilterCoeffIncrCount = voice->filterCoeffIncrCount;
 
-	realT *dspBuf = voice->dspBuf;
+	S16 *dspBuf = voice->dspBuf;
 
-	realT dspCenternode;
+	S16 dspCenternode;
 	int dspI;
-	float v;
+	S16 v;
 
 	/* filter (implement the voice filter according to SoundFont standard) */
-
-	/* Check for denormal number (too close to zero). */
-	if (fabs (dspHist1) < 1e-20)
-		dspHist1 = 0.0f;						/* FIXME JMG - Is this even needed? */
-
 	/* Two versions of the filter loop. One, while the filter is
 	 * changing towards its new setting. The other, if the filter
 	 * doesn't change.
@@ -789,7 +776,7 @@ int voiceCalculateRuntimeSynthesisParameters (Voice * voice) {
 	 * genSetDefaultValues.
 	 */
 
-	for (i = 0; i < voice->modCount; i++) {
+	for (i = 0; i < voice->nMods; i++) {
 		Modulator *mod = &voice->mod[i];
 		realT modval = modGetValue (mod, voice->channel, voice);
 		int destGenIndex = mod->dest;
@@ -990,15 +977,16 @@ void voiceUpdateParam (Voice * voice, int gen) {
 		 */
 		if (voice->gen[GEN_OVERRIDEROOTKEY].val > -1) {	//FIXME: use flag instead of -1
 			voice->rootPitch = voice->gen[GEN_OVERRIDEROOTKEY].val * 100.0f
-				- voice->sampleP->pitchadj;
+				- voice->sampleP->origPitchAdj;
 		} else {
 			voice->rootPitch =
-				voice->sampleP->origpitch * 100.0f - voice->sampleP->pitchadj;
+				voice->sampleP->origPitch * 100.0f - voice->sampleP->origPitchAdj;
 		}
 		voice->rootPitch = ct2hz (voice->rootPitch);
+#define ONLY_SUPPORTED_SAMPLE_RATE (44100)
 		if (voice->sampleP != NULL) {
 			voice->rootPitch *=
-				(realT) voice->outputRate / voice->sampleP->samplerate;
+				(realT) voice->outputRate / ONLY_SUPPORTED_SAMPLE_RATE;
 		}
 		break;
 
@@ -1176,7 +1164,7 @@ void voiceUpdateParam (Voice * voice, int gen) {
 	case GEN_STARTADDROFS:				/* SF2.01 section 8.1.3 # 0 */
 	case GEN_STARTADDRCOARSEOFS:	/* SF2.01 section 8.1.3 # 4 */
 		if (voice->sampleP != NULL) {
-			voice->start = (voice->sampleP->start
+			voice->start = (voice->sampleP->startIdx
 											+ (int) _GEN (voice, GEN_STARTADDROFS)
 											+ 32768 * (int) _GEN (voice, GEN_STARTADDRCOARSEOFS));
 			voice->checkSampleSanityFlag = SAMPLESANITY_CHECK;
@@ -1185,7 +1173,7 @@ void voiceUpdateParam (Voice * voice, int gen) {
 	case GEN_ENDADDROFS:					/* SF2.01 section 8.1.3 # 1 */
 	case GEN_ENDADDRCOARSEOFS:		/* SF2.01 section 8.1.3 # 12 */
 		if (voice->sampleP != NULL) {
-			voice->end = (voice->sampleP->end + (int) _GEN (voice, GEN_ENDADDROFS)
+			voice->end = (voice->sampleP->endIdx + (int) _GEN (voice, GEN_ENDADDROFS)
 										+ 32768 * (int) _GEN (voice, GEN_ENDADDRCOARSEOFS));
 			voice->checkSampleSanityFlag = SAMPLESANITY_CHECK;
 		}
@@ -1193,7 +1181,7 @@ void voiceUpdateParam (Voice * voice, int gen) {
 	case GEN_STARTLOOPADDROFS:		/* SF2.01 section 8.1.3 # 2 */
 	case GEN_STARTLOOPADDRCOARSEOFS:	/* SF2.01 section 8.1.3 # 45 */
 		if (voice->sampleP != NULL) {
-			voice->loopstart = (voice->sampleP->loopstart
+			voice->loopstart = (voice->sampleP->loopStartIdx
 													+ (int) _GEN (voice, GEN_STARTLOOPADDROFS)
 													+ 32768 * (int) _GEN (voice,
 																								GEN_STARTLOOPADDRCOARSEOFS));
@@ -1204,7 +1192,7 @@ void voiceUpdateParam (Voice * voice, int gen) {
 	case GEN_ENDLOOPADDROFS:			/* SF2.01 section 8.1.3 # 3 */
 	case GEN_ENDLOOPADDRCOARSEOFS:	/* SF2.01 section 8.1.3 # 50 */
 		if (voice->sampleP != NULL) {
-			voice->loopend = (voice->sampleP->loopend
+			voice->loopend = (voice->sampleP->loopEndIdx
 												+ (int) _GEN (voice, GEN_ENDLOOPADDROFS)
 												+ 32768 * (int) _GEN (voice,
 																							GEN_ENDLOOPADDRCOARSEOFS));
@@ -1378,7 +1366,7 @@ int voiceModulate (Voice * voice, int cc, int ctrl) {
 	realT modval;
 
 
-	for (i = 0; i < voice->modCount; i++) {
+	for (i = 0; i < voice->nMods; i++) {
 
 		mod = &voice->mod[i];
 
@@ -1391,13 +1379,13 @@ int voiceModulate (Voice * voice, int cc, int ctrl) {
 
 			/* step 2: for every changed modulator, calculate the modulation
 			 * value of its associated generator */
-			for (k = 0; k < voice->modCount; k++) {
+			for (k = 0; k < voice->nMods; k++) {
 				if (modHasDest (&voice->mod[k], gen)) {
 					modval += modGetValue (&voice->mod[k], voice->channel, voice);
 				}
 			}
 
-			genSetMod (&voice->gen[gen], modval);
+      voice->gen[gen].mod = modval;
 
 			/* step 3: now that we have the new value of the generator,
 			 * recalculate the parameter values that are derived from the
@@ -1431,21 +1419,21 @@ int voiceModulateAll (Voice * voice) {
 	   energy (think polution, global warming, unhappy musicians,
 	   ...) */
 
-	for (i = 0; i < voice->modCount; i++) {
+	for (i = 0; i < voice->nMods; i++) {
 
 		mod = &voice->mod[i];
-		gen = modGetDest (mod);
+		gen = mod->dest;
 		modval = 0.0;
 
 		/* Accumulate the modulation values of all the modulators with
 		 * destination generator 'gen' */
-		for (k = 0; k < voice->modCount; k++) {
+		for (k = 0; k < voice->nMods; k++) {
 			if (modHasDest (&voice->mod[k], gen)) {
 				modval += modGetValue (&voice->mod[k], voice->channel, voice);
 			}
 		}
 
-		genSetMod (&voice->gen[gen], modval);
+		voice->gen[gen].mod = modval;
 
 		/* Update the parameter values that are depend on the generator
 		 * 'gen' */
@@ -1469,6 +1457,8 @@ int voiceNoteoff (Voice * voice) {
 		return OK;
 	}
 
+// Moving this here because I don't feel like screaming at the circular dependency hell again.
+#define channelSustained(_c)             ((_c)->cc[SUSTAIN_SWITCH] >= 64)
 	if (voice->channel && channelSustained (voice->channel)) {
 		voice->status = VOICE_SUSTAINED;
 	} else {
@@ -1555,10 +1545,8 @@ int voiceOff (Voice * voice) {
 	voice->status = VOICE_OFF;
 
 	/* Decrement the reference count of the sample. */
-	if (voice->sampleP) {
-		sampleDecrRef (voice->sampleP);
+	if (voice->sampleP) 
 		voice->sampleP = NULL;
-	}
 
 	return OK;
 }
@@ -1583,7 +1571,7 @@ void voiceAddMod (Voice * voice, Modulator * mod, int mode) {
 	 * sound card.  Discard them, maybe print a warning.
 	 */
 
-	if (((mod->flags1 & MOD_CC) == 0)
+	if (((mod->xformType1 & MOD_CC) == 0)
 			&& ((mod->src1 != 0)			/* SF2.01 section 8.2.1: Constant value */
 					&&(mod->src1 != 2)		/* Note-on velocity */
 					&&(mod->src1 != 3)		/* Note-on key number */
@@ -1597,7 +1585,7 @@ void voiceAddMod (Voice * voice, Modulator * mod, int mode) {
 	if (mode == VOICE_ADD) {
 
 		/* if identical modulator exists, add them */
-		for (i = 0; i < voice->modCount; i++) {
+		for (i = 0; i < voice->nMods; i++) {
 			if (modTestIdentity (&voice->mod[i], mod)) {
 				voice->mod[i].amount += mod->amount;
 				return;
@@ -1607,7 +1595,7 @@ void voiceAddMod (Voice * voice, Modulator * mod, int mode) {
 	} else if (mode == VOICE_OVERWRITE) {
 
 		/* if identical modulator exists, replace it (only the amount has to be changed) */
-		for (i = 0; i < voice->modCount; i++) {
+		for (i = 0; i < voice->nMods; i++) {
 			if (modTestIdentity (&voice->mod[i], mod)) {
 				voice->mod[i].amount = mod->amount;
 				return;
@@ -1618,8 +1606,8 @@ void voiceAddMod (Voice * voice, Modulator * mod, int mode) {
 	/* Add a new modulator (No existing modulator to add / overwrite).
 	   Also, default modulators (VOICE_DEFAULT) are added without
 	   checking whether the same modulator already exists. */
-	if (voice->modCount < NUM_MOD) 
-		modClone(&voice->mod[voice->modCount++], mod);
+	if (voice->nMods < NUM_MOD) 
+		modClone(&voice->mod[voice->nMods++], mod);
 }
 
 U32 voiceGetId (Voice * voice) {
@@ -1645,20 +1633,20 @@ voiceGetLowerBoundaryForAttenuation (Voice * voice) {
 	realT possibleAttReductionCB = 0;
 	realT lowerBound;
 
-	for (i = 0; i < voice->modCount; i++) {
+	for (i = 0; i < voice->nMods; i++) {
 		mod = &voice->mod[i];
 
 		/* Modulator has attenuation as target and can change over time? */
 		if ((mod->dest == GEN_ATTENUATION)
-				&& ((mod->flags1 & MOD_CC) || (mod->flags2 & MOD_CC))) {
+				&& ((mod->xformType1 & MOD_CC) || (mod->xformType2 & MOD_CC))) {
 
 			realT currentVal =
 				modGetValue (mod, voice->channel, voice);
 			realT v = fabs (mod->amount);
 
 			if ((mod->src1 == MOD_PITCHWHEEL)
-					|| (mod->flags1 & MOD_BIPOLAR)
-					|| (mod->flags2 & MOD_BIPOLAR)
+					|| (mod->xformType1 & MOD_BIPOLAR)
+					|| (mod->xformType2 & MOD_BIPOLAR)
 					|| (mod->amount < 0)) {
 				/* Can this modulator produce a negative contribution? */
 				v *= -1.0;
@@ -1694,12 +1682,12 @@ voiceGetLowerBoundaryForAttenuation (Voice * voice) {
  * proper order. When starting up, calculate the initial phase.
  */
 void voiceCheckSampleSanity (Voice * voice) {
-	int minIndexNonloop = (int) voice->sampleP->start;
-	int maxIndexNonloop = (int) voice->sampleP->end;
+	int minIndexNonloop = (int) voice->sampleP->startIdx;
+	int maxIndexNonloop = (int) voice->sampleP->endIdx;
 
 	/* make sure we have enough samples surrounding the loop */
-	int minIndexLoop = (int) voice->sampleP->start + MIN_LOOP_PAD;
-	int maxIndexLoop = (int) voice->sampleP->end - MIN_LOOP_PAD + 1;	/* 'end' is last valid sample, loopend can be + 1 */
+	int minIndexLoop = (int) voice->sampleP->startIdx + MIN_LOOP_PAD;
+	int maxIndexLoop = (int) voice->sampleP->endIdx - MIN_LOOP_PAD + 1;	/* 'end' is last valid sample, loopend can be + 1 */
 
 	if (!voice->checkSampleSanityFlag) {
 		return;
@@ -1763,8 +1751,8 @@ void voiceCheckSampleSanity (Voice * voice) {
 
 		/* The loop points may have changed. Obtain a new estimate for the loop volume. */
 		/* Is the voice loop within the sample loop? */
-		if ((int) voice->loopstart >= (int) voice->sampleP->loopstart
-				&& (int) voice->loopend <= (int) voice->sampleP->loopend) {
+		if ((int) voice->loopstart >= (int) voice->sampleP->loopStartIdx
+				&& (int) voice->loopend <= (int) voice->sampleP->loopEndIdx) {
 			/* Is there a valid peak amplitude available for the loop? */
 			if (voice->sampleP->amplitudeThatReachesNoiseFloorIsValid) {
 				voice->amplitudeThatReachesNoiseFloorLoop =
@@ -1772,8 +1760,7 @@ void voiceCheckSampleSanity (Voice * voice) {
 					voice->synthGain;
 			} else {
 				/* Worst case */
-				voice->amplitudeThatReachesNoiseFloorLoop =
-					voice->amplitudeThatReachesNoiseFloorNonloop;
+				voice->amplitudeThatReachesNoiseFloorLoop = voice->amplitudeThatReachesNoiseFloorNonloop;
 			};
 		};
 
@@ -1842,62 +1829,5 @@ int voiceSetGain (Voice * voice, realT gain) {
 	voice->ampReverb = voice->reverbSend * gain / 32768.0f;
 	voice->ampChorus = voice->chorusSend * gain / 32768.0f;
 
-	return OK;
-}
-
-/* - Scan the loop
- * - determine the peak level
- * - Calculate, what factor will make the loop inaudible
- * - Store in sample
- */
-int voiceOptimizeSample (Sample * s) {
-	signed short peakMax = 0;
-	signed short peakMin = 0;
-	signed short peak;
-	realT normalizedAmplitudeDuringLoop;
-	double result;
-	int i;
-
-	/* ignore ROM and other(?) invalid samples */
-	if (!s->valid || (s->sampletype & SAMPLETYPE_OGG_VORBIS))
-		return (OK);
-
-	if (!s->amplitudeThatReachesNoiseFloorIsValid) {	/* Only once */
-		/* Scan the loop */
-		for (i = (int) s->loopstart; i < (int) s->loopend; i++) {
-			signed short val = s->data[i];
-			if (val > peakMax) {
-				peakMax = val;
-			} else if (val < peakMin) {
-				peakMin = val;
-			}
-		}
-
-		/* Determine the peak level */
-		if (peakMax > -peakMin) {
-			peak = peakMax;
-		} else {
-			peak = -peakMin;
-		};
-		if (peak == 0) {
-			/* Avoid division by zero */
-			peak = 1;
-		};
-
-		/* Calculate what factor will make the loop inaudible
-		 * For example: Take a peak of 3277 (10 % of 32768).  The
-		 * normalized amplitude is 0.1 (10 % of 32768).  An amplitude
-		 * factor of 0.0001 (as opposed to the default 0.00001) will
-		 * drop this sample to the noise floor.
-		 */
-
-		/* 16 bits => 96+4=100 dB dynamic range => 0.00001 */
-		normalizedAmplitudeDuringLoop = ((realT) peak) / 32768.;
-		result = NOISE_FLOOR / normalizedAmplitudeDuringLoop;
-
-		/* Store in sample */
-		s->amplitudeThatReachesNoiseFloor = (double) result;
-		s->amplitudeThatReachesNoiseFloorIsValid = 1;
-	};
 	return OK;
 }

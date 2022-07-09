@@ -78,7 +78,7 @@ int dspFloatInterpolateNone (Voice * voice) {
 	phaseT dspPhase = voice->phase;
 	phaseT dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
-	realT *dspBuf = voice->dspBuf;
+	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
 	realT dspAmpIncr = voice->ampIncr;
 	U32 dspI = 0;
@@ -138,7 +138,7 @@ int dspFloatInterpolateLinear (Voice * voice) {
 	phaseT dspPhase = voice->phase;
 	phaseT dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
-	realT *dspBuf = voice->dspBuf;
+	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
 	realT dspAmpIncr = voice->ampIncr;
 	U32 dspI = 0;
@@ -229,7 +229,7 @@ int dspFloatInterpolate_4thOrder (Voice * voice) {
 	phaseT dspPhase = voice->phase;
 	phaseT dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
-	realT *dspBuf = voice->dspBuf;
+	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
 	realT dspAmpIncr = voice->ampIncr;
 	U32 dspI = 0;
@@ -371,7 +371,7 @@ int dspFloatInterpolate_7thOrder (Voice * voice) {
 	phaseT dspPhase = voice->phase;
 	phaseT dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
-	realT *dspBuf = voice->dspBuf;
+	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
 	realT dspAmpIncr = voice->ampIncr;
 	U32 dspI = 0;

@@ -1,4 +1,7 @@
 #include "chan.h"
+#include "synth.h"
+#include "midi.h"
+#include "gen.h"
 
 #define SETCC(_c,_n,_v)  _c->cc[_n] = _v
 

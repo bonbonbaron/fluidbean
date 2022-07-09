@@ -54,6 +54,8 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     "/home/bonbonbaron/hack/fluidbean/src/include/config.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/conv.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/fluidbean.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/mod.h"
+    "/home/bonbonbaron/hack/fluidbean/src/include/gen.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/midi.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/phase.h"
     "/home/bonbonbaron/hack/fluidbean/src/include/rev.h"

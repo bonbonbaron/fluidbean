@@ -21,9 +21,9 @@ typedef struct {
   U8  xformType1;	
   U8  xformType2;	
   U8  dest;   // destination generator
-  U32 amount;
   S16 productScale;	  // Scales the product of src1 transformed and src2 transformed.
-} Modulator;   // 6 bytes 
+  U32 amount;
+} Modulator;   // 12 bytes 
 
 // Generator is a component of a sound; e.g. vibrato LFO, 
 // key/velocity range, filter cutoff/Q, source sample, etc.
@@ -71,46 +71,5 @@ typedef struct {
   U8 nBanks;
   Bank *bankA;
 } Soundfont;  // 8 bytes
-
-U32 genScale (U8 gen, U32 value);
-U32 genScaleNrpn (U8 gen, int data);
-
-#define NUM_MOD           64
-
-enum modFlags {
-  MOD_POSITIVE = 0,
-  MOD_NEGATIVE = 1,
-  MOD_UNIPOLAR = 0,
-  MOD_BIPOLAR = 2,
-  MOD_LINEAR = 0,
-  MOD_CONCAVE = 4,
-  MOD_CONVEX = 8,
-  MOD_SWITCH = 12,
-  MOD_GC = 0,
-  MOD_CC = 16
-};
-
-/* Flags telling the source of a modulator.  This corresponds to
- * SF2.01 section 8.2.1 */
-enum modSrc {
-  MOD_NONE = 0,
-  MOD_VELOCITY = 2,
-  MOD_KEY = 3,
-  MOD_KEYPRESSURE = 10,
-  MOD_CHANNELPRESSURE = 13,
-  MOD_PITCHWHEEL = 14,
-  MOD_PITCHWHEELSENS = 16
-};
-
-void modClone (Modulator * mod, Modulator * src);
-int modTestIdentity (Modulator * mod1, Modulator * mod2);
-
-#define modHasSource(mod,cc,ctrl)  \
-( ((((mod)->src1 == ctrl) && (((mod)->flags1 & MOD_CC) != 0) && (cc != 0)) \
-   || ((((mod)->src1 == ctrl) && (((mod)->flags1 & MOD_CC) == 0) && (cc == 0)))) \
-|| ((((mod)->src2 == ctrl) && (((mod)->flags2 & MOD_CC) != 0) && (cc != 0)) \
-    || ((((mod)->src2 == ctrl) && (((mod)->flags2 & MOD_CC) == 0) && (cc == 0)))))
-
-#define modHasDest(mod,gen)  ((mod)->dest == gen)
 
 #endif

@@ -478,15 +478,15 @@ int thread_join(thread_t *thread) {
 
 static thread_return_t timer_run(void *data) {
 static thread_return_t timer_run(void *data) {
-    timer_t *timer;
-    timer_t *timer;
+    FbTimer *timer;
+    FbTimer *timer;
     int count = 0;
     int cont;
     long start;
     long delay;
 
-    timer = (timer_t *)data;
-    timer = (timer_t *)data;
+    timer = (FbTimer *)data;
+    timer = (FbTimer *)data;
 
     /* keep track of the start time for absolute positioning */
     start = curtime();
@@ -524,13 +524,13 @@ static thread_return_t timer_run(void *data) {
     return THREAD_RETURN_VALUE;
 }
 
-timer_t * new_timer(int msec, timer_callback_t callback, void *data, int new_thread, int auto_destroy, int high_priority) {
-timer_t * new_timer(int msec, timer_callback_t callback, void *data, int new_thread, int auto_destroy, int high_priority) {
-    timer_t *timer;
-    timer_t *timer;
+FbTimer * new_timer(int msec, timer_callback_t callback, void *data, int new_thread, int auto_destroy, int high_priority) {
+FbTimer * new_timer(int msec, timer_callback_t callback, void *data, int new_thread, int auto_destroy, int high_priority) {
+    FbTimer *timer;
+    FbTimer *timer;
 
-    timer = NEW(timer_t);
-    timer = NEW(timer_t);
+    timer = NEW(FbTimer);
+    timer = NEW(FbTimer);
 
     if(timer == NULL)
         return NULL;
@@ -572,12 +572,14 @@ timer_t * new_timer(int msec, timer_callback_t callback, void *data, int new_thr
     return timer;
 }
 
-void delete_timer(timer_t *timer) {
-void delete_timer(timer_t *timer) {
+void delete_timer(FbTimer *timer) {
+void delete_timer(FbTimer *timer) {
     int auto_destroy;
     int auto_destroy;
-    return_if_fail(timer != NULL);
-    return_if_fail(timer != NULL);
+    if (timer != NULL) 
+      return;
+    if (timer != NULL) 
+      return;
 
     auto_destroy = timer->auto_destroy;
     auto_destroy = timer->auto_destroy;
@@ -596,8 +598,8 @@ void delete_timer(timer_t *timer) {
     }
 }
 
-int timer_join(timer_t *timer) {
-int timer_join(timer_t *timer) {
+int timer_join(FbTimer *timer) {
+int timer_join(FbTimer *timer) {
     int auto_destroy;
     int auto_destroy;
 
@@ -618,14 +620,14 @@ int timer_join(timer_t *timer) {
     return OK;
 }
 
-int timer_is_running(const timer_t *timer) {
-int timer_is_running(const timer_t *timer) {
+int timer_is_running(const FbTimer *timer) {
+int timer_is_running(const FbTimer *timer) {
     // for unit test usage only
     return timer->callback != NULL;
 }
 
-long timer_get_interval(const timer_t * timer) {
-long timer_get_interval(const timer_t * timer) {
+long timer_get_interval(const FbTimer * timer) {
+long timer_get_interval(const FbTimer * timer) {
     // for unit test usage only
     return timer->msec;
 }
@@ -1043,8 +1045,10 @@ new_server_socket(int port, server_func_t func, void *data)
 void delete_server_socket(server_socket_t *server_socket)
 void delete_server_socket(server_socket_t *server_socket)
 {
-    return_if_fail(server_socket != NULL);
-    return_if_fail(server_socket != NULL);
+    if (server_socket != NULL)
+      return;
+    if (server_socket != NULL)
+      return;
 
     server_socket->cont = 0;
     server_socket->cont = 0;

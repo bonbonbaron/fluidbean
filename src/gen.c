@@ -77,8 +77,8 @@ GenDefault genDefaultsA[] = {
 	{1, 0, 0, 127, 0} // GEN_PITCH, 
 };
 
-void genSetDefaultValues (Generator *genA, U8 nGens) {
-  Generator *genEndP = genA + nGens;
+void genSetDefaultValues (Generator *genA) {
+  Generator *genEndP = genA + GEN_LAST;
   for (Generator *genP = genA; genP < genEndP; ++genP) {
 		genP->flags = GEN_UNUSED;
 		genP->mod = 0;
@@ -89,20 +89,17 @@ void genSetDefaultValues (Generator *genA, U8 nGens) {
 
 
 /* genInit: Set an array of generators to their initial value */
-int genInit (Generator * genA, U8 nGens, Channel * channelP) {
-	genSetDefaultValues(genA, nGens);
-
-  Generator *genEndP = genA + nGens;
-
-  for (Generator *genP = genA; genP < genEndP; ++genP) {
-		genP->nrpn = channelGetGen (channelP, genP->genType);
+int genInit (Generator *voiceGenA, S32 *chanGenA, S8 *chanGenAbsA) {
+	genSetDefaultValues(voiceGenA);
+  Generator *genEndP = voiceGenA + GEN_LAST;
+  for (Generator *genP = voiceGenA; genP < genEndP; ++genP) {
+		genP->nrpn = chanGenA[genP->genType];
 		/* This is an extension to the SoundFont standard. More
 		 * documentation is available at the synthSetGen2()
 		 * function. */
-    if (channelP->genAbs[genP->genType])
+    if (chanGenAbsA[genP->genType])  // if this generator in channel uses absolute NRPN control...
 			genP->flags = GEN_ABS_NRPN;
 	}
-
 	return OK;
 }
 

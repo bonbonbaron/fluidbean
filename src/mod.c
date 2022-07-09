@@ -1,6 +1,6 @@
 #include "fluidbean.h"
-#include "soundfont.h"
 #include "chan.h"
+#include "soundfont.h"
 #include "voice.h"
 #include "conv.h"
 
@@ -23,12 +23,12 @@ void modSetSource2 (Modulator * mod, int src, int xformType) {
 	mod->xformType2 = xformType;
 }
 
-realT modGetValue (Modulator * mod, Channel * chan, Voice * voice) {
+S32 modGetValue (Modulator * mod, Channel * chan, Voice * voice) {
 	realT v1 = 0.0, v2 = 1.0;
 	realT range1 = 127.0, range2 = 127.0;
 
 	if (chan == NULL) {
-		return 0.0f;
+		return 0;
 	}
 
 	/* 'special treatment' for default controller
@@ -41,17 +41,8 @@ realT modGetValue (Modulator * mod, Channel * chan, Voice * voice) {
 			(mod->xformType2 == (MOD_GC | MOD_UNIPOLAR
 											 | MOD_POSITIVE | MOD_SWITCH)) &&
 			(mod->dest == GEN_FILTERFC)) {
-// S. Christian Collins' mod, to stop forcing velocity based filtering
-/*
-    if (voice->vel < 64){
-      return (realT) mod->amount / 2.0;
-    } else {
-      return (realT) mod->amount * (127 - voice->vel) / 127;
-    }
-*/
-		return 0;										// (realT) mod->amount / 2.0;
+		return 0;
 	}
-// end S. Christian Collins' mod
 
 	/* get the initial value of the first source */
 	if (mod->src1 > 0) {
@@ -138,12 +129,12 @@ realT modGetValue (Modulator * mod, Channel * chan, Voice * voice) {
 			break;
 		}
 	} else {
-		return 0.0;
+		return 0;
 	}
 
 	/* no need to go further */
 	if (v1 == 0.0f) {
-		return 0.0f;
+		return 0;
 	}
 
 	/* get the second input source */
@@ -234,7 +225,7 @@ realT modGetValue (Modulator * mod, Channel * chan, Voice * voice) {
 	}
 
 	/* it's as simple as that: */
-	return (realT) mod->amount * v1 * v2;
+	return (S32) mod->amount * v1 * v2;
 }
 
 /*

@@ -21,6 +21,8 @@ list(APPEND HEADERS
     ${CMAKE_SOURCE_DIR}/src/include/config.h
     ${CMAKE_SOURCE_DIR}/src/include/conv.h
     ${CMAKE_SOURCE_DIR}/src/include/fluidbean.h
+    ${CMAKE_SOURCE_DIR}/src/include/mod.h
+    ${CMAKE_SOURCE_DIR}/src/include/gen.h
     ${CMAKE_SOURCE_DIR}/src/include/midi.h
     ${CMAKE_SOURCE_DIR}/src/include/phase.h
     ${CMAKE_SOURCE_DIR}/src/include/rev.h

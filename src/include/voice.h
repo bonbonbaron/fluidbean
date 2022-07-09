@@ -46,7 +46,10 @@ typedef struct _Voice {
 	U8 chan;						/* the channel number, quick access for channel messages */
 	U8 key;						/* the key, quick acces for noteoff */
 	U8 vel;						/* the velocity */
-	struct _Channel *channel;
+  U8 nGens;
+  U8 nMods;
+	Channel *channel;
+  Modulator *mod;
 	Generator gen[GEN_LAST];
 	S32 hasLooped;								/* Flag that is set as soon as the first loop is completed. */
 	Sample *sampleP;
@@ -67,7 +70,7 @@ typedef struct _Voice {
 
 	realT phaseIncr;			/* the phase increment for the next 64 samples */
 	realT ampIncr;				/* amplitude increment value */
-	realT *dspBuf;				/* buffer to store interpolated sample data to */
+	S16 *dspBuf;				/* buffer to store interpolated sample data to */
 
 	/* End temporary variables */
 
@@ -172,7 +175,7 @@ S32 voiceWrite (Voice * voice,
 											 S16 * reverbBuf, S16 * chorusBuf);
 
 S32 voiceInit (Voice * voice, Sample * sample,
-											struct _Channel * channel, S32 key, S32 vel,
+											Channel * channel, S32 key, S32 vel,
 											U32 id, U32 time, realT gain);
 
 S32 voiceModulate (Voice * voice, S32 cc, S32 ctrl);
@@ -196,7 +199,7 @@ S32 voiceNoteoff (Voice * voice);
 S32 voiceOff (Voice * voice);
 S32 voiceCalculateRuntimeSynthesisParameters (Voice *
 																												voice);
-struct _Channel *voiceGetChannel (Voice * voice);
+Channel *voiceGetChannel (Voice * voice);
 S32 calculateHoldDecayBuffers (Voice * voice, S32 genBase,
 																	S32 genKey2base, S32 isDecay);
 S32 voiceKillExcl (Voice * voice);

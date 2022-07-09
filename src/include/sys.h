@@ -186,17 +186,17 @@ double utime(void);
    returns 0 it will stop */
 typedef int (*timer_callback_t)(void *data, unsigned int msec);
 
-typedef struct _fluid_timer_t timer_t;
+typedef struct _fluid_timer_t FbTimer;
 
-timer_t *new_timer(int msec, timer_callback_t callback,
+FbTimer *new_timer(int msec, timer_callback_t callback,
                                void *data, int new_thread, int auto_destroy,
                                int high_priority);
 
-void delete_timer(timer_t *timer);
-int timer_join(timer_t *timer);
-int timer_stop(timer_t *timer);
-int timer_is_running(const timer_t *timer);
-long timer_get_interval(const timer_t * timer);
+void delete_timer(FbTimer *timer);
+int timer_join(FbTimer *timer);
+int timer_stop(FbTimer *timer);
+int timer_is_running(const FbTimer *timer);
+long timer_get_interval(const FbTimer * timer);
 
 // Macros to use for pre-processor if statements to test which Glib thread API we have (pre or post 2.32)
 #define NEW_GLIB_THREAD_API   GLIB_CHECK_VERSION(2,32,0)
@@ -217,7 +217,7 @@ typedef GMutex mutex_t;
 #define mutex_unlock(_m)    g_mutex_unlock(&(_m))
 
 /* Recursive lock capable mutex */
-typedef g_rec_mutex rec_mutex_t;
+typedef GRecMutex rec_mutex_t;
 #define rec_mutex_init(_m)      g_rec_mutex_init(&(_m))
 #define rec_mutex_destroy(_m)   g_rec_mutex_clear(&(_m))
 #define rec_mutex_lock(_m)      g_rec_mutex_lock(&(_m))
@@ -240,7 +240,8 @@ new_cond_mutex(void)
 static INLINE void
 delete_cond_mutex(cond_mutex_t *m)
 {
-    return_if_fail(m != NULL);
+    if (m != NULL)
+      return;
     g_mutex_clear(m);
     g_free(m);
 }
@@ -263,7 +264,8 @@ new_cond(void)
 static INLINE void
 delete_cond(cond_t *cond)
 {
-    return_if_fail(cond != NULL);
+    if (cond != NULL)
+      return;
     g_cond_clear(cond);
     g_free(cond);
 }
@@ -373,7 +375,7 @@ atomic_float_set(atomicFloatT *fptr, float val)
 {
     int32_t ival;
     memcpy(&ival, &val, 4);
-    atomic_int_set((atomic_int_t *)fptr, ival);
+    atomic_int_set((int *)fptr, ival);
 }
 
 static INLINE float
@@ -381,7 +383,7 @@ atomic_float_get(atomicFloatT *fptr)
 {
     int32_t ival;
     float fval;
-    ival = atomic_int_get((atomic_int_t *)fptr);
+    ival = atomic_int_get((int *)fptr);
     memcpy(&fval, &ival, 4);
     return fval;
 }
@@ -445,11 +447,11 @@ ostream_t socket_get_ostream(socket_t sock);
 /* File access */
 #define stat(_filename, _statbuf)   g_stat((_filename), (_statbuf))
 #if !GLIB_CHECK_VERSION(2, 26, 0)
-    /* GStat_buf has not been introduced yet, manually typedef to what they had at that time:
+    /* GStatBuf has not been introduced yet, manually typedef to what they had at that time:
      * https://github.com/GNOME/glib/blob/e7763678b56e3be073cc55d707a6e92fc2055ee0/glib/gstdio.h#L98-L115
      */
     #if defined(WIN32) || HAVE_WINDOWS_H // somehow reliably mock G_OS_WIN32??
-        // Any effort from our side to reliably mock GStat_buf on Windows is in vain. E.g. glib-2.16 is broken as it uses struct stat rather than struct _stat32 on Win x86.
+        // Any effort from our side to reliably mock GStatBuf on Windows is in vain. E.g. glib-2.16 is broken as it uses struct stat rather than struct _stat32 on Win x86.
         // Disable it (the user has been warned by cmake).
         #undef stat
         #define stat(_filename, _statbuf)  (-1)
@@ -459,7 +461,7 @@ ostream_t socket_get_ostream(socket_t sock);
         typedef struct stat stat_buf_t;
     #endif
 #else
-typedef GStat_buf stat_buf_t;
+typedef GStatBuf stat_buf_t;
 #endif
 
 
@@ -500,7 +502,7 @@ extern unsigned char profile_print;  /* print mode */
 
 extern unsigned short profile_n_prof;/* number of measures */
 extern unsigned short profile_dur;   /* measure duration in ms */
-extern atomic_int_t profile_lock ; /* lock between multiple shell */
+extern int profile_lock ; /* lock between multiple shell */
 /**/
 
 /*----------------------------------------------

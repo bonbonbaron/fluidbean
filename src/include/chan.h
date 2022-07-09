@@ -4,8 +4,8 @@ struct _Channel;
 
 #include "fluidbean.h"
 #include "tuning.h"
-#include "midi.h"
 #include "enums.h"
+#include "soundfont.h"
 
 #define NO_CHANNEL             0xff
 
@@ -54,7 +54,6 @@ void channelPitchWheelSens (Channel * chan, S32 val);
 #define channelSetTuning(_c, _t)        { (_c)->tuning = _t; }
 #define channelHasTuning(_c)            ((_c)->tuning != NULL)
 #define channelGetTuning(_c)            ((_c)->tuning)
-#define channelSustained(_c)             ((_c)->cc[SUSTAIN_SWITCH] >= 64)
 #define channelSetGen(_c, _n, _v, _a)   { (_c)->gen[_n] = _v; (_c)->genAbs[_n] = _a; }
 #define channelGetGen(_c, _n)           ((_c)->gen[_n])
 #define channelGetGenAbs(_c, _n)       ((_c)->genAbs[_n])

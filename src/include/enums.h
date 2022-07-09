@@ -82,4 +82,29 @@ enum fluid_voice_add_mod{
   VOICE_DEFAULT
 };
 
+enum modFlags {
+  MOD_POSITIVE = 0,
+  MOD_NEGATIVE = 1,
+  MOD_UNIPOLAR = 0,
+  MOD_BIPOLAR = 2,
+  MOD_LINEAR = 0,
+  MOD_CONCAVE = 4,
+  MOD_CONVEX = 8,
+  MOD_SWITCH = 12,
+  MOD_GC = 0,
+  MOD_CC = 16
+};
+
+/* Flags telling the source of a modulator.  This corresponds to
+ * SF2.01 section 8.2.1 */
+enum modSrc {
+  MOD_NONE = 0,
+  MOD_VELOCITY = 2,
+  MOD_KEY = 3,
+  MOD_KEYPRESSURE = 10,
+  MOD_CHANNELPRESSURE = 13,
+  MOD_PITCHWHEEL = 14,
+  MOD_PITCHWHEELSENS = 16
+};
+
 #endif

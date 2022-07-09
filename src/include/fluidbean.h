@@ -45,7 +45,6 @@ typedef enum {
 #include "config.h"
 #include "botox/data.h"
 #include <glib.h>
-#include "soundfont.h"
 
 #if HAVE_STRING_H
 #include <string.h>
