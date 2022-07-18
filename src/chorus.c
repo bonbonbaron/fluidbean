@@ -22,7 +22,7 @@
  *            +---->| delay 1 |----------------------------->|   |
  *            |     |_________|                              |   |
  *            |        /|\                                   |   |
- *            :         |                                    |   |
+ *            :         |         (mod wave sine or triangle)|   |
  *            : +-----------------+   +--------------+       | + |
  *            : | Delay control 1 |<--| mod. speed 1 |       |   |
  *            : +-----------------+   +--------------+       |   |
@@ -93,50 +93,48 @@
 void chorusTriangle (int *buf, int len, int depth);
 void chorusSine (int *buf, int len, int depth);
 
+// MB: I was wrong to get worked up about this. newChorus() is only called at synth creation time.
 Chorus *newChorus (S16 sampleRate) {
-	int i;
-	int ii;
-	Chorus *chorus;
-
-	chorus = NEW (Chorus);
+	Chorus *chorus = NEW (Chorus);
 	if (chorus == NULL) 
 		return NULL;
-
 	MEMSET (chorus, 0, sizeof (Chorus));
 	chorus->sampleRate = sampleRate;
-
+  // Currently makes a 5 x 128 (640) array.
 	/* Lookup table for the SI function (impulse response of an ideal low pass) */
 	/* i: Offset in terms of whole samples */
-	for (i = 0; i < INTERPOLATION_SAMPLES; i++) {
+	for (int i = 0; i < INTERPOLATION_SAMPLES; ++i) {
 		/* ii: Offset in terms of fractional samples ('subsamples') */
-		for (ii = 0; ii < INTERPOLATION_SUBSAMPLES; ii++) {
+		for (int ii = 0; ii < INTERPOLATION_SUBSAMPLES; +ii) {
 			/* Move the origin into the center of the table */
-			double iShifted = ((double) i - ((double) INTERPOLATION_SAMPLES) / 2.
+                           // i - 5/2 + ii/128
+			double iShifted =    ((double) i - ((double) INTERPOLATION_SAMPLES) / 2.
 													+ (double) ii / (double) INTERPOLATION_SUBSAMPLES);
 			if (fabs (iShifted) < 0.000001) {
 				/* sinc(0) cannot be calculated straightforward (limit needed
 				   for 0/0) */
 				chorus->sincTable[i][ii] = (S16) 1.;
 			} else {
-				chorus->sincTable[i][ii] =
-					(S16) sin (iShifted * M_PI) / (M_PI * iShifted);
+        // sine is a 0-1 function being scaled down even further.
+        // So when you multiply it by a cosine function also with 0-1 range,
+        // you're going to get a very small number for lots of these.
+        // That means we're going to have to figure out how to handle possible 
+        // fixed point arithmetic *overflow*.
+        // TODO: understand what the hell is going on here. Accomplish tonight's goal first.
+				chorus->sincTable[i][ii] = (S16) sin (iShifted * M_PI) / (M_PI * iShifted);
 				/* Hamming window */
 				chorus->sincTable[i][ii] *=
-					(S16) 0.5 *(1.0 +
-															 cos (2.0 * M_PI * iShifted /
-																		(S16) INTERPOLATION_SAMPLES));
+					(S16) 0.5 *(1.0 + cos (2.0 * M_PI * iShifted / (S16) INTERPOLATION_SAMPLES));
 			};
 		};
 	};
 
 	/* allocate lookup tables */
-	chorus->lookupTab =
-		ARRAY (int, (int) (chorus->sampleRate / MIN_SPEED_HZ));
+	chorus->lookupTab = ARRAY (int, (int) (chorus->sampleRate / MIN_SPEED_HZ));
 	if (chorus->lookupTab == NULL) 
 		goto errorRecovery;
 
 	/* allocate sample buffer */
-
 	chorus->chorusbuf = ARRAY (S16, MAX_SAMPLES);
 	if (chorus->chorusbuf == NULL) 
 		goto errorRecovery;
@@ -155,8 +153,7 @@ errorRecovery:
 int chorusInit (Chorus * chorus) {
 	int i;
 
-	for (i = 0; i < MAX_SAMPLES; i++) 
-		chorus->chorusbuf[i] = 0.0;
+  memset(chorus->chorusbuf, 0, sizeof(chorus->chorusbuf[0] * MAX_SAMPLES));
 
 	/* initialize the chorus with the default settings */
   chorus->numberBlocks = CHORUS_DEFAULT_N;
@@ -185,98 +182,64 @@ void deleteChorus (Chorus * chorus) {
 }
 
 
-/* Purpose:
- * Calculates the internal chorus parameters using the settings from
- * chorusSetXxx. */
+#define clip_(dst_, min_, max_) \
+  if (dst_ < min_) dst_ = min_; \
+  else if (dst_ > max_) dst_ = max_;
+
+/* chorusUpdate():
+ * Calculates the internal chorus parameters using the settings from chorusSetXxx. */
 int chorusUpdate (Chorus * chorus) {
-	int i;
-	int modulationDepthSamples;
+  clip_(chorus->newNumberBlocks, 0, MAX_CHORUS);
+  clip_(chorus->newSpeed_Hz, MIN_SPEED_HZ, MAX_SPEED_HZ);
+	if (chorus->newDepthMs < 0.0) chorus->newDepthMs = 0.0;
 
-	if (chorus->newNumberBlocks < 0) {
-		chorus->newNumberBlocks = 0;
-	} else if (chorus->newNumberBlocks > MAX_CHORUS) {
-		chorus->newNumberBlocks = MAX_CHORUS;
-	};
-
-	if (chorus->newSpeed_Hz < MIN_SPEED_HZ) {
-		chorus->newSpeed_Hz = MIN_SPEED_HZ;
-	} else if (chorus->newSpeed_Hz > MAX_SPEED_HZ) {
-		chorus->newSpeed_Hz = MAX_SPEED_HZ;
-	}
-	if (chorus->newDepthMs < 0.0) {
-		chorus->newDepthMs = 0.0;
-	}
 	/* Depth: Check for too high value through modulationDepthSamples. */
-
-	if (chorus->newLevel < 0.0) {
-		chorus->newLevel = 0.0;
-	} else if (chorus->newLevel > 10) {
-		chorus->newLevel = 0.1;
-	}
+  clip_(chorus->newLevel, 0, 10);
 
 	/* The modulating LFO goes through a full period every x samples: */
-	chorus->modulationPeriodSamples =
-		chorus->sampleRate / chorus->newSpeed_Hz;
+	chorus->modulationPeriodSamples = chorus->sampleRate / chorus->newSpeed_Hz;
 
 	/* The variation in delay time is x: */
-	modulationDepthSamples = (int)
-		(chorus->newDepthMs / 1000.0	/* convert modulation depth in ms to s */
-		 * chorus->sampleRate);
+	int modulationDepthSamples = (int) (chorus->newDepthMs / 1000.0 * chorus->sampleRate);
 
-	if (modulationDepthSamples > MAX_SAMPLES) {
+	if (modulationDepthSamples > MAX_SAMPLES) 
 		modulationDepthSamples = MAX_SAMPLES;
-	}
 
 	/* initialize LFO table */
 	if (chorus->type == CHORUS_MOD_SINE) {
 		chorusSine (chorus->lookupTab, chorus->modulationPeriodSamples,
 											 modulationDepthSamples);
 	} else if (chorus->type == CHORUS_MOD_TRIANGLE) {
-		chorusTriangle (chorus->lookupTab,
-													 chorus->modulationPeriodSamples,
-													 modulationDepthSamples);
+		chorusTriangle (chorus->lookupTab, chorus->modulationPeriodSamples, modulationDepthSamples);
 	} else {
 		chorus->type = CHORUS_MOD_SINE;
 		chorusSine (chorus->lookupTab, chorus->modulationPeriodSamples,
 											 modulationDepthSamples);
 	};
 
-	for (i = 0; i < chorus->numberBlocks; i++) {
+	for (int i = 0; i < chorus->numberBlocks; i++) 
 		/* Set the phase of the chorus blocks equally spaced */
 		chorus->phase[i] = (int) ((double) chorus->modulationPeriodSamples
 															* (double) i / (double) chorus->numberBlocks);
-	}
 
 	/* Start of the circular buffer */
 	chorus->counter = 0;
-
 	chorus->type = chorus->newType;
 	chorus->depthMs = chorus->newDepthMs;
 	chorus->level = chorus->newLevel;
 	chorus->speed_Hz = chorus->newSpeed_Hz;
 	chorus->numberBlocks = chorus->newNumberBlocks;
 	return OK;
-
 }
 
-
-void
-chorusProcessmix (Chorus * chorus, S16 * in,
-												 S16 * leftOut, S16 * rightOut) {
+void chorusProcessmix (Chorus *chorus, S16 *in, S16 *leftOut, S16 *rightOut) {
 	int sampleIndex;
 	int i;
 	S16 dIn, dOut;
 
 	for (sampleIndex = 0; sampleIndex < BUFSIZE; sampleIndex++) {
-
 		dIn = in[sampleIndex];
 		dOut = 0.0f;
-
-#if 0
-		/* Debug: Listen to the chorus signal only */
-		leftOut[sampleIndex] = 0;
-		rightOut[sampleIndex] = 0;
-#endif
 
 		/* Write the current sample into the circular buffer */
 		chorus->chorusbuf[chorus->counter] = dIn;
@@ -323,15 +286,11 @@ chorusProcessmix (Chorus * chorus, S16 * in,
 		/* Move forward in circular buffer */
 		chorus->counter++;
 		chorus->counter %= MAX_SAMPLES;
-
 	}															/* foreach sample */
 }
 
 /* Duplication of code ... (replaces sample data instead of mixing) */
-void
-chorusProcessreplace (Chorus * chorus, S16 * in,
-														 S16 * leftOut,
-														 S16 * rightOut) {
+void chorusProcessreplace (Chorus * chorus, S16 * in, S16 * leftOut, S16 * rightOut) {
 	int sampleIndex;
 	int i;
 	S16 dIn, dOut;
@@ -341,19 +300,12 @@ chorusProcessreplace (Chorus * chorus, S16 * in,
 		dIn = in[sampleIndex];
 		dOut = 0.0f;
 
-#if 0
-		/* Debug: Listen to the chorus signal only */
-		leftOut[sampleIndex] = 0;
-		rightOut[sampleIndex] = 0;
-#endif
-
 		/* Write the current sample into the circular buffer */
 		chorus->chorusbuf[chorus->counter] = dIn;
 
 		for (i = 0; i < chorus->numberBlocks; i++) {
 			int ii;
 			/* Calculate the delay in subsamples for the delay line of chorus block nr. */
-
 			/* The value in the lookup table is so, that this expression
 			 * will always be positive.  It will always include a number of
 			 * full periods of MAX_SAMPLES*INTERPOLATION_SUBSAMPLES to
@@ -396,27 +348,26 @@ chorusProcessreplace (Chorus * chorus, S16 * in,
 	}															/* foreach sample */
 }
 
+// MB SLOW!! Computing sine in a loop, wow!
 /* Purpose:
  *
  * Calculates a modulation waveform (sine) Its value ( modulo
  * MAXSAMPLES) varies between 0 and depth*INTERPOLATION_SUBSAMPLES.
- * Its period length is len.  The waveform data will be used modulo
- * MAXSAMPLES only.  Since MAXSAMPLES is substracted from the waveform
+ * The waveform data will be used modulo MAXSAMPLES only.  
+ *
+ * Since MAXSAMPLES is substracted from the waveform
  * a couple of times here, the resulting (current position in
  * buffer)-(waveform sample) will always be positive.
  */
-void chorusSine (int *buf, int len, int depth) {
-	int i;
+void chorusSine (int *buf, int periodLen, int depth) {
 	double val;
-
-	for (i = 0; i < len; i++) {
-		val = sin ((double) i / (double) len * 2.0 * M_PI);
-		buf[i] =
-			(int) ((1.0 +
-							val) * (double) depth / 2.0 *
-						 (double) INTERPOLATION_SUBSAMPLES);
+	for (int i = 0; i < periodLen; i++) {
+		val = sin ((double) i / (double) periodLen * 2.0 * M_PI);
+		buf[i] = (int) ((1.0 + val) 
+                    * (double) depth 
+                    / 2.0 * (double) INTERPOLATION_SUBSAMPLES
+                   );
 		buf[i] -= 3 * MAX_SAMPLES * INTERPOLATION_SUBSAMPLES;
-		//    printf("%i %i\n",i,buf[i]);
 	}
 }
 
@@ -434,7 +385,7 @@ void chorusTriangle (int *buf, int len, int depth) {
 		val = i * 2.0 / len * (double) depth *(double) INTERPOLATION_SUBSAMPLES;
 		val2 = (int) (val + 0.5) - 3 * MAX_SAMPLES * INTERPOLATION_SUBSAMPLES;
 		buf[i++] = (int) val2;
-		buf[ii--] = (int) val2;
+		buf[ii--] = (int) val2;   // triangle is symmetric, so populate end too.
 	}
 }
 

@@ -12,6 +12,9 @@ typedef struct _Sample {
   U32  loopStartIdx;
   U32  loopEndIdx;
   S16 *pcmDataP;      // Split pcm data apart to avoid duplicates.
+  // TODO get rid of these, i don't like this
+  S8 amplitudeThatReachesNoiseFloorIsValid;
+  S32 amplitudeThatReachesNoiseFloor;
 } Sample;      // 20 bytes
 
 // Modulator adjusts any given generator. Don't need to tell it which generator since the gen in question owns it.

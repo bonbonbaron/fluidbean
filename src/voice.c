@@ -52,8 +52,7 @@ Voice *newVoice (realT outputRate) {
 	/* The 'sustain' and 'finished' segments of the volume / modulation
 	 * envelope are constant. They are never affected by any modulator
 	 * or generator. Therefore it is enough to initialize them once
-	 * during the lifetime of the synth.
-	 */
+	 * during the lifetime of the synth. */
 	voice->volenvData[VOICE_ENVSUSTAIN].count = 0xffffffff;
 	voice->volenvData[VOICE_ENVSUSTAIN].coeff = 1.0f;
 	voice->volenvData[VOICE_ENVSUSTAIN].incr = 0.0f;
@@ -111,7 +110,6 @@ int voiceInit (Voice * voice, Sample * sample, Channel * channel, int key, int v
 	voice->startTime = startTime;
 	voice->ticks = 0;
 	voice->noteoffTicks = 0;
-	voice->debug = 0;
 	voice->hasLooped = 0;				/* Will be set during voiceWrite when the 2nd loop point is reached */
 	voice->lastFres = -1;				/* The filter coefficients have to be calculated later in the DSP loop. */
 	voice->filterStartup = 1;		/* Set the filter immediately, don't fade between old and new settings */
@@ -217,27 +215,17 @@ int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspRev
 	realT x;
 
 
-	/* make sure we're playing and that we have sample data */
-	if (!_PLAYING (voice))
+  // presetNoteon() sets voice->status to VOICE_ON after copying gens and mods over.
+  // The _PLAYING macro checks that here. If it's not on, ignore it. Also has to have a sample of course!
+	if (!_PLAYING(voice))
 		return OK;
-
-	/******************* sample **********************/
-
 	if (voice->sampleP == NULL) {
-		voiceOff (voice);
+		voiceOff(voice);
 		return OK;
 	}
-
-	if (voice->noteoffTicks != 0 && voice->ticks >= voice->noteoffTicks) {
-		voiceNoteoff (voice);
-	}
-
-	/* Range checking for sample- and loop-related parameters
-	 * Initial phase is calculated here*/
-  // MB: This should be done offline, not at runtime.
-	voiceCheckSampleSanity (voice);
-
-	/******************* vol env **********************/
+  // If voice has been playing and it's run out of ticks, kill it.
+	if (voice->noteoffTicks != 0 && voice->ticks >= voice->noteoffTicks) 
+		voiceNoteoff(voice);
 
 	envData = &voice->volenvData[voice->volenvSection];
 
@@ -271,8 +259,6 @@ int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspRev
 		return OK;
 	}
 
-																					/******************* mod env **********************/
-
 	envData = &voice->modenvData[voice->modenvSection];
 
 	/* skip to the next section of the envelope if necessary */
@@ -297,8 +283,6 @@ int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspRev
 	voice->modenvVal = x;
 	voice->modenvCount++;
 
-	/******************* mod lfo **********************/
-
 	if (voice->ticks >= voice->modlfoDelay) {
 		voice->modlfoVal += voice->modlfoIncr;
 
@@ -311,11 +295,9 @@ int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspRev
 		}
 	}
 
-																					/******************* vib lfo **********************/
-
+  // vibratro LFO
 	if (voice->ticks >= voice->viblfoDelay) {
 		voice->viblfoVal += voice->viblfoIncr;
-
 		if (voice->viblfoVal > (realT) 1.0) {
 			voice->viblfoIncr = -voice->viblfoIncr;
 			voice->viblfoVal = (realT) 2.0 - voice->viblfoVal;
@@ -325,8 +307,7 @@ int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspRev
 		}
 	}
 
-																					/******************* amplitude **********************/
-
+  // Amplitude
 	/* calculate final amplitude
 	 * - initial gain
 	 * - amplitude envelope
@@ -408,11 +389,8 @@ int voiceWrite (Voice * voice, S16 * dspLeftBuf, S16 * dspRightBuf, S16 * dspRev
 
 	/* calculate the frequency of the resonant filter in Hz */
 	fres = ct2hz (voice->fres
-											+ voice->modlfoVal * voice->modlfoToFc
-											+ voice->modenvVal * voice->modenvToFc);
-
-	/* FIXME - Still potential for a click during turn on, can we interpolate
-	   between 20khz cutoff and 0 Q? */
+              + voice->modlfoVal * voice->modlfoToFc
+              + voice->modenvVal * voice->modenvToFc);
 
 	/* I removed the optimization of turning the filter off when the
 	 * resonance frequence is above the maximum frequency. Instead, the
@@ -979,15 +957,12 @@ void voiceUpdateParam (Voice * voice, int gen) {
 			voice->rootPitch = voice->gen[GEN_OVERRIDEROOTKEY].val * 100.0f
 				- voice->sampleP->origPitchAdj;
 		} else {
-			voice->rootPitch =
-				voice->sampleP->origPitch * 100.0f - voice->sampleP->origPitchAdj;
+			voice->rootPitch = voice->sampleP->origPitch * 100.0f - voice->sampleP->origPitchAdj;
 		}
 		voice->rootPitch = ct2hz (voice->rootPitch);
 #define ONLY_SUPPORTED_SAMPLE_RATE (44100)
-		if (voice->sampleP != NULL) {
-			voice->rootPitch *=
-				(realT) voice->outputRate / ONLY_SUPPORTED_SAMPLE_RATE;
-		}
+		if (voice->sampleP != NULL) 
+			voice->rootPitch *= (realT) voice->outputRate / ONLY_SUPPORTED_SAMPLE_RATE;
 		break;
 
 	case GEN_FILTERFC:
@@ -1676,141 +1651,8 @@ voiceGetLowerBoundaryForAttenuation (Voice * voice) {
 }
 
 
-/* Purpose:
- *
- * Make sure, that sample start / end point and loop points are in
- * proper order. When starting up, calculate the initial phase.
- */
-void voiceCheckSampleSanity (Voice * voice) {
-	int minIndexNonloop = (int) voice->sampleP->startIdx;
-	int maxIndexNonloop = (int) voice->sampleP->endIdx;
 
-	/* make sure we have enough samples surrounding the loop */
-	int minIndexLoop = (int) voice->sampleP->startIdx + MIN_LOOP_PAD;
-	int maxIndexLoop = (int) voice->sampleP->endIdx - MIN_LOOP_PAD + 1;	/* 'end' is last valid sample, loopend can be + 1 */
-
-	if (!voice->checkSampleSanityFlag) {
-		return;
-	}
-
-
-	/* Keep the start point within the sample data */
-	if (voice->start < minIndexNonloop) {
-		voice->start = minIndexNonloop;
-	} else if (voice->start > maxIndexNonloop) {
-		voice->start = maxIndexNonloop;
-	}
-
-	/* Keep the end point within the sample data */
-	if (voice->end < minIndexNonloop) {
-		voice->end = minIndexNonloop;
-	} else if (voice->end > maxIndexNonloop) {
-		voice->end = maxIndexNonloop;
-	}
-
-	/* Keep start and end point in the right order */
-	if (voice->start > voice->end) {
-		int temp = voice->start;
-		voice->start = voice->end;
-		voice->end = temp;
-	}
-
-	/* Zero length? */
-	if (voice->start == voice->end) {
-		voiceOff (voice);
-		return;
-	}
-
-	if ((_SAMPLEMODE (voice) == LOOP_UNTIL_RELEASE)
-			|| (_SAMPLEMODE (voice) == LOOP_DURING_RELEASE)) {
-		/* Keep the loop start point within the sample data */
-		if (voice->loopstart < minIndexLoop) {
-			voice->loopstart = minIndexLoop;
-		} else if (voice->loopstart > maxIndexLoop) {
-			voice->loopstart = maxIndexLoop;
-		}
-
-		/* Keep the loop end point within the sample data */
-		if (voice->loopend < minIndexLoop) {
-			voice->loopend = minIndexLoop;
-		} else if (voice->loopend > maxIndexLoop) {
-			voice->loopend = maxIndexLoop;
-		}
-
-		/* Keep loop start and end point in the right order */
-		if (voice->loopstart > voice->loopend) {
-			int temp = voice->loopstart;
-			voice->loopstart = voice->loopend;
-			voice->loopend = temp;
-		}
-
-		/* Loop too short? Then don't loop. */
-		if (voice->loopend < voice->loopstart + MIN_LOOP_SIZE) {
-			voice->gen[GEN_SAMPLEMODE].val = UNLOOPED;
-		}
-
-		/* The loop points may have changed. Obtain a new estimate for the loop volume. */
-		/* Is the voice loop within the sample loop? */
-		if ((int) voice->loopstart >= (int) voice->sampleP->loopStartIdx
-				&& (int) voice->loopend <= (int) voice->sampleP->loopEndIdx) {
-			/* Is there a valid peak amplitude available for the loop? */
-			if (voice->sampleP->amplitudeThatReachesNoiseFloorIsValid) {
-				voice->amplitudeThatReachesNoiseFloorLoop =
-					voice->sampleP->amplitudeThatReachesNoiseFloor /
-					voice->synthGain;
-			} else {
-				/* Worst case */
-				voice->amplitudeThatReachesNoiseFloorLoop = voice->amplitudeThatReachesNoiseFloorNonloop;
-			};
-		};
-
-	}															/* if sample mode is looped */
-
-	/* Run startup specific code (only once, when the voice is started) */
-	if (voice->checkSampleSanityFlag & SAMPLESANITY_STARTUP) {
-		if (maxIndexLoop - minIndexLoop < MIN_LOOP_SIZE) {
-			if ((_SAMPLEMODE (voice) == LOOP_UNTIL_RELEASE)
-					|| (_SAMPLEMODE (voice) == LOOP_DURING_RELEASE)) {
-				voice->gen[GEN_SAMPLEMODE].val = UNLOOPED;
-			}
-		}
-
-		/* Set the initial phase of the voice (using the result from the
-		   start offset modulators). */
-		phaseSetInt (voice->phase, voice->start);
-	}															/* if startup */
-
-	/* Is this voice run in loop mode, or does it run straight to the
-	   end of the waveform data? */
-	if (((_SAMPLEMODE (voice) == LOOP_UNTIL_RELEASE)
-			 && (voice->volenvSection < VOICE_ENVRELEASE))
-			|| (_SAMPLEMODE (voice) == LOOP_DURING_RELEASE)) {
-		/* Yes, it will loop as soon as it reaches the loop point.  In
-		 * this case we must prevent, that the playback pointer (phase)
-		 * happens to end up beyond the 2nd loop point, because the
-		 * point has moved.  The DSP algorithm is unable to cope with
-		 * that situation.  So if the phase is beyond the 2nd loop
-		 * point, set it to the start of the loop. No way to avoid some
-		 * noise here.  Note: If the sample pointer ends up -before the
-		 * first loop point- instead, then the DSP loop will just play
-		 * the sample, enter the loop and proceed as expected => no
-		 * actions required.
-		 */
-		int indexInSample = phaseIndex (voice->phase);
-		if (indexInSample >= voice->loopend) {
-			phaseSetInt (voice->phase, voice->loopstart);
-		}
-	}
-
-	/* Sample sanity has been assured. Don't check again, until some
-	   sample parameter is changed by modulation. */
-	voice->checkSampleSanityFlag = 0;
-}
-
-
-int
-voiceSetParam (Voice * voice, int gen,
-											 realT nrpnValue, int abs) {
+int voiceSetParam (Voice * voice, int gen, realT nrpnValue, int abs) {
 	voice->gen[gen].nrpn = nrpnValue;
 	voice->gen[gen].flags = (abs) ? GEN_ABS_NRPN : GEN_SET;
 	voiceUpdateParam (voice, gen);

@@ -1,5 +1,10 @@
+// Really a group of conversion functions. 
+// TODO: It'd be preferable to not have to convert at all!
+// TODO: But at the very least these should be integer arithmetic, not needless floating point.
+// TODO: I need to figure out a clean way to handle fixed point decimal placement for varying needs.
 #include "conv.h"
 
+// TODO Bro, if these are pre-allocated, then they might as well be pre-computed offline!
 /* conversion tables */
 realT ct2hzTab[CENTS_HZ_SIZE];
 realT cb2ampTab[CB_AMP_SIZE];
@@ -10,7 +15,7 @@ realT convexTab[128];
 realT panTab[PAN_SIZE];
 
 /*
- * void synthInit
+ * synthInit()
  *
  * Does all the initialization for this module.
  */
@@ -18,18 +23,17 @@ void conversionConfig (void) {
 	int i;
 	double x;
 
-	for (i = 0; i < CENTS_HZ_SIZE; i++) {
+	for (i = 0; i < CENTS_HZ_SIZE; i++) 
 		ct2hzTab[i] = (realT) pow (2.0, (double) i / 1200.0);
-	}
 
+  // Attenuation is the reduction of sound, the way it'd be through a wall or filter.
 	/* centibels to amplitude conversion
 	 * Note: SF2.01 section 8.1.3: Initial attenuation range is
 	 * between 0 and 144 dB. Therefore a negative attenuation is
 	 * not allowed.
 	 */
-	for (i = 0; i < CB_AMP_SIZE; i++) {
+	for (i = 0; i < CB_AMP_SIZE; i++)    // CB_AMP_SIZE = 961
 		cb2ampTab[i] = (realT) pow (10.0, (double) i / -200.0);
-	}
 
 	/* NOTE: EMU8k and EMU10k devices don't conform to the SoundFont
 	 * specification in regards to volume attenuation.  The below calculation
@@ -37,10 +41,8 @@ void conversionConfig (void) {
 	 * cbToAmpTable[] in tables.c of the TiMidity++ source, which I'm told
 	 * was generated from device testing.  By the spec this should be centibels.
 	 */
-	for (i = 0; i < ATTEN_AMP_SIZE; i++) {
-		atten2ampTab[i] =
-			(realT) pow (10.0, (double) i / ATTEN_POWER_FACTOR);
-	}
+	for (i = 0; i < ATTEN_AMP_SIZE; i++) 
+		atten2ampTab[i] = (realT) pow (10.0, (double) i / ATTEN_POWER_FACTOR);
 
 	/* initialize the conversion tables (see mod.c
 	   modGetValue cases 4 and 8) */
@@ -56,7 +58,6 @@ void conversionConfig (void) {
 
 	/* There seems to be an error in the specs. The equations are
 	   implemented according to the pictures on SF2.01 page 73. */
-
 	for (i = 1; i < 127; i++) {
 		x = -20.0 / 96.0 * log ((i * i) / (127.0 * 127.0)) / log (10.0);
 		convexTab[i] = (realT) (1.0 - x);
@@ -65,9 +66,8 @@ void conversionConfig (void) {
 
 	/* initialize the pan conversion table */
 	x = PI / 2.0 / (PAN_SIZE - 1.0);
-	for (i = 0; i < PAN_SIZE; i++) {
+	for (i = 0; i < PAN_SIZE; i++) 
 		panTab[i] = (realT) sin (i * x);
-	}
 }
 
 /*
@@ -233,17 +233,9 @@ realT tc2secRelease (realT tc) {
  *
  * Convert from absolute cents to Hertz
  */
+// What fixed-point resolution suffices for 0.176?
 realT act2hz (realT c) {
 	return (realT) (8.176 * pow (2.0, (double) c / 1200.0));
-}
-
-/*
- * hz2ct
- *
- * Convert from Hertz to cents
- */
-realT hz2ct (realT f) {
-	return (realT) (6900 + 1200 * log (f / 440.0) / log (2.0));
 }
 
 /*

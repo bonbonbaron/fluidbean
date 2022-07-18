@@ -27,25 +27,20 @@ struct _Chorus;
 /* Use how many samples for interpolation? Must be odd.  '7' sounds
    relatively clean, when listening to the modulated delay signal
    alone.  For a demo on aliasing try '1' With '3', the aliasing is
-   still quite pronounced for some input frequencies
-*/
+   still quite pronounced for some input frequencies */
 #define INTERPOLATION_SAMPLES 5
-
 #define CHORUS_DEFAULT_N 3																/**< Default chorus voice count */
 #define CHORUS_DEFAULT_LEVEL 2.0f													/**< Default chorus level */
 #define CHORUS_DEFAULT_SPEED 0.3f													/**< Default chorus speed */
 #define CHORUS_DEFAULT_DEPTH 8.0f													/**< Default chorus depth */
 #define CHORUS_DEFAULT_TYPE CHORUS_MOD_SINE					/**< Default chorus waveform type */
 
-/**
- * Chorus modulation waveform type.
- */
-enum chorusMod
-{
+/* Chorus modulation waveform type. */
+enum chorusMod {
     CHORUS_MOD_SINE = 0,            /**< Sine wave chorus modulation */
     CHORUS_MOD_TRIANGLE = 1         /**< Triangle wave chorus modulation */
 };
-
+ 
 typedef struct _Chorus {
 	/* Store the values between chorusSetXxx and chorusUpdate
 	 * Logic behind this:
@@ -65,16 +60,13 @@ typedef struct _Chorus {
 	S16 newSpeed_Hz;		/* next value, if parameter check is OK */
 	int numberBlocks;						/* current value */
 	int newNumberBlocks;				/* next value, if parameter check is OK */
-
 	S16 *chorusbuf;
 	int counter;
 	long phase[MAX_CHORUS];
 	long modulationPeriodSamples;
 	int *lookupTab;
 	S16 sampleRate;
-
-	/* sinc lookup table */
-	S16 sincTable[INTERPOLATION_SAMPLES][INTERPOLATION_SUBSAMPLES];
+  S16 **sincTable;
 } Chorus;
 
 /* * chorus */
@@ -86,10 +78,8 @@ void chorusProcessmix (Chorus * chorus, S16 * in,
 void chorusProcessreplace (Chorus * chorus, S16 * in,
 																	S16 * leftOut,
 																	S16 * rightOut);
-
 S32 chorusInit (Chorus * chorus);
 void chorusReset (Chorus * chorus);
-
 void chorusSetNr (Chorus * chorus, S32 nr);
 void chorusSetLevel (Chorus * chorus, S16 level);
 void chorusSetSpeed_Hz (Chorus * chorus,

@@ -2,7 +2,6 @@ struct _Voice;
 
 #ifndef _VOICE_H
 #define _VOICE_H
-
 #include "chan.h"
 #include "phase.h"
 #include "enums.h"
@@ -36,9 +35,7 @@ enum voiceEnvelopeIndexT {
 	VOICE_ENVLAST
 };
 
-/*
- * Voice
- */
+/* Voice */
 typedef struct _Voice {
 	U32 id;							/* the id is incremented for every new noteon.
 																   it's used for noteoff's  */
@@ -64,7 +61,7 @@ typedef struct _Voice {
 	U32 noteoffTicks;		/* Delay note-off until this tick */
 
 	realT amp;							/* current linear amplitude */
-	phaseT phase;					/* the phase of the sample wave */
+	Phase phase;					/* the phase of the sample wave */
 
 	/* Temporary variables used in voiceWrite() */
 
@@ -160,8 +157,6 @@ typedef struct _Voice {
 
 	S32 interpMethod;
 
-	/* for debugging */
-	S32 debug;
 } Voice;
 
 

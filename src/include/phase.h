@@ -14,22 +14,22 @@
 
 #define FRACT_MAX ((double)4294967296.0)
 
-/* phaseT
+/* Phase
 * Purpose:
 * Playing pointer for voice playback
 *
 * When a sample is played back at a different pitch, the playing pointer in the
 * source sample will not advance exactly one sample per output sample.
-* This playing pointer is implemented using phaseT.
+* This playing pointer is implemented using Phase.
 * It is a 64 bit number. The higher 32 bits contain the 'index' (number of
 * the current sample), the lower 32 bits the fractional part.
 */
-typedef unsigned long long phaseT;
+typedef unsigned long long Phase;
 
 /* Purpose:
  * Set a to b.
- * a: phaseT
- * b: phaseT
+ * a: Phase
+ * b: Phase
  */
 #define phaseSet(a,b) a=b;
 
@@ -43,7 +43,7 @@ typedef unsigned long long phaseT;
   (a) = (((unsigned long long)(b)) << 32) \
   | (uint32) (((double)(b) - (S32)(b)) * (double)FRACT_MAX)
 
-/* create a phaseT from an index and a fraction value */
+/* create a Phase from an index and a fraction value */
 #define phaseFromIndexFract(index, fract) \
   ((((unsigned long long)(index)) << 32) + (fract))
 
@@ -73,12 +73,12 @@ typedef unsigned long long phaseT;
   ((double)(phaseIndex(_x)) + ((double)phaseFract(_x) / FRACT_MAX))
 
 /* Purpose:
- * Advance a by a step of b (both are phaseT).
+ * Advance a by a step of b (both are Phase).
  */
 #define phaseIncr(a, b)  a += b
 
 /* Purpose:
- * Subtract b from a (both are phaseT).
+ * Subtract b from a (both are Phase).
  */
 #define phaseDecr(a, b)  a -= b
 

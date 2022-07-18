@@ -201,221 +201,221 @@ fluidbean/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/build
 .PHONY : fluidbean/fast
 
-drivers/audio/fluid_adriver.o: drivers/audio/fluid_adriver.c.o
+drivers/audio/adriver.o: drivers/audio/adriver.c.o
 
-.PHONY : drivers/audio/fluid_adriver.o
-
-# target to build an object file
-drivers/audio/fluid_adriver.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/fluid_adriver.c.o
-.PHONY : drivers/audio/fluid_adriver.c.o
-
-drivers/audio/fluid_adriver.i: drivers/audio/fluid_adriver.c.i
-
-.PHONY : drivers/audio/fluid_adriver.i
-
-# target to preprocess a source file
-drivers/audio/fluid_adriver.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/fluid_adriver.c.i
-.PHONY : drivers/audio/fluid_adriver.c.i
-
-drivers/audio/fluid_adriver.s: drivers/audio/fluid_adriver.c.s
-
-.PHONY : drivers/audio/fluid_adriver.s
-
-# target to generate assembly for a file
-drivers/audio/fluid_adriver.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/fluid_adriver.c.s
-.PHONY : drivers/audio/fluid_adriver.c.s
-
-drivers/audio/fluid_alsa.o: drivers/audio/fluid_alsa.c.o
-
-.PHONY : drivers/audio/fluid_alsa.o
+.PHONY : drivers/audio/adriver.o
 
 # target to build an object file
-drivers/audio/fluid_alsa.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/fluid_alsa.c.o
-.PHONY : drivers/audio/fluid_alsa.c.o
+drivers/audio/adriver.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/adriver.c.o
+.PHONY : drivers/audio/adriver.c.o
 
-drivers/audio/fluid_alsa.i: drivers/audio/fluid_alsa.c.i
+drivers/audio/adriver.i: drivers/audio/adriver.c.i
 
-.PHONY : drivers/audio/fluid_alsa.i
+.PHONY : drivers/audio/adriver.i
 
 # target to preprocess a source file
-drivers/audio/fluid_alsa.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/fluid_alsa.c.i
-.PHONY : drivers/audio/fluid_alsa.c.i
+drivers/audio/adriver.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/adriver.c.i
+.PHONY : drivers/audio/adriver.c.i
 
-drivers/audio/fluid_alsa.s: drivers/audio/fluid_alsa.c.s
+drivers/audio/adriver.s: drivers/audio/adriver.c.s
 
-.PHONY : drivers/audio/fluid_alsa.s
+.PHONY : drivers/audio/adriver.s
 
 # target to generate assembly for a file
-drivers/audio/fluid_alsa.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/fluid_alsa.c.s
-.PHONY : drivers/audio/fluid_alsa.c.s
+drivers/audio/adriver.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/adriver.c.s
+.PHONY : drivers/audio/adriver.c.s
 
-drivers/midi/fluid_midi.o: drivers/midi/fluid_midi.c.o
+drivers/audio/alsa.o: drivers/audio/alsa.c.o
 
-.PHONY : drivers/midi/fluid_midi.o
+.PHONY : drivers/audio/alsa.o
 
 # target to build an object file
-drivers/midi/fluid_midi.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_midi.c.o
-.PHONY : drivers/midi/fluid_midi.c.o
+drivers/audio/alsa.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/alsa.c.o
+.PHONY : drivers/audio/alsa.c.o
 
-drivers/midi/fluid_midi.i: drivers/midi/fluid_midi.c.i
+drivers/audio/alsa.i: drivers/audio/alsa.c.i
 
-.PHONY : drivers/midi/fluid_midi.i
+.PHONY : drivers/audio/alsa.i
 
 # target to preprocess a source file
-drivers/midi/fluid_midi.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_midi.c.i
-.PHONY : drivers/midi/fluid_midi.c.i
+drivers/audio/alsa.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/alsa.c.i
+.PHONY : drivers/audio/alsa.c.i
 
-drivers/midi/fluid_midi.s: drivers/midi/fluid_midi.c.s
+drivers/audio/alsa.s: drivers/audio/alsa.c.s
 
-.PHONY : drivers/midi/fluid_midi.s
+.PHONY : drivers/audio/alsa.s
 
 # target to generate assembly for a file
-drivers/midi/fluid_midi.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_midi.c.s
-.PHONY : drivers/midi/fluid_midi.c.s
+drivers/audio/alsa.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/audio/alsa.c.s
+.PHONY : drivers/audio/alsa.c.s
 
-drivers/midi/fluid_midi_router.o: drivers/midi/fluid_midi_router.c.o
+drivers/midi/midi.o: drivers/midi/midi.c.o
 
-.PHONY : drivers/midi/fluid_midi_router.o
+.PHONY : drivers/midi/midi.o
 
 # target to build an object file
-drivers/midi/fluid_midi_router.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_midi_router.c.o
-.PHONY : drivers/midi/fluid_midi_router.c.o
+drivers/midi/midi.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/midi.c.o
+.PHONY : drivers/midi/midi.c.o
 
-drivers/midi/fluid_midi_router.i: drivers/midi/fluid_midi_router.c.i
+drivers/midi/midi.i: drivers/midi/midi.c.i
 
-.PHONY : drivers/midi/fluid_midi_router.i
+.PHONY : drivers/midi/midi.i
 
 # target to preprocess a source file
-drivers/midi/fluid_midi_router.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_midi_router.c.i
-.PHONY : drivers/midi/fluid_midi_router.c.i
+drivers/midi/midi.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/midi.c.i
+.PHONY : drivers/midi/midi.c.i
 
-drivers/midi/fluid_midi_router.s: drivers/midi/fluid_midi_router.c.s
+drivers/midi/midi.s: drivers/midi/midi.c.s
 
-.PHONY : drivers/midi/fluid_midi_router.s
+.PHONY : drivers/midi/midi.s
 
 # target to generate assembly for a file
-drivers/midi/fluid_midi_router.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_midi_router.c.s
-.PHONY : drivers/midi/fluid_midi_router.c.s
+drivers/midi/midi.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/midi.c.s
+.PHONY : drivers/midi/midi.c.s
 
-drivers/midi/fluid_seq.o: drivers/midi/fluid_seq.c.o
+drivers/midi/midi_router.o: drivers/midi/midi_router.c.o
 
-.PHONY : drivers/midi/fluid_seq.o
+.PHONY : drivers/midi/midi_router.o
 
 # target to build an object file
-drivers/midi/fluid_seq.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seq.c.o
-.PHONY : drivers/midi/fluid_seq.c.o
+drivers/midi/midi_router.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/midi_router.c.o
+.PHONY : drivers/midi/midi_router.c.o
 
-drivers/midi/fluid_seq.i: drivers/midi/fluid_seq.c.i
+drivers/midi/midi_router.i: drivers/midi/midi_router.c.i
 
-.PHONY : drivers/midi/fluid_seq.i
+.PHONY : drivers/midi/midi_router.i
 
 # target to preprocess a source file
-drivers/midi/fluid_seq.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seq.c.i
-.PHONY : drivers/midi/fluid_seq.c.i
+drivers/midi/midi_router.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/midi_router.c.i
+.PHONY : drivers/midi/midi_router.c.i
 
-drivers/midi/fluid_seq.s: drivers/midi/fluid_seq.c.s
+drivers/midi/midi_router.s: drivers/midi/midi_router.c.s
 
-.PHONY : drivers/midi/fluid_seq.s
+.PHONY : drivers/midi/midi_router.s
 
 # target to generate assembly for a file
-drivers/midi/fluid_seq.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seq.c.s
-.PHONY : drivers/midi/fluid_seq.c.s
+drivers/midi/midi_router.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/midi_router.c.s
+.PHONY : drivers/midi/midi_router.c.s
 
-drivers/midi/fluid_seq_queue.o: drivers/midi/fluid_seq_queue.cpp.o
+drivers/midi/seq.o: drivers/midi/seq.c.o
 
-.PHONY : drivers/midi/fluid_seq_queue.o
+.PHONY : drivers/midi/seq.o
 
 # target to build an object file
-drivers/midi/fluid_seq_queue.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seq_queue.cpp.o
-.PHONY : drivers/midi/fluid_seq_queue.cpp.o
+drivers/midi/seq.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seq.c.o
+.PHONY : drivers/midi/seq.c.o
 
-drivers/midi/fluid_seq_queue.i: drivers/midi/fluid_seq_queue.cpp.i
+drivers/midi/seq.i: drivers/midi/seq.c.i
 
-.PHONY : drivers/midi/fluid_seq_queue.i
+.PHONY : drivers/midi/seq.i
 
 # target to preprocess a source file
-drivers/midi/fluid_seq_queue.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seq_queue.cpp.i
-.PHONY : drivers/midi/fluid_seq_queue.cpp.i
+drivers/midi/seq.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seq.c.i
+.PHONY : drivers/midi/seq.c.i
 
-drivers/midi/fluid_seq_queue.s: drivers/midi/fluid_seq_queue.cpp.s
+drivers/midi/seq.s: drivers/midi/seq.c.s
 
-.PHONY : drivers/midi/fluid_seq_queue.s
+.PHONY : drivers/midi/seq.s
 
 # target to generate assembly for a file
-drivers/midi/fluid_seq_queue.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seq_queue.cpp.s
-.PHONY : drivers/midi/fluid_seq_queue.cpp.s
+drivers/midi/seq.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seq.c.s
+.PHONY : drivers/midi/seq.c.s
 
-drivers/midi/fluid_seqbind.o: drivers/midi/fluid_seqbind.c.o
+drivers/midi/seq_queue.o: drivers/midi/seq_queue.cpp.o
 
-.PHONY : drivers/midi/fluid_seqbind.o
+.PHONY : drivers/midi/seq_queue.o
 
 # target to build an object file
-drivers/midi/fluid_seqbind.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seqbind.c.o
-.PHONY : drivers/midi/fluid_seqbind.c.o
+drivers/midi/seq_queue.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seq_queue.cpp.o
+.PHONY : drivers/midi/seq_queue.cpp.o
 
-drivers/midi/fluid_seqbind.i: drivers/midi/fluid_seqbind.c.i
+drivers/midi/seq_queue.i: drivers/midi/seq_queue.cpp.i
 
-.PHONY : drivers/midi/fluid_seqbind.i
+.PHONY : drivers/midi/seq_queue.i
 
 # target to preprocess a source file
-drivers/midi/fluid_seqbind.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seqbind.c.i
-.PHONY : drivers/midi/fluid_seqbind.c.i
+drivers/midi/seq_queue.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seq_queue.cpp.i
+.PHONY : drivers/midi/seq_queue.cpp.i
 
-drivers/midi/fluid_seqbind.s: drivers/midi/fluid_seqbind.c.s
+drivers/midi/seq_queue.s: drivers/midi/seq_queue.cpp.s
 
-.PHONY : drivers/midi/fluid_seqbind.s
+.PHONY : drivers/midi/seq_queue.s
 
 # target to generate assembly for a file
-drivers/midi/fluid_seqbind.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seqbind.c.s
-.PHONY : drivers/midi/fluid_seqbind.c.s
+drivers/midi/seq_queue.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seq_queue.cpp.s
+.PHONY : drivers/midi/seq_queue.cpp.s
 
-drivers/midi/fluid_seqbind_notes.o: drivers/midi/fluid_seqbind_notes.cpp.o
+drivers/midi/seqbind.o: drivers/midi/seqbind.c.o
 
-.PHONY : drivers/midi/fluid_seqbind_notes.o
+.PHONY : drivers/midi/seqbind.o
 
 # target to build an object file
-drivers/midi/fluid_seqbind_notes.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seqbind_notes.cpp.o
-.PHONY : drivers/midi/fluid_seqbind_notes.cpp.o
+drivers/midi/seqbind.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seqbind.c.o
+.PHONY : drivers/midi/seqbind.c.o
 
-drivers/midi/fluid_seqbind_notes.i: drivers/midi/fluid_seqbind_notes.cpp.i
+drivers/midi/seqbind.i: drivers/midi/seqbind.c.i
 
-.PHONY : drivers/midi/fluid_seqbind_notes.i
+.PHONY : drivers/midi/seqbind.i
 
 # target to preprocess a source file
-drivers/midi/fluid_seqbind_notes.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seqbind_notes.cpp.i
-.PHONY : drivers/midi/fluid_seqbind_notes.cpp.i
+drivers/midi/seqbind.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seqbind.c.i
+.PHONY : drivers/midi/seqbind.c.i
 
-drivers/midi/fluid_seqbind_notes.s: drivers/midi/fluid_seqbind_notes.cpp.s
+drivers/midi/seqbind.s: drivers/midi/seqbind.c.s
 
-.PHONY : drivers/midi/fluid_seqbind_notes.s
+.PHONY : drivers/midi/seqbind.s
 
 # target to generate assembly for a file
-drivers/midi/fluid_seqbind_notes.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/fluid_seqbind_notes.cpp.s
-.PHONY : drivers/midi/fluid_seqbind_notes.cpp.s
+drivers/midi/seqbind.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seqbind.c.s
+.PHONY : drivers/midi/seqbind.c.s
+
+drivers/midi/seqbind_notes.o: drivers/midi/seqbind_notes.cpp.o
+
+.PHONY : drivers/midi/seqbind_notes.o
+
+# target to build an object file
+drivers/midi/seqbind_notes.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seqbind_notes.cpp.o
+.PHONY : drivers/midi/seqbind_notes.cpp.o
+
+drivers/midi/seqbind_notes.i: drivers/midi/seqbind_notes.cpp.i
+
+.PHONY : drivers/midi/seqbind_notes.i
+
+# target to preprocess a source file
+drivers/midi/seqbind_notes.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seqbind_notes.cpp.i
+.PHONY : drivers/midi/seqbind_notes.cpp.i
+
+drivers/midi/seqbind_notes.s: drivers/midi/seqbind_notes.cpp.s
+
+.PHONY : drivers/midi/seqbind_notes.s
+
+# target to generate assembly for a file
+drivers/midi/seqbind_notes.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fluidbean.dir/build.make CMakeFiles/fluidbean.dir/drivers/midi/seqbind_notes.cpp.s
+.PHONY : drivers/midi/seqbind_notes.cpp.s
 
 libbotox/src/bt.o: libbotox/src/bt.c.o
 
@@ -782,30 +782,30 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... botox"
 	@echo "... fluidbean"
-	@echo "... drivers/audio/fluid_adriver.o"
-	@echo "... drivers/audio/fluid_adriver.i"
-	@echo "... drivers/audio/fluid_adriver.s"
-	@echo "... drivers/audio/fluid_alsa.o"
-	@echo "... drivers/audio/fluid_alsa.i"
-	@echo "... drivers/audio/fluid_alsa.s"
-	@echo "... drivers/midi/fluid_midi.o"
-	@echo "... drivers/midi/fluid_midi.i"
-	@echo "... drivers/midi/fluid_midi.s"
-	@echo "... drivers/midi/fluid_midi_router.o"
-	@echo "... drivers/midi/fluid_midi_router.i"
-	@echo "... drivers/midi/fluid_midi_router.s"
-	@echo "... drivers/midi/fluid_seq.o"
-	@echo "... drivers/midi/fluid_seq.i"
-	@echo "... drivers/midi/fluid_seq.s"
-	@echo "... drivers/midi/fluid_seq_queue.o"
-	@echo "... drivers/midi/fluid_seq_queue.i"
-	@echo "... drivers/midi/fluid_seq_queue.s"
-	@echo "... drivers/midi/fluid_seqbind.o"
-	@echo "... drivers/midi/fluid_seqbind.i"
-	@echo "... drivers/midi/fluid_seqbind.s"
-	@echo "... drivers/midi/fluid_seqbind_notes.o"
-	@echo "... drivers/midi/fluid_seqbind_notes.i"
-	@echo "... drivers/midi/fluid_seqbind_notes.s"
+	@echo "... drivers/audio/adriver.o"
+	@echo "... drivers/audio/adriver.i"
+	@echo "... drivers/audio/adriver.s"
+	@echo "... drivers/audio/alsa.o"
+	@echo "... drivers/audio/alsa.i"
+	@echo "... drivers/audio/alsa.s"
+	@echo "... drivers/midi/midi.o"
+	@echo "... drivers/midi/midi.i"
+	@echo "... drivers/midi/midi.s"
+	@echo "... drivers/midi/midi_router.o"
+	@echo "... drivers/midi/midi_router.i"
+	@echo "... drivers/midi/midi_router.s"
+	@echo "... drivers/midi/seq.o"
+	@echo "... drivers/midi/seq.i"
+	@echo "... drivers/midi/seq.s"
+	@echo "... drivers/midi/seq_queue.o"
+	@echo "... drivers/midi/seq_queue.i"
+	@echo "... drivers/midi/seq_queue.s"
+	@echo "... drivers/midi/seqbind.o"
+	@echo "... drivers/midi/seqbind.i"
+	@echo "... drivers/midi/seqbind.s"
+	@echo "... drivers/midi/seqbind_notes.o"
+	@echo "... drivers/midi/seqbind_notes.i"
+	@echo "... drivers/midi/seqbind_notes.s"
 	@echo "... libbotox/src/bt.o"
 	@echo "... libbotox/src/bt.i"
 	@echo "... libbotox/src/bt.s"

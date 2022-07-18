@@ -1056,8 +1056,7 @@ int synthChannelPressure (Synthesizer * synth, int chan, int val) {
  * @param val MIDI key pressure value (0-127)
  * @return OK on success, FAILED otherwise
  */
-int
-synthKeyPressure (Synthesizer * synth, int chan, int key, int val) {
+int synthKeyPressure (Synthesizer * synth, int chan, int key, int val) {
 	int result = OK;
 	if (key < 0 || key > 127) {
 		return FAILED;
@@ -1901,9 +1900,7 @@ void synthKillByExclusiveClass (Synthesizer * synth, Voice * newVoice) {
 	};
 };
 
-/*
- * synthStartVoice
- */
+/* synthStartVoice */
 void synthStartVoice (Synthesizer * synth, Voice * voice) {
 /*   mutexLock(synth->busy); /\* Don't interfere with the audio thread *\/ */
 /*   mutexUnlock(synth->busy); */
@@ -2359,25 +2356,20 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
              *A generator in a local instrument zone supersedes a
              *global instrument zone generator.  Both cases supersede
              *the default generator -> voiceGenSet */
+            U8 genType = genP->genType;
             if (genP->flags) 
-              voiceP->gen[genP->genType] = *genP;
-            else if ((globalIzoneP != NULL) && (globalIzoneP->genA[i].flags)) 
-              voiceP->gen[genP->genType] = globalIzoneP->genA[genP->genType];
-            voiceP->gen[i].flags = (voiceP->gen[i].val != 0);  // true evalutes to GEN_SET enum (1).
+              voiceP->gen[genType] = *genP;
+            else if ((globalIzoneP != NULL) && (globalIzoneP->genA[genType].flags)) 
+              voiceP->gen[genType] = globalIzoneP->genA[genType];
+            voiceP->gen[genType].flags = (voiceP->gen[genType].val != 0);  // true evalutes to GEN_SET enum (1).
           }                     /* for all generators */
 
           /* global instrument zone, modulators: Put them all into a list. */
           modListCount = 0;
           if (globalIzoneP) {
-            Generator *genEndP = globalIzoneP->genA + 
-                                 globalIzoneP->nGens;
-            for (Generator *genP = globalIzoneP->genA;
-                genP < genEndP;
-                ++genP) {
-              
-              memcpy(&modList[modListCount],
-                      genP->modA,
-                      sizeof(Modulator) * genP->nMods);
+            Generator *genEndP = globalIzoneP->genA + globalIzoneP->nGens;
+            for (Generator *genP = globalIzoneP->genA; genP < genEndP; ++genP) {
+              memcpy(&modList[modListCount], genP->modA, sizeof(Modulator) * genP->nMods);
               modListCount += genP->nMods;
             }
           }
@@ -2387,15 +2379,9 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
            *SF 2.01 page 69, 'bullet' 8
            */
           genEndP = izoneP->genA + izoneP->nGens;
-          for (Generator *genP = izoneP->genA;
-              genP < genEndP;
-              ++genP) {
-              
+          for (Generator *genP = izoneP->genA; genP < genEndP; ++genP) {
             Modulator *modEndP = genP->modA + genP->nMods;
-            for (Modulator *modP = genP->modA;
-                modP < modEndP;
-                ++modP) {
-
+            for (Modulator *modP = genP->modA; modP < modEndP; ++modP) {
               /* 'Identical' modulators will be deleted by setting their
                * list entry to NULL.  The list length is known, NULL
                * entries will be ignored later.  SF2.01 section 9.5.1
@@ -2503,7 +2489,6 @@ int presetNoteon (Preset *presetP, Synthesizer * synth, int chan, int key, int v
               modPP < modEndPP;
               ++modPP) {
             if ((*modPP != NULL) && ((*modPP)->amount != 0)) {  /* disabled modulators can be skipped. */
-
               /* Preset modulators -add- to existing instrument /
                *default modulators.  SF2.01 page 70 first bullet on page */
               voiceAddMod (voiceP, (*modPP), VOICE_ADD);

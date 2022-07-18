@@ -11,9 +11,7 @@ static realT interpCoeff[INTERP_MAX][4];
 /* 7th order interpolation (7 coefficients centered on 3rd) */
 static realT sincTable7[INTERP_MAX][7];
 
-
 #define SINC_INTERP_ORDER 7			/* 7th order constant */
-
 
 /* Initializes interpolation tables */
 void dspFloatConfig (void) {
@@ -38,9 +36,9 @@ void dspFloatConfig (void) {
 		interpCoeffLinear[i][1] = (realT) x;
 	}
 
-	/* i: Offset in terms of whole samples */
-	for (i = 0; i < SINC_INTERP_ORDER; i++) {	/* i2: Offset in terms of fractional samples ('subsamples') */
-		for (i2 = 0; i2 < INTERP_MAX; i2++) {
+	/* i: Offset in terms of whole samples */ 
+	for (i = 0; i < SINC_INTERP_ORDER; i++) {	/* i2: Offset in terms of fractional samples ('subsamples') */  // to 7
+		for (i2 = 0; i2 < INTERP_MAX; i2++) {  // to 256
 			/* center on middle of table */
 			iShifted = (double) i - ((double) SINC_INTERP_ORDER / 2.0)
 				+ (double) i2 / (double) INTERP_MAX;
@@ -49,34 +47,23 @@ void dspFloatConfig (void) {
 			if (fabs (iShifted) > 0.000001) {
 				v = (realT) sin (iShifted * M_PI) / (M_PI * iShifted);
 				/* Hamming window */
-				v *=
-					(realT) 0.5 *(1.0 +
-															 cos (2.0 * M_PI * iShifted /
-																		(realT) SINC_INTERP_ORDER));
+				v *= (realT) 0.5 * (1.0 + cos (2.0 * M_PI * iShifted / (realT) SINC_INTERP_ORDER));
 			} else
 				v = 1.0;
 
 			sincTable7[INTERP_MAX - i2 - 1][i] = v;
 		}
 	}
-
-#if 0
-	for (i = 0; i < INTERP_MAX; i++) {
-		printf ("%d %0.3f %0.3f %0.3f %0.3f %0.3f %0.3f %0.3f\n",
-						i, sincTable7[0][i], sincTable7[1][i], sincTable7[2][i],
-						sincTable7[3][i], sincTable7[4][i], sincTable7[5][i],
-						sincTable7[6][i]);
-	}
-#endif
 }
+
+// When they say "centering", it looks like they're building a hamming window LUT.
 
 
 /* No interpolation. Just take the sample, which is closest to
-  * the playback pointer.  Questionable quality, but very
-  * efficient. */
+ * the playback pointer. Questionable quality, but very efficient. */
 int dspFloatInterpolateNone (Voice * voice) {
-	phaseT dspPhase = voice->phase;
-	phaseT dspPhaseIncr;
+	Phase dspPhase = voice->phase;
+	Phase dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
 	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
@@ -135,8 +122,8 @@ int dspFloatInterpolateNone (Voice * voice) {
  * smaller if end of sample occurs).
  */
 int dspFloatInterpolateLinear (Voice * voice) {
-	phaseT dspPhase = voice->phase;
-	phaseT dspPhaseIncr;
+	Phase dspPhase = voice->phase;
+	Phase dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
 	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
@@ -226,8 +213,8 @@ int dspFloatInterpolateLinear (Voice * voice) {
  * smaller if end of sample occurs).
  */
 int dspFloatInterpolate_4thOrder (Voice * voice) {
-	phaseT dspPhase = voice->phase;
-	phaseT dspPhaseIncr;
+	Phase dspPhase = voice->phase;
+	Phase dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
 	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
@@ -368,8 +355,8 @@ int dspFloatInterpolate_4thOrder (Voice * voice) {
  * smaller if end of sample occurs).
  */
 int dspFloatInterpolate_7thOrder (Voice * voice) {
-	phaseT dspPhase = voice->phase;
-	phaseT dspPhaseIncr;
+	Phase dspPhase = voice->phase;
+	Phase dspPhaseIncr;
 	short int *dspData = voice->sampleP->pcmDataP;
 	S16 *dspBuf = voice->dspBuf;
 	realT dspAmp = voice->amp;
@@ -387,7 +374,7 @@ int dspFloatInterpolate_7thOrder (Voice * voice) {
 
 	/* add 1/2 sample to dspPhase since 7th order interpolation is centered on
 	 * the 4th sample point */
-	phaseIncr (dspPhase, (phaseT) 0x80000000);
+	phaseIncr (dspPhase, (Phase) 0x80000000);
 
 	/* voice is currently looping? */
 	looping = _SAMPLEMODE (voice) == LOOP_DURING_RELEASE
@@ -628,7 +615,7 @@ int dspFloatInterpolate_7thOrder (Voice * voice) {
 
 	/* sub 1/2 sample from dspPhase since 7th order interpolation is centered on
 	 * the 4th sample point (correct back to real value) */
-	phaseDecr (dspPhase, (phaseT) 0x80000000);
+	phaseDecr (dspPhase, (Phase) 0x80000000);
 
 	voice->phase = dspPhase;
 	voice->amp = dspAmp;

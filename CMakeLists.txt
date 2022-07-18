@@ -8,7 +8,6 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_admin )
 # Then, using the above, we'll know where to find our modules.
 include(GNUInstallDirs)
 include (PkgConfigHelpers) # has unset_pkg_config()
-
 set(DRIVER_DIR ${CMAKE_SOURCE_DIR}/drivers)
 set(AUDIO_DRIVER_DIR ${DRIVER_DIR}/audio)
 set(MIDI_DRIVER_DIR ${DRIVER_DIR}/midi)
@@ -47,15 +46,15 @@ list(APPEND SOURCES
     ${CMAKE_SOURCE_DIR}/src/tuning.c
     ${CMAKE_SOURCE_DIR}/src/voice.c
     # AUdio driver files
-    ${AUDIO_DRIVER_DIR}/fluid_adriver.c
-    ${AUDIO_DRIVER_DIR}/fluid_alsa.c
+    ${AUDIO_DRIVER_DIR}/adriver.c
+    ${AUDIO_DRIVER_DIR}/alsa.c
     # Midi driver files
-    ${MIDI_DRIVER_DIR}/fluid_midi.c
-    ${MIDI_DRIVER_DIR}/fluid_midi_router.c
-    ${MIDI_DRIVER_DIR}/fluid_seq.c
-    ${MIDI_DRIVER_DIR}/fluid_seqbind.c
-    ${MIDI_DRIVER_DIR}/fluid_seqbind_notes.cpp
-    ${MIDI_DRIVER_DIR}/fluid_seq_queue.cpp
+    ${MIDI_DRIVER_DIR}/midi.c
+    ${MIDI_DRIVER_DIR}/midi_router.c
+    ${MIDI_DRIVER_DIR}/seq.c
+    ${MIDI_DRIVER_DIR}/seqbind.c
+    ${MIDI_DRIVER_DIR}/seqbind_notes.cpp
+    ${MIDI_DRIVER_DIR}/seq_queue.cpp
 )
 
 # Basic C library checks

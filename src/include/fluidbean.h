@@ -177,7 +177,7 @@ typedef long long longLongT;
  *                      CONSTANTS
  */
 
-#define BUFSIZE                64
+#define BUFSIZE                64   // a CONSTANT buffer size for max speed, eh??
 
 #ifndef PI
 #define PI                          3.141592654

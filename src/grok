@@ -1,0 +1,29 @@
+GOAL (A): streamline processing from noteon to emission
+multiple mods can source from the same controller
+multiple mods can feed the same generator
+owning the generator can cause multiple copies. so don't do that
+keep an array of generators
+defer generator-processing till all mods are processed
+start from the ground up; go backwards in the hierarchy since controllers access the bottom (mod) level.
+
+controller owns array of indices to mods
+process all mod indices 
+
+
+is this copying values into the voice necessary? 
+
+
+GROWING AN IDEA...
+==================
+controller array (controller 1 touches mods 0 and 1, 2 hits 5 and 52, etc.)
+loop through and populate array of mod indices
+mod array: {0 1 5 2 26 32 52 80}
+affected gens: {23 256 1 12}
+
+
+HOWEVER...
+==========
+note/key (NK) must be in preset range first
+[NK] must be in each izone range second
+if igen exists, set voice->gen[igen.genType] = igen. Else if globalIgen exists, do that instead.
+controller changes don't matter if the note's not on, so start with noteon instead.

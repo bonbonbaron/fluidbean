@@ -17,7 +17,7 @@ typedef enum {
     MIDI_ROUTER_RULE_COUNT                  /**< @internal Total count of rule types. This symbol
                                                     is not part of the public API and ABI stability
                                                     guarantee and may change at any time!*/
-} midiRouterRuleType;
+} MidiRouterRuleType;
 
 enum playerStatus {
     PLAYER_READY,           /**< Player is ready */
@@ -27,9 +27,9 @@ enum playerStatus {
 };
 
 enum playerSetTempoType {
-    PLAYER_TEMPO_INTERNAL,      /**< Use midi file tempo set in midi file (120 bpm by default). Multiplied by a factor */
-    PLAYER_TEMPO_EXTERNAL_BPM,  /**< Set player tempo in bpm, supersede midi file tempo */
-    PLAYER_TEMPO_EXTERNAL_MIDI, /**< Set player tempo in us per quarter note, supersede midi file tempo */
+    PLAYER_TEMPO_INTERNAL,      /**< Use Midi file tempo set in Midi file (120 bpm by default). Multiplied by a factor */
+    PLAYER_TEMPO_EXTERNAL_BPM,  /**< Set player tempo in bpm, supersede Midi file tempo */
+    PLAYER_TEMPO_EXTERNAL_MIDI, /**< Set player tempo in us per quarter note, supersede Midi file tempo */
     PLAYER_TEMPO_NBR        /**< @internal Value defines the count of player tempo type (#playerSetTempoType) @warning This symbol is not part of the public API and ABI stability guarantee and may change at any time! */
 };
 
@@ -39,32 +39,32 @@ enum playerSetTempoType {
 #define MAX_NUMBER_OF_CHANNELS 16
 
 
+
 /*
- * midiEventT
+ * MidiEventT
  */
-typedef struct _fluidMidiEventT {
-	struct _fluidMidiEventT *next;			/* Don't use it, it will dissappear. Used in midi tracks.  */
-	U32 dtime;						/* Delay (ticks) between this and previous event. midi tracks. */
-	U8 type;						/* MIDI event type */
-	U8 channel;				/* MIDI channel */
-	U32 param1;					/* First parameter */
-	U32 param2;					/* Second parameter */
-} midiEventT;
+typedef struct _MidiEventT {
+    struct _MidiEventT *next; /* Link to next event */
+    void *paramptr;           /* Pointer parameter (for SYSEX data), size is stored to param1, param2 indicates if pointer should be freed (dynamic if TRUE) */
+    unsigned int dtime;       /* Delay (ticks) between this and previous event. midi tracks. */
+    unsigned int param1;      /* First parameter */
+    unsigned int param2;      /* Second parameter */
+    unsigned char type;       /* MIDI event type */
+    unsigned char channel;    /* MIDI channel */
+} MidiEventT;
 
 typedef struct _fluidTrackT {
     char *name;
     int num;
-    midiEventT *first;
-    midiEventT *cur;
-    midiEventT *last;
+    MidiEventT *first;
+    MidiEventT *cur;
+    MidiEventT *last;
     unsigned int ticks;
-} trackT;
+} TrackT;
 
-typedef struct _fluidMidiParserT midiParserT;
-
-midiParserT *newMidiParser (void);
-S32 deleteMidiParser (midiParserT * parser);
-midiEventT *midiParserParse (midiParserT * parser,
+struct _MidiParserT *newMidiParser (void);
+void deleteMidiParser (struct _MidiParserT * parser);
+MidiEventT *MidiParserParse (struct _MidiParserT * parser,
 																						 U8 c);
 
 typedef struct _fluidSampleTimerT {
@@ -77,11 +77,11 @@ typedef struct _fluidSampleTimerT {
 
 
 /* * player */
-typedef struct _fluidPlayerT {
-    atomicIntT status;
-    atomicIntT stopping; /* Flag for sending allNotesOff when player is stopped */
+typedef struct _PlayerT {
+    int status;
+    int stopping; /* Flag for sending allNotesOff when player is stopped */
     int ntracks;
-    trackT *track[MAX_NUMBER_OF_TRACKS];
+    TrackT *track[MAX_NUMBER_OF_TRACKS];
     struct _Synthesizer *synth;
     struct _fluidTimerT *systemTimer;
     sampleTimerT *sampleTimer;
@@ -90,7 +90,7 @@ typedef struct _fluidPlayerT {
 
     char useSystemTimer;   /* if zero, use sample timers, otherwise use system clock timer */
     char resetSynthBetweenSongs; /* 1 if system reset should be sent to the synth between songs. */
-    atomicIntT seekTicks; /* new position in tempo ticks (midi ticks) for seeking */
+    int seekTicks; /* new position in tempo ticks (Midi ticks) for seeking */
     int startTicks;          /* the number of tempo ticks passed at the last tempo change */
     int curTicks;            /* the number of tempo ticks passed */
     int lastCallbackTicks;  /* the last tick number that was passed to player->tickCallback */
@@ -98,31 +98,31 @@ typedef struct _fluidPlayerT {
     int startMsec;           /* the start time of the last tempo change */
     int curMsec;             /* the current time */
     /* sync mode: indicates the tempo mode the player is driven by (see playerSetTempo()):
-       1, the player is driven by internal tempo (miditempo). This is the default.
+       1, the player is driven by internal tempo (Miditempo). This is the default.
        0, the player is driven by external tempo (exttempo)
     */
     int syncMode;
-    /* miditempo: internal tempo coming from MIDI file tempo change events
+    /* Miditempo: internal tempo coming from MIDI file tempo change events
       (in micro seconds per quarter note)
     */
-    int miditempo;     /* as indicated by MIDI SetTempo: n 24th of a usec per midi-clock. bravo! */
+    int miditempo;     /* as indicated by MIDI SetTempo: n 24th of a usec per Midi-clock. bravo! */
     /* exttempo: external tempo set by playerSetTempo() (in micro seconds per quarter note) */
     int exttempo;
     /* multempo: tempo multiplier set by playerSetTempo() */
     float multempo;
-    float deltatime;   /* milliseconds per midi tick. depends on current tempo mode (see syncMode) */
+    float deltatime;   /* milliseconds per Midi tick. depends on current tempo mode (see syncMode) */
     unsigned int division;
 
-    handleMidiEventFuncT playbackCallback; /* function fired on each midi event as it is played */
+    handleMidiEventFuncT playbackCallback; /* function fired on each Midi event as it is played */
     void *playbackUserdata; /* pointer to user-defined data passed to playbackCallback function */
     handleMidiTickFuncT tickCallback; /* function fired on each tick change */
     void *tickUserdata; /* pointer to user-defined data passed to tickCallback function */
 
     int channelIsplaying[MAX_NUMBER_OF_CHANNELS]; /* flags indicating channels on which notes have played */
-} playerT;
+} PlayerT;
 
-S32 midiSendEvent (struct _Synthesizer * synth, playerT * player,
-													 midiEventT * evt);
+S32 MidiSendEvent (struct _Synthesizer * synth, PlayerT * player,
+													 MidiEventT * evt);
 
 
 /***************************************************************
@@ -133,7 +133,7 @@ S32 midiSendEvent (struct _Synthesizer * synth, playerT * player,
 
 #define MAX_NUMBER_OF_TRACKS 128
 
-enum midiEventType {
+enum MidiEventType {
 	/* channel messages */
 	NOTE_OFF = 0x80,
 	NOTE_ON = 0x90,
@@ -144,13 +144,13 @@ enum midiEventType {
 	PITCH_BEND = 0xe0,
 	/* system exclusive */
 	MIDI_SYSEX = 0xf0,
-	/* system common - never in midi files */
+	/* system common - never in Midi files */
 	MIDI_TIME_CODE = 0xf1,
 	MIDI_SONG_POSITION = 0xf2,
 	MIDI_SONG_SELECT = 0xf3,
 	MIDI_TUNE_REQUEST = 0xf6,
 	MIDI_EOX = 0xf7,
-	/* system real-time - never in midi files */
+	/* system real-time - never in Midi files */
 	MIDI_SYNC = 0xf8,
 	MIDI_TICK = 0xf9,
 	MIDI_START = 0xfa,
@@ -158,11 +158,11 @@ enum midiEventType {
 	MIDI_STOP = 0xfc,
 	MIDI_ACTIVE_SENSING = 0xfe,
 	MIDI_SYSTEM_RESET = 0xff,
-	/* meta event - for midi files only */
+	/* meta event - for Midi files only */
 	MIDI_META_EVENT = 0xff
 };
 
-enum midiControlChange {
+enum MidiControlChange {
 	BANK_SELECT_MSB = 0x00,
 	MODULATION_MSB = 0x01,
 	BREATH_MSB = 0x02,
@@ -238,7 +238,7 @@ enum midiControlChange {
 };
 
 /* General MIDI RPN event numbers (LSB, MSB = 0) */
-enum midiRpnEvent {
+enum MidiRpnEvent {
 	RPN_PITCH_BEND_RANGE = 0x00,
 	RPN_CHANNEL_FINE_TUNE = 0x01,
 	RPN_CHANNEL_COARSE_TUNE = 0x02,
@@ -247,7 +247,7 @@ enum midiRpnEvent {
 	RPN_MODULATION_DEPTH_RANGE = 0x05
 };
 
-enum midiMetaEvent {
+enum MidiMetaEvent {
 	MIDI_COPYRIGHT = 0x02,
 	MIDI_TRACK_NAME = 0x03,
 	MIDI_INST_NAME = 0x04,
@@ -263,7 +263,7 @@ enum midiMetaEvent {
 };
 
 /* MIDI SYSEX useful manufacturer values */
-enum midiSysexManuf {
+enum MidiSysexManuf {
 	MIDI_SYSEX_MANUF_ROLAND = 0x41,								/**< Roland manufacturer ID */
 	MIDI_SYSEX_UNIV_NON_REALTIME = 0x7E,					/**< Universal non realtime message */
 	MIDI_SYSEX_UNIV_REALTIME = 0x7F								/**< Universal realtime message */
@@ -278,7 +278,7 @@ enum midiSysexManuf {
 /**
  * SYSEX tuning message IDs.
  */
-enum midiSysexTuningMsgId {
+enum MidiSysexTuningMsgId {
 	MIDI_SYSEX_TUNING_BULK_DUMP_REQ = 0x00,				/**< Bulk tuning dump request (non-realtime) */
 	MIDI_SYSEX_TUNING_BULK_DUMP = 0x01,						/**< Bulk tuning dump response (non-realtime) */
 	MIDI_SYSEX_TUNING_NOTE_TUNE = 0x02,						/**< Tuning note change message (realtime) */
@@ -309,9 +309,96 @@ enum driverStatus {
 /* From ctype.h */
 #define isascii(c)    (((c) & ~0x7f) == 0)
 
+struct _MidiParserT;
+
+struct _MidiParserT *newMidiParser(void);
+void deleteMidiParser(struct _MidiParserT *parser);
+MidiEventT *MidiParserParse(struct _MidiParserT *parser, unsigned char c);
 
 
+/***************************************************************
+ *
+ *                   CONSTANTS & ENUM
+ */
 
 
+#define MAX_NUMBER_OF_TRACKS 128
+#define MAX_NUMBER_OF_CHANNELS 16
+
+/* General MIDI RPN event numbers (LSB, MSB = 0) */
+
+
+/* MIDI SYSEX useful manufacturer values */
+
+#define MIDI_SYSEX_DEVICE_ID_ALL        0x7F    /**< Device ID used in SYSEX messages to indicate all devices */
+
+/* SYSEX sub-ID #1 which follows device ID */
+#define MIDI_SYSEX_MIDI_TUNING_ID       0x08    /**< Sysex sub-ID #1 for MIDI tuning messages */
+#define MIDI_SYSEX_GM_ID                0x09    /**< Sysex sub-ID #1 for General MIDI messages */
+#define MIDI_SYSEX_GS_ID                0x42    /**< Model ID (GS) serving as sub-ID #1 for GS messages*/
+#define MIDI_SYSEX_XG_ID                0x4C    /**< Model ID (XG) serving as sub-ID #1 for XG messages*/
+
+/**
+ * SYSEX tuning message IDs.
+ */
+
+/* General MIDI sub-ID #2 */
+#define MIDI_SYSEX_GM_ON                0x01    /**< Enable GM mode */
+#define MIDI_SYSEX_GM_OFF               0x02    /**< Disable GM mode */
+#define MIDI_SYSEX_GM2_ON               0x03    /**< Enable GM2 mode */
+#define MIDI_SYSEX_GS_DT1               0x12    /**< GS DT1 command */
+
+
+/***************************************************************
+ *
+ *         TYPE DEFINITIONS & FUNCTION DECLARATIONS
+ */
+
+
+#define TrackEot(track)  ((track)->cur == NULL)
+
+/* range of tempo values */
+#define MIN_TEMPO_VALUE (1.0f)
+#define MAX_TEMPO_VALUE (60000000.0f)
+/* range of tempo multiplier values */
+#define MIN_TEMPO_MULTIPLIER (0.001f)
+#define MAX_TEMPO_MULTIPLIER (1000.0f)
+
+/*
+ * MidiFile
+ */
+typedef struct {
+    const char *buffer;           /* Entire contents of MIDI file (borrowed) */
+    int bufLen;                  /* Length of buffer, in bytes */
+    int bufPos;                  /* Current read position in contents buffer */
+    int eof;                      /* The "end of file" condition */
+    int runningStatus;
+    int c;
+    int type;
+    int ntracks;
+    int usesSmpte;
+    unsigned int smpteFps;
+    unsigned int smpteRes;
+    unsigned int division;       /* If uses_SMPTE == 0 then division is
+				  ticks per beat (quarter-note) */
+    double tempo;                /* Beats per second (SI rules =) */
+    int tracklen;
+    int trackpos;
+    int eot;
+    int varlen;
+    int dtime;
+} MidiFile;
+
+#define MIDI_PARSER_MAX_DATA_SIZE 1024    /**< Maximum size of MIDI parameters/data (largest is SYSEX data) */
+
+/* MidiParserT */
+typedef struct _MidiParserT {
+    unsigned char status;           /* Identifies the type of event, that is currently received ('Noteon', 'Pitch Bend' etc). */
+    unsigned char channel;          /* The channel of the event that is received (in case of a channel event) */
+    unsigned int nrBytes;          /* How many bytes have been read for the current event? */
+    unsigned int nrBytesTotal;    /* How many bytes does the current event type include? */
+    unsigned char data[MIDI_PARSER_MAX_DATA_SIZE]; /* The parameters or SYSEX data */
+    MidiEventT event;        /* The event, that is returned to the MIDI driver. */
+} MidiParserT;
 
 #endif /* _MIDI_H */
